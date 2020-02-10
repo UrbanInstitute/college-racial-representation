@@ -1,0 +1,451 @@
+body {
+  color: #353535;
+}
+
+/******************************************
+* VARIABLES
+*******************************************/
+
+$spacing-unit: 50px;
+
+$sans-serif: "Lato", sans-serif;
+
+
+/* URBAN COLORS */
+$cyan: #1696D2;
+$gray: #D2D2D2;
+$black: #000000;
+
+$yellow: #FDBF11;
+$magenta: #EC008B;
+
+$space-gray: #5C5859;
+$green: #55B748;
+$red: #DB2B27;
+
+$copy-black: #353535;
+
+/* CYANS */
+$cyan-1: #CFE8F3;
+$cyan-2: #A2D4EC;
+$cyan-3: #73BFE2;
+$cyan-4: #46ABDB;
+$cyan-5: #1696D2;
+$cyan-6: #12719E;
+$cyan-7: #0A4C6A;
+$cyan-8: #062635;
+
+/* GRAYS */
+$gray-1: #F5F5F5;
+$gray-2: #ECECEC;
+$gray-3: #E3E3E3;
+$gray-4: #DCDBDB;
+$gray-5: #D2D2D2;
+$gray-6: #9D9D9D;
+$gray-7: #696969;
+$gray-8: #353535;
+
+/* ORANGE */
+$orange-1: #FFF2CF;
+$orange-2: #FCE39E;
+$orange-3: #FDD870;
+$orange-4: #FCCB41;
+$orange-5: #FDBF11;
+$orange-6: #E88E2D;
+$orange-7: #CA5800;
+$orange-8: #843215;
+
+/* MAGENTAS */
+$magenta-1: #F5CBDF;
+$magenta-2: #EB99C2;
+$magenta-3: #E46AA7;
+$magenta-4: #E54096;
+$magenta-5: #EC008B;
+$magenta-6: #AF1F6B;
+$magenta-7: #761548;
+$magenta-8: #351123;
+
+/* GREENS */
+$green-1: #DCEDD9;
+$green-2: #BCDEB4;
+$green-3: #98CF90;
+$green-4: #78C26D;
+$green-5: #55B748;
+$green-6: #408941;
+$green-7: #2C5C2D;
+$green-8: #1A2E19;
+
+/* SPACE-GRAYS */
+$space-gray-1: #D5D5D4;
+$space-gray-2: #ADABAC;
+$space-gray-3: #848081;
+$space-gray-4: #5C5859;
+$space-gray-5: #332D2F;
+$space-gray-6: #262223;
+$space-gray-7: #1A1717;
+$space-gray-8: #0E0C0D;
+
+/* REDS */
+$green-1: #F8D5D4;
+$green-2: #F1AAA9;
+$green-3: #E9807D;
+$green-4: #E25552;
+$green-5: #DB2B27;
+$green-6: #A4201D;
+$green-7: #6E1614;
+$green-8: #370B0A;
+
+
+/******************************************
+* LAYOUT
+*******************************************/
+
+body {
+  font-family: $sans-serif;
+  font-size: 14px;
+  text-align: left;
+}
+
+.check-this {
+  background: red;
+  color: white;
+  font-weight: bold;
+  padding: 0 2px;
+  margin-right: 2px;
+}
+
+h1 {
+  font-weight: bold;
+}
+
+.dateline {
+  font-size: 18px;
+}
+
+.title-content {
+  text-align: center;
+  margin-bottom: 0.5* $spacing-unit;
+  padding-top: $spacing-unit * 2;
+}
+
+#intro {
+  font-size: 21px;
+  font-weight: 300;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 80px;
+  text-align: left;
+}
+
+/******************************************
+* HEADER
+*******************************************/
+
+.at_a11y {
+    display: none;
+}
+
+#aboutNavBar {
+  display: none;
+  position: absolute;
+  top: 50px;
+  height: 50px;
+  background: #EFEFEF;
+  color: #696969;
+  text-transform: uppercase;
+  font-size: 18px;
+  width: 100%;
+  cursor: pointer;
+}
+
+#aboutNavTitle {
+  display: none;
+  padding-top: 13px;
+  text-align: center;
+  width: 100%;
+}
+
+#aboutNavTitle a {
+  color: inherit;
+  text-decoration: none;
+}
+
+#header-pinned {
+    background: #FFFFFF;
+    border-bottom: 2px solid #EEEEEE;
+    color: #333333;
+    font: $sans-serif;
+    font-size: 16px;
+    height: 56px;
+    left: 0;
+    position: fixed;
+    top: 0px;
+    transition: top 0.25s linear;
+    width: 100%;
+    z-index: 999;
+    -webkit-transition: top 0.25s linear;
+    -moz-transition: top 0.25s linear;
+    -o-transition: top 0.25s linear;
+}
+
+#header-pinned * {
+  color: #333333;
+  font-family: $sans-serif;
+  text-decoration: none;
+}
+
+#header-pinned .share-icons {
+    background-color: transparent;
+    width: 69px;
+    height: 50px;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    width: 60px;
+    position: absolute;
+    right: 0;
+}
+
+#header-pinned .share-icons .shareThisB {
+    display: block;
+    background-repeat: no-repeat;
+    background-image: url(https://www.urban.org/sites/all/themes/urban/images/generated/icons-s8fe141aaaa.png);
+    background-position: 0 -2396px;
+    height: 32px;
+    width: 32px;
+    float: none;
+    margin: 0 auto;
+}
+
+#header-pinned .share-icons .shareThisP {
+    border-top: 0;
+    border-left: 1px solid #e6e5e5;
+    height: 56px;
+    padding: 11px 0 0;
+}
+
+#header-pinned .share-icons .shareThisW {
+    background-color: #fff;
+    /* border: 1px solid #e6e5e5; */
+    position: absolute;
+    top: 50px;
+    left: -100px;
+    padding: 5px;
+    border-top: 0;
+    width: 160px;
+    z-index: 3;
+    display: none;
+    float: none;
+    top: 50px;
+    right: 0;
+    left: auto;
+    width: 300px;
+    text-align: right;
+    border: 0;
+    background: transparent;
+}
+
+#header-pinned .share-icons .addthis_toolbox {
+    display: inline-block;
+    width: auto;
+    /* border: 1px solid #e6e5e5; */
+    border-top: 0;
+    background: #fff;
+    padding: 10px 10px 0 0;
+    margin: 0 auto;
+}
+
+#header-pinned .share-icons .addthis_toolbox a {
+    margin-bottom: 5px;
+}
+
+#header-pinned .share-icons [class^="addthis_button_"] {
+    display: inline-block !important;
+    margin: 0 0 0 10px;
+}
+
+#header-pinned .share-icons .at15t_twitter.at16t_twitter, 
+#header-pinned .share-icons .addthis_button_facebook {
+    display: block;
+    background-repeat: no-repeat;
+    background-image: url(https://www.urban.org/sites/all/themes/urban/images/generated/icons-s8fe141aaaa.png);
+    background-position: 0 -2056px;
+    height: 32px;
+    width: 32px;
+}
+
+#header-pinned .share-icons .at15t_twitter.at16t_twitter,
+#header-pinned .share-icons .addthis_button_facebook:hover {
+    background-position: 0 -1609px;
+}
+
+#header-pinned .share-icons .at15t_twitter.at16t_twitter, 
+#header-pinned .share-icons .addthis_button_twitter {
+    display: block;
+    background-repeat: no-repeat;
+    background-image: url(https://www.urban.org/sites/all/themes/urban/images/generated/icons-s8fe141aaaa.png);
+    background-position: 0 -1169px;
+    height: 32px;
+    width: 32px;
+}
+
+#header-pinned .share-icons .at15t_twitter.at16t_twitter,
+#header-pinned .share-icons .addthis_button_twitter:hover {
+    background-position: 0 -1577px;
+}
+
+#header-pinned .share-icons .at15t_linkedin.at16t_linkedin,
+#header-pinned .share-icons .addthis_button_linkedin {
+    display: block;
+    background-repeat: no-repeat;
+    background-image: url(https://www.urban.org/sites/all/themes/urban/images/generated/icons-s8fe141aaaa.png);
+    background-position: 0 -1641px;
+    height: 32px;
+    width: 32px;
+}
+
+#header-pinned .share-icons .at15t_linkedin.at16t_linkedin,
+#header-pinned .share-icons .addthis_button_linkedin:hover {
+    background-position: 0 -1379px;
+}
+
+#header-pinned .share-icons .at15t_google_plusone_share.at16t_google_plusone_share,
+#header-pinned .share-icons .addthis_button_google_plusone_share {
+    display: block;
+    background-repeat: no-repeat;
+    background-image: url(https://www.urban.org/sites/all/themes/urban/images/generated/icons-s8fe141aaaa.png);
+    background-position: 0 -1719px;
+    height: 32px;
+    width: 32px;
+}
+
+#header-pinned .share-icons .at15t_email.at16t_email, 
+#header-pinned .share-icons .addthis_button_email {
+    display: block;
+    background-repeat: no-repeat;
+    background-image: url(https://www.urban.org/sites/all/themes/urban/images/generated/icons-s8fe141aaaa.png);
+    background-position: 0 -1449px;
+    height: 32px;
+    width: 32px;
+}
+
+#header-pinned .share-icons .at15t_email.at16t_email,
+#header-pinned .share-icons .addthis_button_email:hover {
+    background-position: 0 -1271px;
+}
+
+#header-pinned .share-icons [class^="addthis_button_"] {
+    display: inline-block !important;
+    margin: 0 0 0 10px;
+}
+
+#header-pinned .site-logo {
+    background: url(../img/tpcLogo.png) no-repeat;
+    background-size: 44px 37px;
+    display: block;
+    height: 37px;
+    left: 10px;
+    margin-top: 9px;
+    position: absolute;
+    width: 44px;
+}
+
+#header-pinned .title {
+  font-size: 20px;
+  line-height: 56px;
+  margin: 0 80px 0 55px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+#header-pinned > div.title > span {
+  margin-left: 20px;
+}
+
+#header-pinned .title span, #header-pinned .title a {
+  display: inline;
+}
+
+.headerimage {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 430px;
+  z-index: -1;
+}
+
+/******************************************
+* FOOTER
+*******************************************/
+
+footer {
+  position: relative;
+    background-color: #f1f2f2;
+    margin-top: $spacing-unit + 20;
+    padding-top: 50px;
+    padding-bottom: 120px;
+    bottom: 0;
+   overflow: hidden;
+     height:auto;
+     z-index: 10000;  
+ 
+}
+
+footer .content {
+    max-width: 750px;
+    width: calc(100% - 40px);
+    margin: 0 auto;
+}
+
+footer li {
+  font-size: 14px;
+}
+   
+h4 {
+  font-size: 34px;
+  font-family: $sans-serif;
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+
+.credits{
+  font-family: $sans-serif;
+  font-style: italic;
+}
+
+footer p {
+  font-size: 14px;
+}
+
+footer h2 {
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.credits {
+    font-size: 14px;
+    margin-top: 1em;
+    margin-bottom: 16px;
+}
+
+.job {
+  font-family: $sans-serif;
+  font-size: 16px;
+  margin-bottom: 4px;
+  margin-top: 12px;
+  text-transform: uppercase;
+}
+
+.employee {
+  font-size: 14px;
+}
+
+.urbanstatement {
+    font-family: $sans-serif;
+    font-style: italic;
+    color: #666666;
+    font-size: 13px;
+    margin-bottom: 1em;
+}
