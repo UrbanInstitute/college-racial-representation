@@ -118,6 +118,10 @@ h1 {
   font-weight: bold;
 }
 
+.clear {
+  clear: both;
+}
+
 .dateline {
   font-size: 18px;
 }
@@ -448,4 +452,18 @@ footer h2 {
     color: #666666;
     font-size: 13px;
     margin-bottom: 1em;
+}
+
+
+/*SCENARIOS*/
+
+#scenarios {
+  border-top: 1px solid $cyan-6;
+  border-bottom: 1px solid $cyan-6;
+  padding: 20px 0;
+}
+
+.scenario {
+  float: left;
+  width: 23%;
 }
