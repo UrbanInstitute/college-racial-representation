@@ -80,14 +80,62 @@
       <div class="scenario" id="scenario3">
         <img src="https://via.placeholder.com/250">
       </div>
-    <div class="clear"></div>
+      <div class="clear"></div>
     </div>
 
-    
+
+    <div id="geography-selection">
+        <label for="national">
+          <input type="radio" class="geography-choices n-radio " name="geography-choice" value="national" checked="checked"/>
+          <span>National</span>
+        </label>
+
+        <label for="state">
+          <input type="radio" class="geography-choices n-radio " name="geography-choice" value="state"/>
+          <span>State</span>
+        </label>
+
+        <label for="school">
+          <input type="radio" class="geography-choices n-radio " name="geography-choice" value="school"/>
+          <span>School</span>
+        </label>
+    </div> 
 
 
+    <div id="options-panel">
+      <div id="time-selection">
+        <div class="time-selector bar selected" value="single-year-bar">
+          <img src="images/barIcon.png">
+          <span>Single year</span>
+        </div>
+        <div class="time-selector line" value="race-ethnicities-as-lines"> 
+          <img src="images/lineIcon.png">
+          <span>Historical by sector</span>
+        </div>
+        <div class="time-selector line" value="sectors-as-lines">
+          <img src="images/lineIcon.png">
+          <span>Historical by race</span>
+        </div>
+      </div>
 
+      <div id="year-selector">
+        <label for="year">Year:</label>
+        <input type="text" id="year-box" name="year" required minlength="4" maxlength="4" size="10">
+        <input id="year-input" type="submit" value="Submit" name="year" /><br>
+      </div>
+      <div id="first-dynamic-menu"></div>
+      <div id="second-dynamic-menu"></div>
+    </div>
 
+    <div id="chart-area-container">
+      <div id="chart-frame">
+        <div id="single-year-container"></div>
+        <div id="multi-year-by-race-container"></div>
+        <div id="multi-year-by-sector-container"></div>
+      </div>
+    </div>
+
+    <div class="clear"></div>
   
 </div>
 
@@ -144,8 +192,9 @@
     <script type="text/javascript" src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- endbuild -->
     <!-- build:js scripts/main.js -->
+    
     <script src="node_modules/d3/dist/d3.js"></script>
-    <script src="scripts/util.js"></script>
+    <script src="scripts/halpurs.js"></script>
     <script src="scripts/main.js"></script>
     <!-- endbuild -->
   </body>
