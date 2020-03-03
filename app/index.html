@@ -103,28 +103,30 @@
 
 
     <div id="options-panel">
-      <div id="time-selection">
-        <div class="time-selector bar selected" value="single-year-bar">
+      <span id="time-selection">
+        <span class="time-selector bar selected" value="single-year-bar">
           <img src="images/barIcon.png">
           <span>Single year</span>
-        </div>
-        <div class="time-selector line" value="race-ethnicities-as-lines"> 
+        </span>
+        <span class="time-selector line" value="race-ethnicities-as-lines"> 
           <img src="images/lineIcon.png">
-          <span>Historical by sector</span>
-        </div>
-        <div class="time-selector line" value="sectors-as-lines">
+          <span>By sector</span>
+        </span>
+        <span class="time-selector line" value="sectors-as-lines">
           <img src="images/lineIcon.png">
-          <span>Historical by race</span>
-        </div>
-      </div>
+          <span>By race</span>
+        </span>
+
 
       <div id="year-selector">
         <label for="year">Year:</label>
         <input type="text" id="year-box" name="year" required minlength="4" maxlength="4" size="10">
         <input id="year-input" type="submit" value="Submit" name="year" /><br>
       </div>
+
       <div id="first-dynamic-menu"></div>
       <div id="second-dynamic-menu"></div>
+      
     </div>
 
     <div id="chart-area-container">

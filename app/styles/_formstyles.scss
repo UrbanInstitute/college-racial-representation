@@ -1,0 +1,232 @@
+
+
+
+.c-cb {
+	padding-left: 2em;
+	position: relative;
+}
+//https://github.com/scottaohara/a11y_styled_form_controls/blob/master/src/assets/css/checkbox.css
+.c-cb > input[type="checkbox"] {
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	appearance: none;
+	margin-left: -2em;
+	margin-top: .75em;
+	opacity: .00001;
+	position: relative;
+	vertical-align: top;
+	z-index: 2;
+}
+
+/**
+ * Make sure the label is only as wide as the
+ * inner text requires it to be.
+ * The label should not be a block element
+ * or run 100% width of its container.
+ * Why would someone expect to click
+ * white space on the opposite side of the
+ * screen to have a checkbox checked?
+ */
+.c-cb > label {
+	display: inline-block;
+	// padding: .75em .5em;
+	// vertical-align: top;
+}
+
+
+/**
+ * Note, the :before pseudo-element is the new
+ * "bounds" or "box" of the checkbox.
+ * It must be the same height, width and
+ * position of the native checkbox element.
+ */
+.c-cb > label:before,
+.c-cb > input[type="checkbox"] {
+	height: 1.125em;
+	left: .125em;
+	width: 1.125em;
+}
+
+/**
+ * Base styles for use on both
+ * pseudo elements.
+ */
+.c-cb > label:before,
+.c-cb > label:after {
+	border: 1px solid;
+	content: " ";
+	position: absolute;
+	transition:
+		border-color .2s ease-in-out,
+		box-shadow .2s ease-in-out,
+		transform .2s ease-in-out;
+}
+
+/**
+ * Styles for the custom box boundary.
+ */
+.c-cb > label:before {
+	border-color: #565656;
+	border-radius: 2px;
+	box-shadow: 0 0 0 1px #565656;
+	height: 1.125em;
+	left: .125em;
+	top: .825em;
+	width: 1.125em;
+}
+
+/**
+ * This recreates the "check" mark.
+ */
+.c-cb > label:after {
+	border: 0;
+	border-bottom: 4px solid #565656;
+	border-right: 4px solid #565656;
+	height: .825em;
+	left: .425em;
+	top: .825em;
+	transform-origin: center center;
+	transform: rotate(45deg) scale(0);
+	width: .5em;
+}
+
+
+/**
+ * ** Defining States **
+ */
+.c-cb > input:checked ~ label:before {
+	border-color: transparent;
+	box-shadow: 0 0 0 2px #0d5192;
+}
+
+.c-cb > input:focus ~ label:before {
+	border-color: transparent;
+	box-shadow: 0 0 0 3px #228BEC;
+	outline-offset: 2px;
+	outline: 2px solid transparent;
+}
+
+.c-cb > input:checked ~ label:after {
+	transform: rotate(45deg) scale(1);
+}
+
+.c-cb > input:checked:focus ~ label:after {
+	border-color: #228BEC;
+}
+
+.c-cb > input[disabled] ~ label {
+	opacity: .625;
+}
+
+/* placeholder design until a better required
+   design pattern can be created */
+.c-cb > input:invalid ~ label:before {
+	border-color: #f00;
+	box-shadow: 0 0 0 1px #f00;
+}
+
+.c-cb > input:invalid:focus ~ label:before {
+	box-shadow: 0 0 0 2px #f00;
+}
+
+.c-cb input:invalid ~ [aria-hidden="true"] {
+	color: #f00;
+}
+
+
+.c-cb input[required] ~ label .req-star {
+	position: relative;
+	right: -1em;
+}
+
+.c-cb input[required] ~ label .req-star:after,
+.c-cb input[required] ~ label .req-star:before {
+  border-left: .35em solid transparent;
+  border-right: .35em solid transparent;
+  content: " ";
+  position: absolute;
+  right: 0;
+}
+
+.c-cb input[required] ~ label .req-star:after {
+ border-bottom: .6em solid red;
+ top: -.2em;
+}
+
+.c-cb input[required] ~ label .req-star:before {
+ border-top: .6em solid red;
+ top: 0
+}
+
+/* when checked, ease up on the "error" feel to the indicator */
+.c-cb input[required]:checked + label .req-star:after {
+  border-bottom-color: rgba(34, 139, 236, .8);
+}
+
+.c-cb input[required]:checked + label .req-star:before {
+  border-top-color: rgba(34, 139, 236, .8);
+}
+
+
+
+// radio button styles: https://scottaohara.github.io/a11y_styled_form_controls/src/radio-button/
+
+.n-radio-label {
+  display: inline-block;
+  padding: .5em 0;
+}
+
+.n-radio {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none; /* in case this ever gets supported */
+  background: #fff;
+  border-radius: 100%;
+  border: 1px solid transparent;
+  box-shadow:
+    0 0 0 2px rgba(13,81,146, 1),
+    inset 0 0 0 0px rgba(13,81,146, 0);
+  display: inline-block;
+  height: 1.25em;
+  margin-right: .25em;
+  transition:
+    border-color .2s ease-in-out,
+    box-shadow .2s ease-in-out;
+  vertical-align: text-bottom;
+  width: 1.25em;
+}
+
+.n-radio:focus {
+  border-color: transparent;
+  box-shadow:
+    0 0 0 2px rgba(13, 81, 146, 1),
+    inset 0 0 0 0px rgba(13, 81, 146, 1);
+}
+
+.n-radio:checked {
+  border-color: #fff;
+  box-shadow:
+    0 0 0 2px rgba(34, 139, 236, 1),
+    inset 0 0 0 6px rgba(13, 81, 146, 1);
+}
+
+.n-radio:checked:focus {
+  box-shadow:
+    0 0 0 3px rgba(34, 139, 236, 1),
+    inset 0 0 0 3px rgba(13, 81, 146, 1);
+}
+
+.n-radio[disabled],
+.n-radio[disabled] + span {
+  opacity: .4;
+}
+
+@media screen and (-ms-high-contrast: active) {
+  .n-radio:checked {
+    border: 6px solid;
+    box-shadow: none;
+  }
+}
+
+
+
