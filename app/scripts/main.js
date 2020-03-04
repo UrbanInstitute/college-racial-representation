@@ -25,7 +25,7 @@ var higherEdSelections = {};
 	higherEdSelections.programLength = "four",  //two, four
 	higherEdSelections.singleRace = "dif_hispa",
 	higherEdSelections.singleSector = "Public Non-Selective",
-	higherEdSelections.state = "California",
+	higherEdSelections.state = "Alabama",
 	higherEdSelections.arrayRaces = [],
 	higherEdSelections.arraySectors = []
 	
@@ -572,6 +572,43 @@ function buildOptionPanel(chartType){
 	})
 }
 
+function makeDropdown(data){
+  data.sort(function(a, b){
+    return a.localeCompare(b);
+  })
+
+  var select = d3.select("#dropdown").on("change", menuSelected)
+
+  var options = select.selectAll("option")
+                      .data(data)
+                      .enter()
+                      .append("option")
+                      .text(function(d){ return d })
+                      .attr("value", function(d){ return d })
+                      .property("selected", function(d){ return d === higherEdSelections.state })
+}
+
+function menuSelected(){
+	higherEdSelections.state = this.value 
+
+	higherEdData.allData.filteredForState =  higherEdData.allData[higherEdSelections.geography + higherEdSelections.programLength].filter(function(d){
+		return d.fips_ipeds === higherEdSelections.state;
+	})
+
+			//format data and call bar chart
+		FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);
+		FILTERED_BY_YEAR = FILTERED_BY_YEAR.filter(function(d){return higherEdSelections.arraySectors.indexOf(d[SECTOR_KEY]) > -1  })
+		drawBarChart(FILTERED_BY_YEAR)
+
+		//format data and call line chart race
+		NESTED_BY_SECTOR = makeSectorNest();
+		NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
+		drawLineChart(NESTED_BY_SECTOR, "race", sectorLineSVG, sectorLineG, sectorLineYAxis); 
+
+		NESTED_BY_RACE = makeDemogNest(higherEdSelections.singleSector);
+		NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
+}
+
 function initializeStaticControls(){
 
 	d3.selectAll(".geography-choices").on("click", function(){
@@ -584,7 +621,16 @@ function initializeStaticControls(){
 				return d.fips_ipeds === higherEdSelections.state;
 			})
 			SELECTED_DATASET = "filteredForState";
-		} 
+
+			var distinct = function(value, index, self){ return self.indexOf(value) === index; }
+			var states = higherEdData.allData.statefour.map(function(d){return d.fips_ipeds});
+			var menuData = states.filter(distinct);
+			makeDropdown(menuData)
+
+			d3.select("#dropdown").style("display", "block")
+		} else if ( userChoice === "national" ){
+			d3.select("#dropdown").style("display", "none")
+		}
 
 		//format data and call bar chart
 		FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);

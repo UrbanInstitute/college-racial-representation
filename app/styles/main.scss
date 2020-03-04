@@ -208,6 +208,10 @@ g.grid > g.tick > line {
   stroke-dasharray: 2,2;
 }
 
+#dropdown {
+  display: none;
+}
+
 .zero-line {
   display: none;
   stroke: $gray-6;
