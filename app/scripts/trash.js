@@ -1,13 +1,13 @@
 function buildRaceMenu(div, inputType){
 	var menuArea = d3.select(div);
-	var raceEthnicities = ["American Indian", "Asian", "Black", "Hispanic", "Multiracial", "Pacific Islander", "White"]
-	menuArea.selectAll(".race-ethnicity-choice-div")
+	var raceEthnicities = ['American Indian', 'Asian', 'Black', 'Hispanic', 'Multiracial', 'Pacific Islander', 'White']
+	menuArea.selectAll('.race-ethnicity-choice-div')
 		.data(raceEthnicities)
 		.enter()
-		.append("div")
-		.classed("race-ethnicity-choice-div", true)
+		.append('div')
+		.classed('race-ethnicity-choice-div', true)
 		.html(function(d){
-			return "<input type='radio' class='race-ethnicity-choices' name='race-ethnicity-choice' value='" + d + "' checked=''/><label for='" + d +"'>" + d + "</label>"
+			return '<input type=\'radio\' class=\'race-ethnicity-choices\' name=\'race-ethnicity-choice\' value=\'' + d + '\' checked=\'\'/><label for=\'' + d +'\'>' + d + '</label>'
 		})
 }
 
@@ -15,23 +15,23 @@ function buildSectorMenu(div, inputType){
 	var menuArea = d3.select(div);
 
 	var sectors = [
-	    { key: "Four Year Colleges", 
+	    { key: 'Four Year Colleges', 
 	   		 value: [
 		    		{ 
-			    		key: "Public", 
-			    		value: ["Non-selective", "Selective", "Highly selective"]
+			    		key: 'Public', 
+			    		value: ['Non-selective', 'Selective', 'Highly selective']
 		    		},
 		    		{ 
-			    		key: "Private",
-			    		value: ["Non-selective", "Selective", "Highly selective"]
+			    		key: 'Private',
+			    		value: ['Non-selective', 'Selective', 'Highly selective']
 		    		},
 		    		{
-		    			key: "For-profit",
+		    			key: 'For-profit',
 		    			value: []
 		    		}
 	    		]
 	    	},
-	    { key: "Two Year Colleges", value: ["Public", "Private"]}
+	    { key: 'Two Year Colleges', value: ['Public', 'Private']}
   	]
 
 	// var div = d3.select("#list")
@@ -46,19 +46,19 @@ function buildSectorMenu(div, inputType){
 	//     .text(function(d) { return d.value; });
 	
 
-	var majorCategories = menuArea.selectAll(".major-categories")
+	var majorCategories = menuArea.selectAll('.major-categories')
 		.data(sectors)
 		.enter()
-		.append("p")
-		.classed("major-categories", true)
+		.append('p')
+		.classed('major-categories', true)
 		//.attr("id", function(d){ debugger })
 		.text(function(d){ return d.key })
 
-	var fourYears = majorCategories.selectAll(".sectors")
+	var fourYears = majorCategories.selectAll('.sectors')
 		.data(sectors[0].value)
 		.enter()
-		.append("p")
-		.classed("sectors", true)
+		.append('p')
+		.classed('sectors', true)
 		.text(function(d){ return d.key })
 
 
@@ -81,9 +81,9 @@ function buildMenuPanel(){
 		//if view is national or state and chart type is line-sectors
 	//put sectors as radio buttons first - set/map to get keys
 
-	if (higherEdSelections.chartType === "line-sectors"){
-		buildSectorMenu("#primary-attribute-menu", "checkbox")
-		buildRaceMenu("#secondary-attribute-menu", "radio")
+	if (higherEdSelections.chartType === 'line-sectors'){
+		buildSectorMenu('#primary-attribute-menu', 'checkbox')
+		buildRaceMenu('#secondary-attribute-menu', 'radio')
 	}
 
 	//races as check boxes second
