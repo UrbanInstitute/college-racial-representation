@@ -9,6 +9,10 @@
 // $(function () { $('[data-toggle="popover"]').popover(); });
 
 
+// TODO - 
+// deal with two/four year swtich out
+// 
+
 // the datas
 var higherEdData = {};
 	higherEdData.allData = {};
@@ -41,6 +45,16 @@ var colorObject = {
 	"dif_pacis": "#98CF90",
 	"dif_othra": "#000000",
 	"dif_twora": "#FDD870"
+}
+
+var translate = {
+	 "for-profit": "For-Profit",
+	 "private-highly-selective": "Private More Selective",
+	 "private-nonselective": "Private Non-Selective",
+	 "private-selective": "Private Selective",
+	 "public-highly-selective": "Public More Selective",
+	 "public-nonselective": "Public Non-Selective",
+	 "public-selective": "Public Selective"
 }
 
 var margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -240,16 +254,26 @@ function buildOptionPanel(chartType){
 			sectorOptions.push(d[SECTOR_KEY]) 
 		})
 
+	var translateRace = {
+		"dif_white": "White", 
+		"dif_hispa": "Hispanic or Latino", 
+		"dif_black": "Black", 
+		"dif_asian": "Asian", 
+		"dif_amind": "American Indian", 
+		"dif_pacis": "Pacific Islander", 
+		"dif_othra": "Other" 
+	}
+
 	// radio button template:
 	function radioButtonTemplater(option){
 		var text = 
-		'<label for="' + option + '"><input type="radio" class=" " name="' + chartType + '" value="' + option + '" /><span>' + option + '</span></label>'
+		'<label for="' + option + '"><input type="radio" class=" " name="' + chartType + '" value="' + option + '" /><span>' + translateRace[option] + '</span></label>'
         return text
 	}
 	// checkbox template
 	function checkboxTemplater(option){
 		var text = 
-		'<div class="c-cb"><input type="checkbox" class=" " name="' + chartType + '" value="' + option + '" checked/><label for="' + option + '">' + option + '</label></div>'
+		'<div class="c-cb"><input type="checkbox" class=" " name="' + chartType + '" value="' + option + '" checked/><label for="' + option + '">' + translateRace[option] + '</label></div>'
         return text
 	}
 
@@ -275,6 +299,10 @@ function buildOptionPanel(chartType){
 		d3.selectAll(".race-ethnicity-checkboxes > div > input")
 			.property('checked', function(d){ return higherEdSelections.arrayRaces.indexOf(this.value) > -1 });
 
+
+		d3.selectAll(".sector-boxes")
+			.property('checked', function(d){ return higherEdSelections.arraySectors.indexOf(translate[this.value]) > -1 });
+
 	} else if (chartType === "sectors-as-lines"){
 		//races as radio buttons, sectors as checkboxes
 		d3.select("#year-selector").style("display", "none")
@@ -288,6 +316,12 @@ function buildOptionPanel(chartType){
 			.html(function(d){ return radioButtonTemplater(d) })
 
 		d3.select("#second-dynamic-menu").html(COLLEGE_SECTOR_CHECKBOXES)
+		//TODO set a default radio button to "checked"
+		
+		d3.select("input[value=" + higherEdSelections.singleRace + "]").property("checked", true)
+		console.log(higherEdSelections.arraySectors + "hi")
+		d3.selectAll(".sector-boxes")
+			.property('checked', function(d){ return higherEdSelections.arraySectors.indexOf(translate[this.value]) > -1 });
 
 	} else if (chartType === "race-ethnicities-as-lines"){
 		//sectors as radio buttons, races as checkboxes
@@ -310,38 +344,64 @@ function buildOptionPanel(chartType){
 	
 	//initialize controls 
 
-	var translate = {
-		 "for-profit": "For-Profit",
-		 "private-highly-selective": "Private More Selective",
-		 "private-nonselective": "Private Non-Selective",
-		 "private-selective": "Private Selective",
-		 "public-highly-selective": "Public More Selective",
-		 "public-nonselective": "Public Non-Selective",
-		 "public-selective": "Public Selective"
-	}
-
 	//sector boxes - updates arraySector
 	d3.selectAll(".sector-boxes").on("click", function(){
 		var userChoice = this.value;
 		//update sectorsArray
 
-		var checkbox = d3.select(this)
+		var checkbox = d3.select(this);
+
+		var twoYearTranslate = {
+			"two-year-public": "Public 2-year",
+			"two-year-private": "For-Profit 2-year"
+		}
+			//switching from 4 year to 2
+		if (checkbox.classed("two-year") && higherEdSelections.programLength === "four"){
+			higherEdSelections.programLength = "two"
+			higherEdSelections.arraySectors = [twoYearTranslate[userChoice]]
+
+			d3.selectAll(".four-year").classed("checked", false)
+			d3.selectAll(".four-year.sector-boxes").property("checked", false)	
+			
+		} else if (checkbox.classed("two-year") && higherEdSelections.programLength === "two"){
+			//TODO - this is wrong
+			if (checkbox.classed("checked")){
+				higherEdSelections.arraySectors.filter(function(d){
+					return d !== twoYearTranslate[userChoice]
+				})
+			} else {
+				higherEdSelections.arraySectors.push(twoYearTranslate[userChoice])
+			}
+			
+		} else if (checkbox.classed("four-year") && higherEdSelections.programLength === "two"){
+			higherEdSelections.programLength = "four"
+			higherEdSelections.arraySectors = [translate[userChoice]]
+			d3.selectAll(".two-year").classed("checked", false)
+			d3.selectAll(".two-year.sector-boxes").property("checked", false)
+			
+		} else if (checkbox.classed("four-year") && higherEdSelections.programLength === "four"){		
+			if (checkbox.classed("checked")){
+				higherEdSelections.arraySectors = higherEdSelections.arraySectors.filter(function(d){
+					return d !== translate[userChoice]
+				})
+			} else {
+				higherEdSelections.arraySectors.push(translate[userChoice])
+			}
+		}
+console.log(higherEdSelections.arraySectors)
 									//equivalent to toggleClass
 		checkbox.classed("checked", !checkbox.classed("checked"));
-
-		higherEdSelections.arraySectors = higherEdSelections.arraySectors.filter(function(d){
-			//TODO need to either add or subtract item depending on the box being checked or unchecked
-			return d !== translate[userChoice]
-		})
-
-		filterSectorNest();
+		NESTED_BY_SECTOR = makeSectorNest();
+		NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
 		drawLineChart(NESTED_BY_SECTOR, "race", sectorLineSVG, sectorLineG);
 
 		//filter the year data too and call bar chart
+		FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);
 		FILTERED_BY_YEAR = FILTERED_BY_YEAR.filter(function(d){return higherEdSelections.arraySectors.indexOf(d[SECTOR_KEY]) > -1  })
 		drawBarChart(FILTERED_BY_YEAR)
 
 	})
+
 
 	//sector radios - updates singleSector
 	d3.selectAll(".sector-radios").on("click", function(){
@@ -369,22 +429,21 @@ function buildOptionPanel(chartType){
 		drawBarChart(FILTERED_BY_YEAR)
 
 		//take lines off 
-		//drawLineChart(NESTED_BY_RACE, "sector", raceEthnicityLineSVG, raceEthnicityLineG);
+		NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return d.key !== userChoice })
+		drawLineChart(NESTED_BY_RACE, "sector", raceEthnicityLineSVG, raceEthnicityLineG);
 	})
 
 	//race radios - updates singleRace
 	d3.selectAll(".race-ethnicity-radios").on("click", function(){	
-		higherEdSelections.singleRace = d3.select(this).datum();
+		var userChoice = d3.select(this).datum();
+		higherEdSelections.singleRace = userChoice;
+		
+		d3.select("input[value=" + userChoice + "]").property("checked", true)
 		drawLineChart(NESTED_BY_SECTOR, "race", sectorLineSVG, sectorLineG);
 	})
-
-
-
-
-
 }
 
-function initializeControls(){
+function initializeStaticControls(){
 
 	d3.selectAll(".geography-choices").on("click", function(){
 		higherEdSelections.geography = this.value;
@@ -433,12 +492,6 @@ function makeSectorNest(){
 	return nest;
 }
 
-function filterSectorNest(){
-	NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){
-		return higherEdSelections.arraySectors.indexOf(d.key) > -1 
-	})
-}
-
 function makeDemogNest(sector){
 	var raceOptions = higherEdData.allData[SELECTED_DATASET].columns.slice(2)
 	var nestedByDemog = []
@@ -472,7 +525,7 @@ function prepareData(){
 function init(){
 	prepareData();
 	buildOptionPanel("single-year-bar");
-	initializeControls();
+	initializeStaticControls();
 
 	//draw your default chart, bars for 2017: all races/sectors 
 	FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);
