@@ -28,7 +28,7 @@ var higherEdSelections = {};
 	higherEdSelections.arrayRaces = [],
 	higherEdSelections.arraySectors = []
 	
-var SECTOR_KEY = higherEdSelections.programLength === "four" ? "fourcat" : "twocat",
+var SECTOR_KEY = "fourcat",
 	SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength,
 	NESTED_BY_SECTOR,
 	NESTED_BY_RACE,
@@ -36,7 +36,7 @@ var SECTOR_KEY = higherEdSelections.programLength === "four" ? "fourcat" : "twoc
 
 var colorArray = ["#E88E2D","#E9807D","#46ABDB","#D2D2D2","#FDD870","#98CF90","#EB99C2", "#351123"]
 
-var colorObject = {
+var raceColorObj = {
 	"dif_white": "#EB99C2",
 	"dif_hispa": "#D2D2D2",
 	"dif_black": "#46ABDB",
@@ -68,6 +68,9 @@ var singleYearSVG = d3.select("#single-year-container").append("svg")
     .attr("height", height + margin.top + margin.bottom)
 var barChartG = singleYearSVG.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+var barChartXAxis = barChartG.append("g")
+	.attr("transform", "translate(0," + (height - margin.bottom) + ")")
+	.attr("class", "grid");
 
 var sectorLineSVG = d3.select("#multi-year-by-sector-container").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -91,7 +94,7 @@ var color = d3.scaleOrdinal()
     .range(colorArray)
 
 function drawBarChart(data){
-	var keys = higherEdSelections.arrayRaces //higherEdData.allData[SELECTED_DATASET].columns.slice(1);
+	var keys = higherEdSelections.arrayRaces.slice() //higherEdData.allData[SELECTED_DATASET].columns.slice(1);
 
 	keys.push(SECTOR_KEY); 
 	//make your data an array of objects
@@ -105,7 +108,7 @@ function drawBarChart(data){
 
 	var color = d3.scaleOrdinal()
 	    .range(colorArray);
-	
+	console.log("list of sectors in the domain: " + data.map(function(d){ return d[SECTOR_KEY] }))
 	//scale used to place each sector
 	var y0 = d3.scaleBand()
 	    .domain(data.map(function(d){ return d[SECTOR_KEY] }) ) //returns lists of sectors
@@ -131,14 +134,24 @@ function drawBarChart(data){
 
 	//regular scale for bar length
     var x = d3.scaleLinear()
-	    .domain([min, max]) 
+	    .domain([min,max]) 
 	    .rangeRound([margin.left, width - margin.right])
 
 	var xAxis = d3.axisBottom(x)
+		.tickSize(-height)
 
-	barChartG.append("g")
-		.attr("transform", "translate(0," + (height - margin.bottom) + ")")
-		.call(xAxis)
+
+
+	barChartXAxis.call(xAxis)
+	d3.select(".domain").remove();
+
+    barChartXAxis.append('line')
+	    .attr('class', 'zero-line')
+	    .attr('x1', x(0))
+	    .attr('x2', x(0))
+	    .attr('y1', 0)
+	    .attr('role','presentation')
+	    .attr('y2', -height);
 
 	var sectorGroups = barChartG.selectAll("g.sector")
 		.data(data, function(d){ return d[SECTOR_KEY] })
@@ -146,6 +159,13 @@ function drawBarChart(data){
 		  .attr("transform", function(d){ return "translate(0," + y0(d[SECTOR_KEY]) + ")" } ) 
 		  .attr("class", function(d){ return d[SECTOR_KEY] })
 		  .classed("sector", true)
+
+	d3.selectAll(".sector-label").remove(); //shrug emoji?
+
+	var sectorLabels = sectorGroups.append("text")
+			.classed("sector-label", true)
+			.text(function(d){ return d[SECTOR_KEY] })
+			.attr("x", x(0))
 
 	sectorGroups.exit().remove();
 
@@ -171,11 +191,13 @@ function drawBarChart(data){
 	rects.transition().duration(800)
 		.attr("x", function(d){ return d.value > 0 ? x(0) : x(d.value) })
 		.attr("width", function(d){ return d.value > 0 ? x(d.value) - x(0) : (x(0) - x(d.value)) })
+				.attr("y", function(d){ return y1(d.key) })
+		.attr("height", y1.bandwidth())
 
 	rects.exit().remove();
 }
 
-//svg: #multi-year-by-race-container #multi-year-by-sector-container
+//svg & g: sectorLineSVG, sectorLineG, raceEthnicityLineSVG, raceEthnicityLineSVG
 function drawLineChart(data, topic, svg, g){
 
 	var selected = {
@@ -216,12 +238,12 @@ function drawLineChart(data, topic, svg, g){
 		.append("path")
 		.attr("fill", "none")
 		.attr("d", function(d){ return line(d.values)  })
-		.attr("stroke", function(d,i){ return topic === "sector" ? color(d.values[i][SECTOR_KEY] ) : color(d.key) })
+		.attr("stroke", function(d,i){ return topic === "sector" ? color(d.key) : color(d.values[i][SECTOR_KEY] ) })
 		.attr("data-cat", function(d){ return d.key })
 
 	path.transition()
 		.attr("d", function(d){ return line(d.values)  })
-		.attr("stroke", function(d,i){ return topic === "sector" ? color(d.values[i][SECTOR_KEY] ) : color(d.key) })
+		.attr("stroke", function(d,i){ return topic === "sector" ? color(d.key) : color(d.values[i][SECTOR_KEY] )  })
 		.attr("data-cat", function(d){ return d.key })
 
 	path.exit().remove()
@@ -261,7 +283,7 @@ function buildOptionPanel(chartType){
 		"dif_asian": "Asian", 
 		"dif_amind": "American Indian", 
 		"dif_pacis": "Pacific Islander", 
-		"dif_othra": "Other" 
+		"dif_twora": "Multiracial" 
 	}
 
 	// radio button template:
@@ -316,10 +338,9 @@ function buildOptionPanel(chartType){
 			.html(function(d){ return radioButtonTemplater(d) })
 
 		d3.select("#second-dynamic-menu").html(COLLEGE_SECTOR_CHECKBOXES)
-		//TODO set a default radio button to "checked"
 		
 		d3.select("input[value=" + higherEdSelections.singleRace + "]").property("checked", true)
-		console.log(higherEdSelections.arraySectors + "hi")
+		
 		d3.selectAll(".sector-boxes")
 			.property('checked', function(d){ return higherEdSelections.arraySectors.indexOf(translate[this.value]) > -1 });
 
@@ -337,6 +358,18 @@ function buildOptionPanel(chartType){
 			.classed("race-ethnicity-checkboxes", true) 
 			.classed("checked", function(d){ return higherEdSelections.arrayRaces.indexOf(d) > -1 })
 			.html(function(d){ return checkboxTemplater(d) })
+
+		var translateBack = {
+			 "For-Profit": "for-profit",
+			 "Private More Selective": "private-highly-selective",
+			 "Private Non-Selective": "private-nonselective",
+			 "Private Selective": "private-selective",
+			 "Public More Selective": "public-highly-selective",
+			 "Public Non-Selective": "public-nonselective",
+			 "Public Selective": "public-selective"
+		}
+
+		d3.select("input[value=" + translateBack[higherEdSelections.singleSector] + "]").property("checked", true)
 
 		d3.selectAll(".race-ethnicity-checkboxes > div > input")
 			.property('checked', function(d){ return higherEdSelections.arrayRaces.indexOf(this.value) > -1 });
@@ -357,16 +390,20 @@ function buildOptionPanel(chartType){
 		}
 			//switching from 4 year to 2
 		if (checkbox.classed("two-year") && higherEdSelections.programLength === "four"){
+			//switch over all the checked's and reset the arraySectors to just be the new userchoice
+			SECTOR_KEY = "twocat"
 			higherEdSelections.programLength = "two"
+			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength
 			higherEdSelections.arraySectors = [twoYearTranslate[userChoice]]
+
 
 			d3.selectAll(".four-year").classed("checked", false)
 			d3.selectAll(".four-year.sector-boxes").property("checked", false)	
 			
 		} else if (checkbox.classed("two-year") && higherEdSelections.programLength === "two"){
-			//TODO - this is wrong
+			//remove or add userchoice from the array
 			if (checkbox.classed("checked")){
-				higherEdSelections.arraySectors.filter(function(d){
+				higherEdSelections.arraySectors = higherEdSelections.arraySectors.filter(function(d){
 					return d !== twoYearTranslate[userChoice]
 				})
 			} else {
@@ -374,7 +411,9 @@ function buildOptionPanel(chartType){
 			}
 			
 		} else if (checkbox.classed("four-year") && higherEdSelections.programLength === "two"){
+			SECTOR_KEY = "fourcat"
 			higherEdSelections.programLength = "four"
+			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength
 			higherEdSelections.arraySectors = [translate[userChoice]]
 			d3.selectAll(".two-year").classed("checked", false)
 			d3.selectAll(".two-year.sector-boxes").property("checked", false)
@@ -388,18 +427,23 @@ function buildOptionPanel(chartType){
 				higherEdSelections.arraySectors.push(translate[userChoice])
 			}
 		}
-console.log(higherEdSelections.arraySectors)
 									//equivalent to toggleClass
 		checkbox.classed("checked", !checkbox.classed("checked"));
-		NESTED_BY_SECTOR = makeSectorNest();
-		NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
-		drawLineChart(NESTED_BY_SECTOR, "race", sectorLineSVG, sectorLineG);
+		
+		if (higherEdSelections.arraySectors.length < 1){
+			alert("Please pick at least one sector")
+		} else {
 
+			NESTED_BY_SECTOR = makeSectorNest();
+			NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
+			drawLineChart(NESTED_BY_SECTOR, "race", sectorLineSVG, sectorLineG);
+		}
+		
 		//filter the year data too and call bar chart
 		FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);
 		FILTERED_BY_YEAR = FILTERED_BY_YEAR.filter(function(d){return higherEdSelections.arraySectors.indexOf(d[SECTOR_KEY]) > -1  })
 		drawBarChart(FILTERED_BY_YEAR)
-
+	
 	})
 
 
@@ -419,17 +463,32 @@ console.log(higherEdSelections.arraySectors)
 			higherEdSelections.arrayRaces = higherEdSelections.arrayRaces.filter(function(d){
 				return d !== userChoice
 			})
+			//change the property of the input
+			d3.select(".race-ethnicity-checkboxes > div > input[value=" + userChoice + "]").property("checked", false)
 		} else {
 			higherEdSelections.arrayRaces.push(userChoice)
+			//change the property of the input
+			d3.select(".race-ethnicity-checkboxes > div > input[value=" + userChoice + "]").property("checked", true)
 		}	
+		
 									//equivalent to toggleClass
 		checkbox.classed("checked", !checkbox.classed("checked"));
 
+
 		//bar chart function refers to arrayRaces so we don't filter here
 		drawBarChart(FILTERED_BY_YEAR)
+		console.log(higherEdSelections.arrayRaces.length)
+		if (higherEdSelections.arrayRaces.length < 1){
+			alert("Please pick one or more races")
+		} else {
+			//take lines off 
+			NESTED_BY_RACE = makeDemogNest(higherEdSelections.singleSector);
+			// put lines back on
+			NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
+		}
 
-		//take lines off 
-		NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return d.key !== userChoice })
+		
+
 		drawLineChart(NESTED_BY_RACE, "sector", raceEthnicityLineSVG, raceEthnicityLineG);
 	})
 

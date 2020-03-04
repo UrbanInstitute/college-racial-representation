@@ -173,6 +173,16 @@ h1 {
   float: right;
 }
 
+g.grid > g.tick > line {
+  stroke: $gray-5;
+  stroke-dasharray: 2,2;
+}
+
+.zero-line {
+  stroke: #000000;
+}
+
+
 #chart-area-container {
   white-space: nowrap;
   overflow-x: hidden;
