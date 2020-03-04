@@ -186,7 +186,10 @@ function drawBarChart(data){
 		.data(data, function(d){ return d[SECTOR_KEY] })
 		.join('g')        
 		  .attr('transform', function(d){ return 'translate(0,' + y0(d[SECTOR_KEY]) + ')' } ) 
-		  .attr('class', function(d){ return d[SECTOR_KEY] })
+		  .attr('class', function(d){ if (d[SECTOR_KEY] === 'Public Non-Selective') { return 'Public Nonselective'} 
+		  	else if (d[SECTOR_KEY] === 'Private Non-Selective'){ return 'Private Nonselective'} else {
+		  		return d[SECTOR_KEY]
+		  	} })
 		  .classed('sector', true)
 
 	d3.selectAll('.sector-label').remove(); //shrug emoji?
