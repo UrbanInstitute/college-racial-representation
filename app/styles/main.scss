@@ -173,13 +173,45 @@ h1 {
   float: right;
 }
 
+path.domain {
+  display: none;
+}
+
+h4.chart-title {
+  font-size: 21px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  // text-align: center;
+}
+
+.key {
+  padding-left: 0;
+  margin: 1em 0 1em 0;
+  padding: 0;
+  list-style-type: none;
+  width: 100%;
+}
+
+li.key-item {
+  display: inline-block;
+  margin: 0 1em 1em 0;
+  padding: 0 0 0 3px;
+  line-height: 1em;
+}
+
+g.tick > text {
+  font-size: 14px;
+}
+
 g.grid > g.tick > line {
   stroke: $gray-5;
   stroke-dasharray: 2,2;
 }
 
 .zero-line {
-  stroke: #000000;
+  display: none;
+  stroke: $gray-6;
+  stroke-width: 3;
 }
 
 
@@ -222,6 +254,7 @@ g.grid > g.tick > line {
 #options-panel {
   display: inline;
   float: left;
+  margin-right: $spacing-unit;
   max-width: 310px;
 }
 
