@@ -287,14 +287,22 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 
 	axisSelection.call(yAxis);
 
-	//d3.select(".zero-line").remove();
-    axisSelection.append('line')
-	    .attr('class', 'zero-line')
-	    .attr('x1', x(parseTime(2008)))
-	    .attr('x2', x(parseTime(2018)))
-	    .attr('y1', y(0))
-	    .attr('y2', y(0))
-	    .attr('role','presentation')
+	svg.selectAll('g.tick > line')
+		.style('stroke', function(d,i){
+			if (d === 0){
+				return '#000000'
+			} else {
+				return '#D2D2D2'
+			}
+		})
+		.style('stroke-dasharray', function(d,i){
+			if(d === 0){
+				return 'none'
+			} else {
+				return '2, 2'
+			}
+		})
+		
 	    
 	var path = g.selectAll('path')
 		.data(data, function(d){ return d.key })
@@ -578,7 +586,7 @@ function buildOptionPanel(chartType){
 	d3.selectAll('.race-ethnicity-radios').on('click', function(){	
 		var userChoice = d3.select(this).datum();
 		higherEdSelections.singleRace = userChoice;
-		d3.select('#multi-year-by-sector-container > h4 > span').text(userChoice);
+		d3.select('#multi-year-by-sector-container > h4 > span').text(translateRace[userChoice]);
 		d3.select('input[value=' + userChoice + ']').property('checked', true)
 		drawLineChart(NESTED_BY_SECTOR, 'race', sectorLineSVG, sectorLineG, sectorLineYAxis); 
 	})
