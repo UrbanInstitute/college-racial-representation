@@ -9,8 +9,8 @@
 // $(function () { $('[data-toggle="popover"]').popover(); });
 
 
-// TODO - 
-// deal with two/four year swtich out
+// Some Q's maybe to get help with:
+// 
 // 
 
 // the datas
@@ -208,7 +208,7 @@ function drawBarChart(data){
 		    .map(function (key) {
 	    		return {
 			        key: key,
-			        value: d[key]
+			        value: +d[key]
 			      };
 		    }) 
 		  }, function(d){ return d.key })
@@ -217,8 +217,8 @@ function drawBarChart(data){
 		.attr('y', function(d){ return y1(d.key) })
 		.attr('height', y1.bandwidth())
 		.attr('fill', function(d){ return raceColorObj[d.key] })
-		.attr('x', function(d){ return d.value > 0 ? x(0) : x(d.value) })
-		.attr('width', function(d){ return d.value > 0 ? x(d.value) - x(0) : (x(0) - x(d.value)) })
+		.attr('x', function(d){ return +d.value > 0 ? x(0) : x(d.value) })
+		.attr('width', function(d){ return +d.value > 0 ? x(d.value) - x(0) : (x(0) - x(d.value)) })
 
 	rects.transition().duration(800)
 		.attr('x', function(d){ return d.value > 0 ? x(0) : x(d.value) })
@@ -253,17 +253,24 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		.range([margin.left, width - margin.right])
 		.domain([parseTime(2009), parseTime(2017)])
 
+	var domainInflater = 1.3
+
+	var min = d3.min(data, function(d){return d3.min(d.values, function(d){ return +d[selected[topic]] }) })
+		min = min < -4 ? min * domainInflater : -4 ;
+	var max = d3.max(data, function(d){return d3.max(d.values, function(d){return +d[selected[topic]] }) })
+		max = max < 5 ? 5 : max * domainInflater ;
+
 	var y = d3.scaleLinear()
 		.range([height - margin.bottom, margin.top])
 		.domain([
-			d3.min(data, function(d){return d3.min(d.values, function(d){ return +d[selected[topic]] }) }),
-			d3.max(data, function(d){return d3.max(d.values, function(d){return +d[selected[topic]] }) })
+			min,
+			max
 		]);
 
 	var line = d3.line()
 		// .defined(function(d){ return !isNaN(d) })
 		.x(function(d){ return x(parseTime(d.year)) })
-		.y(function(d){ return y(d[selected[topic]]) })
+		.y(function(d){ return y(+d[selected[topic]]) })
 
 	color.domain(data.map(function(d){return d.key}))
 
@@ -271,7 +278,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 	//d3.select(".x-axis").remove();
 	svg.append('g')
 		.attr('class','x-axis')
-		.attr('transform', 'translate(0,' + (height - margin.bottom) + ')')
+		.attr('transform', 'translate(' + margin.left + ',' + (height - margin.bottom) + ')')
 		.call(d3.axisBottom(x).tickFormat(d3.timeFormat('%Y')));
 
 	var yAxis = d3.axisLeft(y)
@@ -289,7 +296,6 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 	    .attr('y2', y(0))
 	    .attr('role','presentation')
 	    
-
 	var path = g.selectAll('path')
 		.data(data, function(d){ return d.key })
 		
@@ -298,10 +304,12 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		.attr('fill', 'none')
 		.attr('d', function(d){ return line(d.values)  })
 		.attr('stroke', function(d,i){ return topic === 'sector' ? color(d.key) : color(d.values[i][SECTOR_KEY] ) })
+		.attr('stroke-width', 2)
 		.attr('data-cat', function(d){ return d.key })
 
 	path.transition()
 		.attr('d', function(d){ return line(d.values)  })
+		.attr('stroke-width', 2)
 		.attr('stroke', function(d,i){ return topic === 'sector' ? color(d.key) : color(d.values[i][SECTOR_KEY] )  })
 		.attr('data-cat', function(d){ return d.key })
 
@@ -377,7 +385,7 @@ function buildOptionPanel(chartType){
 
 	if (chartType === 'single-year-bar'){
 		//checkboxes for everything
-		d3.select('#year-selector').style('display', 'block')
+		d3.select('#year-selector').style('display', 'block');
 
 		d3.select('#first-dynamic-menu').html(COLLEGE_SECTOR_CHECKBOXES)//controls initialized further down for this one
 
@@ -447,14 +455,16 @@ function buildOptionPanel(chartType){
 			.property('checked', function(d){ return higherEdSelections.arrayRaces.indexOf(this.value) > -1 });
 	}
 	
-	//initialize controls 
+	//event listener party: 
 
 	//sector boxes - updates arraySector
 	d3.selectAll('.sector-boxes').on('click', function(){
+
 		var userChoice = this.value;
-		//update sectorsArray
 
 		var checkbox = d3.select(this);
+
+		var checkboxChecked = checkbox.classed('checked');
 
 		var twoYearTranslate = {
 			'two-year-public': 'Public 2-year',
@@ -468,13 +478,12 @@ function buildOptionPanel(chartType){
 			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength
 			higherEdSelections.arraySectors = [twoYearTranslate[userChoice]]
 
-
 			d3.selectAll('.four-year').classed('checked', false)
 			d3.selectAll('.four-year.sector-boxes').property('checked', false)	
 			
 		} else if (checkbox.classed('two-year') && higherEdSelections.programLength === 'two'){
 			//remove or add userchoice from the array
-			if (checkbox.classed('checked')){
+			if (checkboxChecked){
 				higherEdSelections.arraySectors = higherEdSelections.arraySectors.filter(function(d){
 					return d !== twoYearTranslate[userChoice]
 				})
@@ -491,7 +500,7 @@ function buildOptionPanel(chartType){
 			d3.selectAll('.two-year.sector-boxes').property('checked', false)
 			
 		} else if (checkbox.classed('four-year') && higherEdSelections.programLength === 'four'){		
-			if (checkbox.classed('checked')){
+			if (checkboxChecked){
 				higherEdSelections.arraySectors = higherEdSelections.arraySectors.filter(function(d){
 					return d !== translate[userChoice]
 				})
@@ -502,7 +511,7 @@ function buildOptionPanel(chartType){
 									//equivalent to toggleClass
 		checkbox.classed('checked', !checkbox.classed('checked'));
 		
-		if (higherEdSelections.arraySectors.length < 1){
+		if (checkboxChecked && higherEdSelections.arraySectors.length < 1){
 			alert('Please pick at least one sector')
 		} else {
 
@@ -598,18 +607,19 @@ function menuSelected(){
 		return d.fips_ipeds === higherEdSelections.state;
 	})
 
-			//format data and call bar chart
-		FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);
-		FILTERED_BY_YEAR = FILTERED_BY_YEAR.filter(function(d){return higherEdSelections.arraySectors.indexOf(d[SECTOR_KEY]) > -1  })
-		drawBarChart(FILTERED_BY_YEAR)
+		//format data and call bar chart
+	FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);
+	FILTERED_BY_YEAR = FILTERED_BY_YEAR.filter(function(d){return higherEdSelections.arraySectors.indexOf(d[SECTOR_KEY]) > -1  })
+	drawBarChart(FILTERED_BY_YEAR)
 
-		//format data and call line chart race
-		NESTED_BY_SECTOR = makeSectorNest();
-		NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
-		drawLineChart(NESTED_BY_SECTOR, 'race', sectorLineSVG, sectorLineG, sectorLineYAxis); 
+	//format data and call line chart race
+	NESTED_BY_SECTOR = makeSectorNest();
+	NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
+	drawLineChart(NESTED_BY_SECTOR, 'race', sectorLineSVG, sectorLineG, sectorLineYAxis); 
 
-		NESTED_BY_RACE = makeDemogNest(higherEdSelections.singleSector);
-		NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
+	NESTED_BY_RACE = makeDemogNest(higherEdSelections.singleSector);
+	NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
+	drawLineChart(NESTED_BY_RACE, 'sector', raceEthnicityLineSVG, raceEthnicityLineG, raceLineYAxis)
 }
 
 function initializeStaticControls(){
@@ -647,7 +657,7 @@ function initializeStaticControls(){
 
 		NESTED_BY_RACE = makeDemogNest(higherEdSelections.singleSector);
 		NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
-
+		drawLineChart(NESTED_BY_RACE, 'sector', raceEthnicityLineSVG, raceEthnicityLineG, raceLineYAxis)
 		//format data and call line chart sector
 		
 	})
