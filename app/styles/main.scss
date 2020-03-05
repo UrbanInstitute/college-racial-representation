@@ -199,7 +199,7 @@ p.scenario {
 }
 
 .scenario.clickable {
-  
+
 }
 
 #bar-chart {
@@ -268,7 +268,7 @@ g.grid > g.tick > line {
     width: 700px;
 }
 
-#single-year-container, #multi-year-by-race-container, #multi-year-by-sector-container {
+.chart-div {
   width: 600px;
   display: inline-block;
 }
@@ -295,6 +295,10 @@ g.grid > g.tick > line {
   float: left;
   margin-right: $spacing-unit;
   max-width: 310px;
+}
+
+#school-chooser {
+  display: none;
 }
 
 .options-panel-section {
