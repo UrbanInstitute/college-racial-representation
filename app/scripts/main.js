@@ -26,7 +26,7 @@ var higherEdSelections = {};
 	higherEdSelections.singleRace = 'dif_hispa',
 	higherEdSelections.singleSector = 'Public Non-Selective',
 	higherEdSelections.state = 'Alabama',
-  higherEdSelections.selectedSchool = 'Alabama A & M University',
+  	higherEdSelections.selectedSchool = 'Alabama A & M University',
 	higherEdSelections.arrayRaces = [],
 	higherEdSelections.arraySectors = []
 
@@ -274,7 +274,8 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 
 	var selected = {
 		'race': higherEdSelections.singleRace, //"dif_hispa", "dif_white".. etc
-		'sector': 'value' //bc this data object just has one sector at a time
+		'sector': 'value', //bc this data object just has one sector at a time
+		'comparison': higherEdSelections.singleRace
 	}
 	var ymdFmt = d3.timeParse('%Y-%m-%d')
 	//scales
@@ -339,7 +340,6 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 			}
 		})
 
-
 	var path = g.selectAll('path')
 		.data(data, function(d){ return d.key })
 
@@ -347,14 +347,18 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		.append('path')
 		.attr('fill', 'none')
 		.attr('d', function(d){ return line(d.values)  })
-		.attr('stroke', function(d,i){ return topic === 'sector' ? color(d.key) : color(d.values[i][SECTOR_KEY] ) })
+		.attr('stroke', function(d,i){ if (topic === 'sector'){ return color(d.key) } else if (topic === 'race'){ 
+			return color(d.values[i][SECTOR_KEY]) } })
 		.attr('stroke-width', 2)
 		.attr('data-cat', function(d){ return d.key })
+		.attr('class', function(d){ if (topic==='comparison' && d.key === higherEdSelections.selectedSchool){ return 'highlight-school' } })
+			
 
 	path.transition()
 		.attr('d', function(d){ return line(d.values)  })
 		.attr('stroke-width', 2)
-		.attr('stroke', function(d,i){ return topic === 'sector' ? color(d.key) : color(d.values[i][SECTOR_KEY] )  })
+		.attr('stroke', function(d,i){ if (topic === 'sector'){ return color(d.key) } else if (topic === 'race'){ 
+			return color(d.values[i][SECTOR_KEY]) } })
 		.attr('data-cat', function(d){ return d.key })
 
 	path.exit().remove();
@@ -637,12 +641,30 @@ function buildOptionPanel(chartType){
 	})
 }
 
-// d3.select('#school-comparison').on('click', function(d){
-// 	//filter school data to that sector && state
-// 	var comparisons = higherEdData.allData.schoolfour.filter(function(d){ 
-// 		return d.fourcat === "Public Selective" && d.fips_ipeds === "Alabama" 
-// 	})
-// })
+d3.select('#school-comparison').on('click', function(d){
+	
+	var div = d3.select('#one-school-all-races')
+
+  	if (div.classed('school-comparison')){
+  		callSchoolChart();
+  	} else {
+  		callComparisonChart();
+  	}
+  	div.classed('school-comparison', !div.classed('school-comparison'));
+  	
+})
+
+function callComparisonChart(){
+	  	//filter school data to that sector && state
+	var comparisons = higherEdData.allData.schoolfour.filter(function(d){ 
+		return d.fourcat === higherEdSelections.singleSector && d.fips_ipeds === higherEdSelections.state
+	})
+	//put race radios on dynamic menu one
+	var nestedBySchool = d3.nest().key(function(d){ return d.inst_name }).entries(comparisons);
+
+	d3.select('#one-school-all-races > h4 > span').text(higherEdSelections.state + ' ' + higherEdSelections.singleSector + 's ');
+	drawLineChart(nestedBySchool, 'comparison', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
+}
 
 function makeDropdown(data){
   data.sort(function(a, b){
@@ -687,13 +709,15 @@ function makeSchoolLookup(schoolNames){
     source: schoolNames,
     select: function(event, ui){
 
-      console.log(ui.item.value)
-      higherEdSelections.selectedSchool = ui.item.value
+      
+     higherEdSelections.selectedSchool = ui.item.value;
 
-      var schoolDataByRace = makeDemogForSchool();
-      //schoolDataByRace = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
-      drawLineChart(schoolDataByRace, 'sector', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
-      d3.select('#one-school-all-races > h4 > span').text(higherEdSelections.selectedSchool)
+    if (d3.select('#one-school-all-races').classed('school-comparison')){
+     	callComparisonChart();
+    } else {
+    	callSchoolChart();
+    }
+     
 
     }
   });
@@ -707,85 +731,79 @@ function initializeStaticControls(){
 		var userChoice = this.value;
 		higherEdSelections.geography = this.value;
 
-
 		if ( userChoice === 'state'){
 			higherEdData.allData.filteredForState =  higherEdData.allData[SELECTED_DATASET].filter(function(d){
 				return d.fips_ipeds === higherEdSelections.state;
 			})
 
-		SELECTED_DATASET = 'filteredForState';
-      	SECTOR_KEY = higherEdSelections.programLength === 'four' ? 'fourcat' : 'twocat';
+			SELECTED_DATASET = 'filteredForState';
+			SECTOR_KEY = higherEdSelections.programLength === 'four' ? 'fourcat' : 'twocat';
 
-      d3.select('#time-selection').style('display', 'block');
-      d3.select('#school-chooser').style('display', 'none');
+			d3.select('#time-selection').style('display', 'block');
+			d3.select('#school-chooser').style('display', 'none');
 
 			var states = higherEdData.allData.statefour.map(function(d){return d.fips_ipeds});
 			var menuData = states.filter(distinct);
 			makeDropdown(menuData);
-      d3.select('#dropdown').style('display', 'block')
+			d3.select('#dropdown').style('display', 'block')
 
-      higherEdData.allData.filteredForState =  higherEdData.allData[higherEdSelections.geography + higherEdSelections.programLength].filter(function(d){
-        return d.fips_ipeds === higherEdSelections.state;
-      })
-      // a little, duh, just move the chart action
-      if (higherEdSelections.chartType === 'one-school-all-races' || higherEdSelections.chartType === 'multiple-schools'){
-        showChart('single-year-bar')
-      }
-      higherEdSelections.chartType = 'single-year-bar'
+			higherEdData.allData.filteredForState =  higherEdData.allData[higherEdSelections.geography + higherEdSelections.programLength].filter(function(d){
+			return d.fips_ipeds === higherEdSelections.state;
+			})
+			// a little, duh, just move the chart action
+			if (higherEdSelections.chartType === 'one-school-all-races' || higherEdSelections.chartType === 'multiple-schools'){
+				showChart('single-year-bar')
+			}
+			higherEdSelections.chartType = 'single-year-bar'
 
 		} else if ( userChoice === 'national' ){
-      SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength
-      d3.select('#time-selection').style('display', 'block');
+			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength
+			d3.select('#time-selection').style('display', 'block');
 			d3.select('#dropdown').style('display', 'none')
-      d3.select('#school-chooser').style('display', 'none')
-      d3.select('#year-selector').style('display', 'block')
-      // a little, duh, just move the chart action
-      if (higherEdSelections.chartType === 'one-school-all-races' || higherEdSelections.chartType === 'multiple-schools'){
-        showChart('single-year-bar')
-      }
-		} else if ( userChoice === 'school' ){
-      
-      //this shit takes forever!!!
-      var schoolFours = higherEdData.allData.schoolfour.filter(function(d){ 
-      	if (d.year ==='2015'){ return d.inst_name }
-      }).map(function(d){ 
-      	return d.inst_name 
-      })
+			d3.select('#school-chooser').style('display', 'none')
+			d3.select('#year-selector').style('display', 'block')
+			// a little, duh, just move the chart action
+			if (higherEdSelections.chartType === 'one-school-all-races' || higherEdSelections.chartType === 'multiple-schools'){
+				showChart('single-year-bar')
+			}
+		} else if ( userChoice === 'school' ){ 
+			//this shit takes forever!!!
+			var schoolFours = higherEdData.allData.schoolfour.filter(function(d){ 
+				if (d.year ==='2015'){ return d.inst_name }
+			}).map(function(d){ 
+				return d.inst_name 
+			})
 
-      var schoolTwos = higherEdData.allData.schooltwo.filter(function(d){ 
-      	if (d.year ==='2015'){ return d.inst_name }
-      }).map(function(d){ 
-      	return d.inst_name 
-      })
-      
+			var schoolTwos = higherEdData.allData.schooltwo.filter(function(d){ 
+				if (d.year ==='2015'){ return d.inst_name }
+			}).map(function(d){ 
+				return d.inst_name 
+			})
 
-      var schoolNames = schoolFours.concat(schoolTwos);
-      makeSchoolLookup(schoolNames);
+			var schoolNames = schoolFours.concat(schoolTwos);
+			makeSchoolLookup(schoolNames);
 
+			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength;
 
-      SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength
-      //TODO list
-      d3.select('#time-selection').style('display', 'none');
-      d3.select('#dropdown').style('display', 'none');
-      //remove sector choice bc you're just going to have one school at a time
-      //create a lookup box for the school name
-      d3.select('#school-chooser').style('display', 'block');
-      //create a switch offering 'school comparison'
-      // --> changes the race menu from boxes to radios
-      // --> changes the lines on the chart from one per race to being individ schools for one race at a time
+			//TODO list
+			d3.select('#time-selection').style('display', 'none');
+			d3.select('#dropdown').style('display', 'none');
+			//append race checkbox menu
+			//show lookup box for the school name
+			d3.select('#school-chooser').style('display', 'block');
+			//show switch offering 'school comparison'
+			// --> changes the race menu from boxes to radios
+			// --> changes the lines on the chart from one per race to being individ schools for one race at a time
 
-      //move the schools chart into view
-      higherEdSelections.chartType = 'one-school-all-races'// teh switch brings multiple-schools
-      showChart(higherEdSelections.chartType);
+			//move the schools chart into view
+			higherEdSelections.chartType = 'one-school-all-races'// teh switch brings multiple-schools
+			showChart(higherEdSelections.chartType);
 
-      //filter the data
+			callSchoolChart();
 
-      var schoolDataByRace = makeDemogForSchool();
-      //schoolDataByRace = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
-      drawLineChart(schoolDataByRace, 'sector', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
-
-      //make the chart
     }
+
+
 
 
     //all these shits use SELECTED_DATASET inside the filtering/nesting functions
@@ -854,15 +872,29 @@ function makeSectorNest(){
 	return nest;
 }
 
-function makeDemogNest(sector){
+function callSchoolChart(){
+  var schoolDataByRace = makeDemogNest(higherEdSelections.selectedSchool, true);
+  d3.select('#one-school-all-races > h4 > span').text(higherEdSelections.selectedSchool);
+  //schoolDataByRace = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
+  drawLineChart(schoolDataByRace, 'sector', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
+}
 
-	var raceOptions = higherEdData.allData.nationalfour.columns.slice(2)
+function makeDemogNest(sector, isSchoolData){
+	var raceOptions = higherEdData.allData.nationalfour.columns.slice(2),
+	nestedByDemog = [],
+	filtered;
 
-	var nestedByDemog = []
-
-	var filtered = higherEdData.allData[SELECTED_DATASET].filter(function(d){
-						return d[SECTOR_KEY] === sector
-					})
+	if (isSchoolData){
+		filtered = higherEdData.allData[SELECTED_DATASET].filter(function(d){
+					return d.inst_name === higherEdSelections.selectedSchool
+				})
+		higherEdSelections.state = filtered[0].fips_ipeds;
+		higherEdSelections.singleSector = filtered[0][SECTOR_KEY];
+	} else {	
+		filtered = higherEdData.allData[SELECTED_DATASET].filter(function(d){
+							return d[SECTOR_KEY] === sector
+						})
+	}
 
 	for (var i = 0; i < raceOptions.length; i++){
 		nestedByDemog.push({'key': raceOptions[i], 'values': []})
@@ -875,29 +907,6 @@ function makeDemogNest(sector){
 		})
 	}
 	return nestedByDemog;
-}
-
-function makeDemogForSchool(){
-
-  var raceOptions = higherEdData.allData.nationalfour.columns.slice(2)
-
-  var nestedByDemog = []
-
-  var filtered = higherEdData.allData[SELECTED_DATASET].filter(function(d){
-            return d.inst_name === higherEdSelections.selectedSchool
-          })
-
-  for (var i = 0; i < raceOptions.length; i++){
-    nestedByDemog.push({'key': raceOptions[i], 'values': []})
-    filtered.forEach(function(yearData){
-      var obj = {
-        'year': yearData.year,
-        'value': yearData[raceOptions[i]]
-      }
-      nestedByDemog[i].values.push(obj)
-    })
-  }
-  return nestedByDemog;
 }
 
 function prepareData(){
