@@ -269,8 +269,9 @@ g.grid > g.tick > line {
 }
 
 .chart-div {
-  width: 600px;
   display: inline-block;
+  white-space: normal;
+  width: 600px;
 }
 
 

@@ -188,14 +188,28 @@ function drawBarChart(data){
 		.attr('y', 6)
 	d3.select('.domain').remove();
 
-	d3.select('.zero-line').remove();
-    barChartXAxis.append('line')
-	    .attr('class', 'zero-line')
-	    .attr('x1', x(0))
-	    .attr('x2', x(0))
-	    .attr('y1', 0)
-	    .attr('role','presentation')
-	    .attr('y2', -height);
+	singleYearSVG.selectAll('g.tick > line')
+		.style('stroke', function(d,i){
+			if (d === 0){
+				return '#000000'
+			} else {
+				return '#D2D2D2'
+			}
+		})
+		.style('stroke-dasharray', function(d,i){
+			if(d === 0){
+				return 'none'
+			} else {
+				return '2, 2'
+			}
+		})
+		.style('stroke-width', function(d){
+			if(d === 0){
+				return 2
+			} else {
+				return 1
+			}
+		})
 
 	var sectorGroups = barChartG.selectAll('g.sector')
 		.data(data, function(d){ return d[SECTOR_KEY] })
@@ -315,6 +329,13 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 				return 'none'
 			} else {
 				return '2, 2'
+			}
+		})
+		.style('stroke-width', function(d){
+			if(d === 0){
+				return 2
+			} else {
+				return 1
 			}
 		})
 
@@ -603,9 +624,6 @@ function buildOptionPanel(chartType){
 			// put lines back on
 			NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
 		}
-
-
-
 		drawLineChart(NESTED_BY_RACE, 'sector', raceEthnicityLineSVG, raceEthnicityLineG, raceLineYAxis);
 	})
 
@@ -618,6 +636,13 @@ function buildOptionPanel(chartType){
 		drawLineChart(NESTED_BY_SECTOR, 'race', sectorLineSVG, sectorLineG, sectorLineYAxis);
 	})
 }
+
+// d3.select('#school-comparison').on('click', function(d){
+// 	//filter school data to that sector && state
+// 	var comparisons = higherEdData.allData.schoolfour.filter(function(d){ 
+// 		return d.fourcat === "Public Selective" && d.fips_ipeds === "Alabama" 
+// 	})
+// })
 
 function makeDropdown(data){
   data.sort(function(a, b){
@@ -677,7 +702,7 @@ function makeSchoolLookup(schoolNames){
 
 
 function initializeStaticControls(){
-
+	//event listener after party
 	d3.selectAll('.geography-choices').on('click', function(){
 		var userChoice = this.value;
 		higherEdSelections.geography = this.value;
@@ -688,8 +713,8 @@ function initializeStaticControls(){
 				return d.fips_ipeds === higherEdSelections.state;
 			})
 
-			SELECTED_DATASET = 'filteredForState';
-      SECTOR_KEY = higherEdSelections.programLength === 'four' ? 'fourcat' : 'twocat';
+		SELECTED_DATASET = 'filteredForState';
+      	SECTOR_KEY = higherEdSelections.programLength === 'four' ? 'fourcat' : 'twocat';
 
       d3.select('#time-selection').style('display', 'block');
       d3.select('#school-chooser').style('display', 'none');
@@ -719,12 +744,20 @@ function initializeStaticControls(){
         showChart('single-year-bar')
       }
 		} else if ( userChoice === 'school' ){
+      
       //this shit takes forever!!!
-      var messySchoolFours = higherEdData.allData.schoolfour.map(function(d){ return d.inst_name })
-      var schoolFours = messySchoolFours.filter(distinct);
+      var schoolFours = higherEdData.allData.schoolfour.filter(function(d){ 
+      	if (d.year ==='2015'){ return d.inst_name }
+      }).map(function(d){ 
+      	return d.inst_name 
+      })
 
-      var messySchoolTwos = higherEdData.allData.schooltwo.map(function(d){ return d.inst_name })
-      var schoolTwos = messySchoolTwos.filter(distinct);
+      var schoolTwos = higherEdData.allData.schooltwo.filter(function(d){ 
+      	if (d.year ==='2015'){ return d.inst_name }
+      }).map(function(d){ 
+      	return d.inst_name 
+      })
+      
 
       var schoolNames = schoolFours.concat(schoolTwos);
       makeSchoolLookup(schoolNames);
