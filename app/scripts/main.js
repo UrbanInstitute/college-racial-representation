@@ -38,6 +38,8 @@ var SECTOR_KEY = 'fourcat',
 	STATE_DATA,
   SCHOOL_NAMES;
 
+  
+
 var colorArray = ['#E88E2D','#E9807D','#46ABDB','#D2D2D2','#FDD870','#98CF90','#EB99C2', '#351123']
 
 var raceColorObj = {
@@ -196,13 +198,6 @@ function drawBarChart(data){
 				return '#D2D2D2'
 			}
 		})
-		.style('stroke-dasharray', function(d,i){
-			if(d === 0){
-				return 'none'
-			} else {
-				return '2, 2'
-			}
-		})
 		.style('stroke-width', function(d){
 			if(d === 0){
 				return 2
@@ -325,13 +320,6 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 				return '#D2D2D2'
 			}
 		})
-		.style('stroke-dasharray', function(d,i){
-			if(d === 0){
-				return 'none'
-			} else {
-				return '2, 2'
-			}
-		})
 		.style('stroke-width', function(d){
 			if(d === 0){
 				return 2
@@ -428,18 +416,19 @@ function buildOptionPanel(chartType){
 			sectorOptions.push(d[SECTOR_KEY])
 		})
 
-	// radio button template:
-	function radioButtonTemplater(option){
-		var text =
-		'<label for="' + option + '"><input type="radio" class=" " name="' + chartType + '" value="' + option + '" /><span>' + translateRace[option] + '</span></label>'
-        return text
-	}
-	// checkbox template
-	function checkboxTemplater(option){
-		var text =
-		'<div class="c-cb"><input type="checkbox" class=" " name="' + chartType + '" value="' + option + '" checked/><label for="' + option + '">' + translateRace[option] + '</label></div>'
-        return text
-	}
+		  // radio button template:
+	  function radioButtonTemplater(option){
+	    var text =
+	    '<label for="' + option + '"><input type="radio" class=" " name="' + chartType + '" value="' + option + '" /><span>' + translateRace[option] + '</span></label>'
+	        return text
+	  }
+	  // checkbox template
+	  function checkboxTemplater(option){
+	    var text =
+	    '<div class="c-cb"><input type="checkbox" class=" " name="' + chartType + '" value="' + option + '" checked/><label for="' + option + '">' + translateRace[option] + '</label></div>'
+	        return text
+	  }
+
 
 	//radio button one always goes up top
 	d3.select('#first-dynamic-menu').text('')
@@ -642,13 +631,38 @@ function buildOptionPanel(chartType){
 }
 
 d3.select('#school-comparison').on('click', function(d){
-	
+	var raceOptions = higherEdData.allData.nationalfour.columns.slice(2)
 	var div = d3.select('#one-school-all-races')
 
+	function radioButtonTemplater(option){
+	    var text =
+	    '<label for="' + option + '"><input type="radio" class=" " name="sch-comparison-race" value="' + option + '" /><span>' + translateRace[option] + '</span></label>'
+	        return text
+	}
+
   	if (div.classed('school-comparison')){
+  		d3.select('#comparison-menu').html('')
   		callSchoolChart();
+
   	} else {
   		callComparisonChart();
+  		d3.select('#comparison-menu').html('')
+  		
+		d3.select('#comparison-menu').selectAll('div.race-ethnicity-radios')
+			.data(raceOptions)
+			.enter()
+			.append('div')
+			.classed('race-ethnicity-radios', true)
+			//.classed("checked", function(d){ return d === higherEdSelections.singleRace })// this becomes a function using singleRace
+			.html(function(d){ return radioButtonTemplater(d) })
+			.on('click', function(){
+				var userChoice = d3.select(this).datum();
+				higherEdSelections.singleRace = userChoice;
+				
+				callComparisonChart();
+			})
+
+		d3.select('input[value=' + higherEdSelections.singleRace + ']').property('checked', true)
   	}
   	div.classed('school-comparison', !div.classed('school-comparison'));
   	
@@ -784,6 +798,20 @@ function initializeStaticControls(){
 			makeSchoolLookup(schoolNames);
 
 			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength;
+
+			var raceOptions = higherEdData.allData.nationalfour.columns.slice(2)
+			function checkboxTemplater(option){
+			    var text =
+			    '<div class="c-cb"><input type="checkbox" class=" " name="sch-comparison-race" value="' + option + '" checked/><label for="' + option + '">' + translateRace[option] + '</label></div>'
+			        return text
+			}
+			d3.select('#comparison-menu').selectAll('div.race-ethnicity-checkboxes')
+				.data(raceOptions)
+				.enter()
+				.append('div')
+				.classed('race-ethnicity-checkboxes', true)
+				.classed('checked', true)
+				.html(function(d){ return checkboxTemplater(d) })
 
 			//TODO list
 			d3.select('#time-selection').style('display', 'none');
