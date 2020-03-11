@@ -9,10 +9,6 @@
 // $(function () { $('[data-toggle="popover"]').popover(); });
 
 
-// Some Q's maybe to get help with:
-//
-//
-
 // the datas
 var higherEdData = {};
 	higherEdData.allData = {};
@@ -36,9 +32,18 @@ var SECTOR_KEY = 'fourcat',
 	NESTED_BY_RACE,
 	FILTERED_BY_YEAR,
 	STATE_DATA,
-  SCHOOL_NAMES;
+  	SCHOOL_NAMES;
 
-  
+var chartDivWidth = $("#chart-area-container").innerWidth(),
+	aspectRatio 
+
+console.log(chartDivWidth)
+var margin = {top: 20, right: 10, bottom: 30, left: 40},
+    width = 600 - margin.left - margin.right,
+    height = 700 - margin.top - margin.bottom;
+  	
+var MIN_YEAR = 2009,
+  	MAX_YEAR = 2017;
 
 var colorArray = ['#E88E2D','#E9807D','#46ABDB','#D2D2D2','#FDD870','#98CF90','#EB99C2', '#351123']
 
@@ -75,9 +80,52 @@ var translateRace = {
 
 var distinct = function(value, index, self){ return self.indexOf(value) === index; }
 
-var margin = {top: 20, right: 10, bottom: 30, left: 40},
-    width = 600 - margin.left - margin.right,
-    height = 700 - margin.top - margin.bottom;
+// radio button template: 
+function radioButtonTemplater(option){
+var text =
+'<label for="' + option + '"><input type="radio" class=" " name="' + higherEdSelections.chartType + '" value="' + option + '" /><span>' + translateRace[option] + '</span></label>'
+    return text
+}
+// checkbox template
+function checkboxTemplater(option){
+var text =
+'<div class="c-cb"><input type="checkbox" class=" " name="' + higherEdSelections.chartType + '" value="' + option + '" checked/><label for="' + option + '">' + translateRace[option] + '</label></div>'
+    return text
+}
+
+function widthUnder(w){
+  return d3.select(".widthTester.w" + w).style("display") == "block"
+}
+
+function getBarW(){
+	if(widthUnder(768)){
+		return window.innerWidth - 40;;	
+	}
+	else if(widthUnder(1085)){
+		return window.innerWidth - 40;
+	}
+	else {
+		return 1085;
+	}
+}
+
+function showChart(chartType){
+	//have 2 divs for bar/line that slide in/out cleanly
+	//var contentWidth = (widthUnder(1085)) ? window.innerWidth + 20 : d3.select("#chartAreaContainer").node().getBoundingClientRect().width
+	var contentWidth = 600
+
+	var chartScootch = {
+		'single-year-bar': 0,
+		'race-ethnicities-as-lines': contentWidth * -1,
+		'sectors-as-lines': contentWidth * -2,
+    'one-school-all-races': contentWidth * -3,
+    'multiple-schools': contentWidth * -4
+	}
+
+	d3.select('#single-year-container').transition().style('margin-left', chartScootch[chartType] + 'px')
+
+}
+
 
 
 //the chart selections & their G's
@@ -276,7 +324,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 	//scales
 	var x = d3.scaleTime()
 		.range([margin.left, width - margin.right])
-		.domain([parseTime(2009), parseTime(2017)])
+		.domain([parseTime(MIN_YEAR), parseTime(MAX_YEAR)])
 
 	var domainInflater = 1.3
 
@@ -388,22 +436,6 @@ console.log(higherEdSelections.chartType)
 
 }
 
-function showChart(chartType){
-	//have 2 divs for bar/line that slide in/out cleanly
-	//var contentWidth = (widthUnder(1085)) ? window.innerWidth + 20 : d3.select("#chartAreaContainer").node().getBoundingClientRect().width
-	var contentWidth = 600
-
-	var chartScootch = {
-		'single-year-bar': 0,
-		'race-ethnicities-as-lines': contentWidth * -1,
-		'sectors-as-lines': contentWidth * -2,
-    'one-school-all-races': contentWidth * -3,
-    'multiple-schools': contentWidth * -4
-	}
-
-	d3.select('#single-year-container').transition().style('margin-left', chartScootch[chartType] + 'px')
-
-}
 
 function buildOptionPanel(chartType){
 
@@ -416,18 +448,6 @@ function buildOptionPanel(chartType){
 			sectorOptions.push(d[SECTOR_KEY])
 		})
 
-		  // radio button template:
-	  function radioButtonTemplater(option){
-	    var text =
-	    '<label for="' + option + '"><input type="radio" class=" " name="' + chartType + '" value="' + option + '" /><span>' + translateRace[option] + '</span></label>'
-	        return text
-	  }
-	  // checkbox template
-	  function checkboxTemplater(option){
-	    var text =
-	    '<div class="c-cb"><input type="checkbox" class=" " name="' + chartType + '" value="' + option + '" checked/><label for="' + option + '">' + translateRace[option] + '</label></div>'
-	        return text
-	  }
 
 
 	//radio button one always goes up top
@@ -506,7 +526,7 @@ function buildOptionPanel(chartType){
 			.property('checked', function(d){ return higherEdSelections.arrayRaces.indexOf(this.value) > -1 });
 	}
 
-	//event listener party:
+	//event listener after party:
 
 	//sector boxes - updates arraySector
 	d3.selectAll('.sector-boxes').on('click', function(){
@@ -738,12 +758,53 @@ function makeSchoolLookup(schoolNames){
 }
 
 
+// Time
+
+ var dataTime = d3.range(0, 9).map(function(d) {
+    return new Date(MIN_YEAR + d, 0, 1);
+  });
+
+var sliderTime = 
+	d3.sliderBottom()
+		.min(d3.min(dataTime))
+		.max(d3.max(dataTime))
+		.step(1000 * 60 * 60 * 24 * 365)
+		.width(220)
+		.tickFormat(function(d){ return "'" + d3.timeFormat('%y')(d)})
+		.tickValues(dataTime)
+		.default(new Date(2017, 0, 1))
+		.on('onchange', function(val){
+			higherEdSelections.year = timeFormat(val);
+			callBarChart(higherEdSelections.year);
+			d3.select('#single-year-container > h4 > span').text(timeFormat(val));
+		});
+
+var gTime = 
+	d3.select('div#year-input')
+		.append('svg')
+		.attr('width', 250)
+		.attr('height', 60)
+		.append('g')
+		.attr('transform', 'translate(15,10)');
+
+gTime.call(sliderTime);
+d3.select('#single-year-container > h4 > span').text(timeFormat(sliderTime.value()));
+// d3.select('p#value-time').text(d3.timeFormat('%Y')(sliderTime.value()));
+
+function callBarChart(year){
+	FILTERED_BY_YEAR = filterDataByYear(year);
+	drawBarChart(FILTERED_BY_YEAR)
+}
 
 function initializeStaticControls(){
-	//event listener after party
+	//event listener party
 	d3.selectAll('.geography-choices').on('click', function(){
-		var userChoice = this.value;
-		higherEdSelections.geography = this.value;
+		var userChoice = this.getAttribute("data-cat");
+		console.log(userChoice)
+		higherEdSelections.geography = userChoice
+
+		d3.selectAll('.geography-choices').classed('selected', false)
+		d3.select(this).classed("selected", !d3.select(this).classed("selected"))
 
 		if ( userChoice === 'state'){
 			higherEdData.allData.filteredForState =  higherEdData.allData[SELECTED_DATASET].filter(function(d){
@@ -831,9 +892,6 @@ function initializeStaticControls(){
 
     }
 
-
-
-
     //all these shits use SELECTED_DATASET inside the filtering/nesting functions
 
 		//format data and call bar chart
@@ -851,8 +909,6 @@ function initializeStaticControls(){
 		NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
 		drawLineChart(NESTED_BY_RACE, 'sector', raceEthnicityLineSVG, raceEthnicityLineG, raceLineYAxis)
 		//format data and call line chart sector
-
-
 
 	})
 

@@ -24,6 +24,13 @@
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
     <!-- START HEADER -->
+  <div class="widthTester w1200"></div>
+  <div class="widthTester w1085"></div>
+  <div class="widthTester w900"></div>
+  <div class="widthTester w768"></div>
+  <div class="widthTester w600"></div>
+  <div class="widthTester w500"></div>
+  <div class="widthTester w400"></div>
   <div id="header-pinned" class="no-touch">
     <a target="_blank" href="https://www.urban.org/" title="Home" rel="home" class="site-logo"></a>
     <div class="title">
@@ -95,20 +102,20 @@
 
 
     <div id="geography-selection">
-        <label for="national">
-          <input type="radio" class="geography-choices n-radio " name="geography-choice" value="national" checked="checked"/>
+        <div class="geography-choices selected " data-cat="national">
+          <!-- <input type="radio" class="geography-choices " data-cat="national" checked="checked"/> -->
           <span>National</span>
-        </label>
+        </div>
 
-        <label for="state">
-          <input type="radio" class="geography-choices n-radio " name="geography-choice" value="state"/>
+        <div class="geography-choices " data-cat="state">
+          <!-- <input type="radio" class="geography-choices " data-cat="state"/> -->
           <span>State</span>
-        </label>
+        </div>
 
-        <label for="school">
-          <input type="radio" class="geography-choices n-radio " name="geography-choice" value="school"/>
-          <span>School</span>
-        </label>
+        <div class="geography-choices " data-cat="school">
+          <!-- <input type="radio" class="geography-choices " value="school"/> -->
+          <span>College</span>
+        </div>
     </div>
 
 
@@ -127,25 +134,27 @@
         <div id="comparison-menu"></div>
       </div>
 
-      <span id="time-selection">
-        <span class="time-selector bar selected" value="single-year-bar">
+      <div id="time-selection">
+                <span class="time-selector bar selected" value="single-year-bar">
           <img src="images/barIcon.png">
-          <span>Single year</span>
+          <span> Single year</span>
         </span>
+        <p class="button-title">Trends over time:</p>
         <span class="time-selector line" value="race-ethnicities-as-lines">
           <img src="images/lineIcon.png">
-          <span>By sector</span>
-        </span>
-        <span class="time-selector line" value="sectors-as-lines">
-          <img src="images/lineIcon.png">
-          <span>By race</span>
+          <span>All races by sector</span>
         </span>
 
-      <div id="year-selector">
-        <label for="year">Year:</label>
-        <input type="text" id="year-box" name="year" required minlength="4" maxlength="4" size="10">
-        <input id="year-input" type="submit" value="Submit" name="year" /><br>
+        <span class="time-selector line" value="sectors-as-lines">
+          <img src="images/lineIcon.png">
+          <span>All sectors by race</span>
+        </span>
+
+        <div id="year-selector">
+          <div id="year-input"></div>
+        </div>
       </div>
+
 
       <div id="first-dynamic-menu"></div>
       <div id="second-dynamic-menu"></div>
@@ -159,11 +168,11 @@
           <div class="legend"></div>
         </div>
         <div id="multi-year-by-race-container" class="chart-div">
-          <h4 class="chart-title">Average Representation at <span>Public Nonselective</span> US Colleges<br> over Time, by Race or Ethnicity</h4>
+          <h4 class="chart-title">Average Representation at <span>Public Nonselective</span> US Colleges over Time, by Race or Ethnicity</h4>
           <div class="legend"></div>
         </div>
         <div id="multi-year-by-sector-container" class="chart-div">
-          <h4 class="chart-title">Average <span>Hispanic</span> Representation at US Colleges over Time,<br> by College Sector</h4>
+          <h4 class="chart-title">Average <span>Hispanic</span> Representation at US Colleges over Time, by College Sector</h4>
           <div class="legend"></div>
         </div>
         <div id="one-school-all-races" class="chart-div">
@@ -208,7 +217,7 @@
 
       <h4>Project credits</h4>
       <div class="urbanstatement">
-        This feature was funded by the Joyce Foundation and the Lumina Foundation. We are grateful to them and to all our funders, who make it possible for Urban to advance its mission. The views expressed are those of the authors and should not be attributed to the Urban Institute, its trustees, or its funders. Funders do not determine research findings or the insights and recommendations of our experts. More information on our funding principles is available <a href="https://www.urban.org/support/funding-principles">here</a>. Read our terms of service <a href="https://www.urban.org/terms-service">here</a>.
+        This feature was funded by the Joyce Foundation and Lumina Foundation. We are grateful to them and to all our funders, who make it possible for Urban to advance its mission. The views expressed are those of the authors and should not be attributed to the Urban Institute, its trustees, or its funders. Funders do not determine research findings or the insights and recommendations of our experts. More information on our funding principles is available <a href="https://www.urban.org/support/funding-principles">here</a>. Read our terms of service <a href="https://www.urban.org/terms-service">here</a>.
       </div>
 
       <h3 class="job">Research</h3><a href="https://www.urban.org/author/tomas-monarrez"><span class="employee">Tomas Monarrez</span></a> and <a href="https://www.urban.org/author/kelia-washington"><span class="employee">Kelia Washington</span></a>
@@ -242,8 +251,10 @@
     <!-- endbuild -->
     <!-- build:js scripts/main.js -->
     <script src="node_modules/jquery-ui-dist/jquery-ui.js"></script>
+    <script src="node_modules/d3-simple-slider/dist/d3-simple-slider.js"></script>
     <script src="node_modules/d3/dist/d3.js"></script>
     <script src="scripts/halpurs.js"></script>
+    <script src="scripts/graphic.js"></script>
     <script src="scripts/main.js"></script>
     <!-- endbuild -->
   </body>
