@@ -60,14 +60,14 @@
   <div class="container">
     <div id="title-and-top">
       <div class="title-content">
-          <h1 class="hed">Tracking Racial Representation in College Enrollment</h1>
+          <h1 class="hed">How Racially Representative Is Your College?</h1>
           <!-- <h2 class="dek">Subhead Goes Here</h2> -->
           <p class="dateline"><i>March TK, 2020</i></p>
       </div>
 
       <div id="intro">
         <p>
-          A college degree can improve a person’s job prospects, wages, and quality of life, but not everyone has equal access to higher education. 
+          A college degree can improve a person’s job prospects, wages, and quality of life, but not everyone has equal access to higher education.
         </p>
         <p>
           College enrollment gaps between racial and ethnic groups persist, driven by <a href="https://next50.urban.org/question/structural-racism">structural racism</a>, other systemic barriers, and policies and practices that often aren’t designed to help underrepresented students access high-quality postsecondary education opportunities. These gaps can <a href="https://www.nber.org/papers/w23618">perpetuate earnings and wealth disparities</a> between racial and ethnic groups.
@@ -102,6 +102,7 @@
 
 
     <div id="geography-selection">
+        <p class="be-choosy">Choose a dataset:</p>
         <div class="geography-choices selected " data-cat="national">
           <!-- <input type="radio" class="geography-choices " data-cat="national" checked="checked"/> -->
           <span>National</span>
@@ -109,20 +110,20 @@
 
         <div class="geography-choices " data-cat="state">
           <!-- <input type="radio" class="geography-choices " data-cat="state"/> -->
-          <span>State</span>
+          <span>States</span>
         </div>
 
         <div class="geography-choices " data-cat="school">
           <!-- <input type="radio" class="geography-choices " value="school"/> -->
-          <span>College</span>
+          <span>Colleges</span>
         </div>
     </div>
 
 
     <div id="options-panel">
       <select id="dropdown"></select>
-      
-      <div id="school-chooser">
+
+      <div id="school-selection">
         <p>College</p>
         <input type="" name="" id="school-lookup" class="ui-autocomplete-input" autocomplete="off" value=""><br>
         <!-- <p id="school-description">Sector: <span>4-year, selective public</span></p> -->
@@ -135,24 +136,32 @@
       </div>
 
       <div id="time-selection">
-                <span class="time-selector bar selected" value="single-year-bar">
+        <p class="be-choosy">Choose a view:</p>
+        <div class="time-selector bar main-choice selected " value="single-year-bar">
           <img src="images/barIcon.png">
           <span> Single year</span>
-        </span>
-        <p class="button-title">Trends over time:</p>
-        <span class="time-selector line" value="race-ethnicities-as-lines">
-          <img src="images/lineIcon.png">
-          <span>All races by sector</span>
-        </span>
-
-        <span class="time-selector line" value="sectors-as-lines">
-          <img src="images/lineIcon.png">
-          <span>All sectors by race</span>
-        </span>
-
+        </div>
+        <div class="blank-box year"></div>
         <div id="year-selector">
           <div id="year-input"></div>
         </div>
+
+        <div class="time-selector main-choice line " value="race-ethnicities-as-lines">
+          <img src="images/lineIcon.png">
+          <span>Trends over time</span>
+        </div>
+        <div class="blank-box groupby"></div>
+        <div class="sub-choices">
+          <div class="time-selector line sub-choice selected" value="race-ethnicities-as-lines">
+            <span>by sector</span>
+          </div>
+
+          <div class="time-selector line sub-choice" value="sectors-as-lines">
+            <span>by race</span>
+          </div>
+        </div>
+
+
       </div>
 
 
@@ -168,11 +177,11 @@
           <div class="legend"></div>
         </div>
         <div id="multi-year-by-race-container" class="chart-div">
-          <h4 class="chart-title">Average Representation at <span>Public Nonselective</span> US Colleges over Time, by Race or Ethnicity</h4>
+          <h4 class="chart-title">Average Representation at <span>Public Nonselective</span> US Colleges over Time, by College Sector</h4>
           <div class="legend"></div>
         </div>
         <div id="multi-year-by-sector-container" class="chart-div">
-          <h4 class="chart-title">Average <span>Hispanic</span> Representation at US Colleges over Time, by College Sector</h4>
+          <h4 class="chart-title">Average <span>Hispanic</span> Representation at US Colleges over Time, by Race or Ethnicity</h4>
           <div class="legend"></div>
         </div>
         <div id="one-school-all-races" class="chart-div">
