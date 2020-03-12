@@ -34,26 +34,24 @@ var SECTOR_KEY = 'fourcat',
 	STATE_DATA,
   SCHOOL_NAMES;
 
-var chartDivWidth = $("#chart-area-container").innerWidth(),
+var chartDivWidth = $('#chart-area-container').innerWidth(),
 	aspectRatio
 
 var margin = {top: 10, right: 10, bottom: 30, left: 40},
     barMargin = {top: 10, right: 10, bottom: 30, left: 0},
     width = 600 - margin.left - margin.right,
-    height = 700 - margin.top - margin.bottom;
+    height = 1300 - margin.top - margin.bottom;
 
 //the chart selections & their G's
 
 //bar chart
-var barChartHeight = height + 300
+
 var singleYearSVG = d3.select('#single-year-container').append('svg')
     .attr('width', width + barMargin.left + barMargin.right)
-    .attr('height', barChartHeight + barMargin.top + barMargin.bottom)
+
 var barChartG = singleYearSVG.append('g')
     .attr('transform', 'translate(' + barMargin.left + ',' + barMargin.top + ')');
-var barChartXAxis = barChartG.append('g')
-  .attr('transform', 'translate(0,' + (barChartHeight - barMargin.bottom) + ')')
-  .attr('class', 'grid');
+
 var barLegend = d3.select('#single-year-container > div.legend').append('ul')
   .attr('class', 'key')
 
@@ -119,20 +117,20 @@ var translateRace = {
 var MIN_YEAR = 2009,
     MAX_YEAR = 2017;
 
-var colorArray = ['#E88E2D','#E9807D','#46ABDB','#D2D2D2','#FDD870','#98CF90','#EB99C2', '#351123']
+var colorArray = ['#ec008b','#55b748','#1696d2','#9d9d9d','#fdbf11','#000000','#0a4c6a', '#351123']
 
 var color = d3.scaleOrdinal()
     .range(colorArray)
 
 var raceColorObj = {
-  'dif_white': '#EB99C2',
-  'dif_hispa': '#D2D2D2',
-  'dif_black': '#46ABDB',
-  'dif_asian': '#E9807D',
-  'dif_amind': '#E88E2D',
-  'dif_pacis': '#98CF90',
-  'dif_othra': '#000000',
-  'dif_twora': '#FDD870'
+  'dif_white': '#0a4c6a',
+  'dif_hispa': '#9d9d9d',
+  'dif_black': '#1696d2',
+  'dif_asian': '#55b748',
+  'dif_amind': '#ec008b',
+  'dif_pacis': '#000000',
+  'dif_othra': '#fdbf11',
+  'dif_twora': '#fdbf11'
 }
 
 var distinct = function(value, index, self){ return self.indexOf(value) === index; }
@@ -151,7 +149,7 @@ var text =
 }
 
 function widthUnder(w){
-  return d3.select(".widthTester.w" + w).style("display") == "block"
+  return d3.select('.widthTester.w' + w).style('display') == 'block'
 }
 
 function getBarW(){
@@ -199,7 +197,8 @@ function drawBarChart(data){
 	var color = d3.scaleOrdinal()
 	    .range(colorArray);
 
-  var barChartHeight = height + 300; //don't know why this var isn't available down here
+  var barChartHeight = 1200;
+  singleYearSVG.attr('height', barChartHeight + barMargin.top + barMargin.bottom)
   var numSectors = 7,
   heightOfOneSector = barChartHeight / numSectors,
   numCurrentSectors = data.length,
@@ -210,13 +209,13 @@ function drawBarChart(data){
 	var y0 = d3.scaleBand()
 	    .domain(data.map(function(d){ return d[SECTOR_KEY] }) ) //returns lists of sectors
 	    .rangeRound([barChartHeight - barMargin.bottom, barMargin.top])
-	    .paddingInner(0.4)
+	    .paddingInner(0.3)
 
 	//scale used to place each race within sector
     var y1 = d3.scaleBand()
 	    .domain(higherEdSelections.arrayRaces)
 	    .rangeRound([y0.bandwidth(), 0])
-	    .padding(0.15)
+	    .padding(0.2)
 
 	var min = 0, max = 0;
 	for (var i = 0; i < data.length; i++){
@@ -234,32 +233,6 @@ function drawBarChart(data){
 	    .domain([-30,30])
 	    .rangeRound([barMargin.left, width - barMargin.right])
 
-	// //hello i am the axis
-	// var xAxis = d3.axisBottom(x)
-	// 	.tickSize(-height)
-	// 	.tickFormat(function(d){ return d + '%'})
-
-	// barChartXAxis.call(xAxis)
-	// 	.selectAll('text')
-	// 	.attr('y', 6)
-	// d3.select('.domain').remove();
-
-	// singleYearSVG.selectAll('g.tick > line')
-	// 	.style('stroke', function(d,i){
-	// 		if (d === 0){
-	// 			return '#000000'
-	// 		} else {
-	// 			return '#D2D2D2'
-	// 		}
-	// 	})
-	// 	.style('stroke-width', function(d){
-	// 		if(d === 0){
-	// 			return 2
-	// 		} else {
-	// 			return 1
-	// 		}
-	// 	})
-
 	var sectorGroups = barChartG.selectAll('g.sector')
 		.data(data, function(d){ return d[SECTOR_KEY] })
 		.join('g')
@@ -275,13 +248,14 @@ function drawBarChart(data){
 	var sectorLabels = sectorGroups.append('text')
 			.classed('sector-label', true)
 			.text(function(d){ return d[SECTOR_KEY] })
-			.attr('x', barMargin.left)
-      .attr('y', -10)
+			.attr('x', x(0))//barMargin.left)
+      .attr('y', 0)//-10)
       .style('text-transform', 'uppercase')
 
 	sectorGroups.exit().remove();
 
-	var rects = sectorGroups.selectAll('rect')
+//TODO add a g here and add the bar value
+	var barG = sectorGroups.selectAll('barG')
 		.data(function (d) {
 		    return keys.filter(function(key){
 		    	return key !== SECTOR_KEY })
@@ -293,20 +267,36 @@ function drawBarChart(data){
 		    })
 		  }, function(d){ return d.key })
 
-	rects.enter().append('rect')
-		.attr('y', function(d){ return y1(d.key) })
+  barG.exit().remove()
+
+	var lilG = barG.enter().append('g')
+		.attr('transform', function(d){ return 'translate(0,' + y1(d.key) + ')' } )
+
+
+  var rects = lilG.append('rect')
+    .attr('y', 0 )
+    .attr('x', function(d){ return +d.value > 0 ? x(0) : x(d.value) })
+    .attr('fill', function(d){ return raceColorObj[d.key] })
 		.attr('height', y1.bandwidth())
-		.attr('fill', function(d){ return raceColorObj[d.key] })
-		.attr('x', function(d){ return +d.value > 0 ? x(0) : x(d.value) })
 		.attr('width', function(d){ return +d.value > 0 ? x(d.value) - x(0) : (x(0) - x(d.value)) })
 
 	rects.transition().duration(800)
 		.attr('x', function(d){ return d.value > 0 ? x(0) : x(d.value) })
 		.attr('width', function(d){ return d.value > 0 ? x(d.value) - x(0) : (x(0) - x(d.value)) })
-				.attr('y', function(d){ return y1(d.key) })
+		.attr('y', 0 )
 		.attr('height', y1.bandwidth())
 
-	rects.exit().remove();
+	lilG.exit().remove();
+  rects.exit().remove();
+
+  d3.selectAll('.bar-labels').remove();
+  var barLabels = lilG.append('text')
+    .classed('bar-labels', true)
+    .text(function(d){ return formatTwoDecimals(d.value) + '%' })
+    .attr('x', function(d){ return  +d.value > 0 ? x(d.value) + 3 : x(d.value - 5 )})
+    .attr('y', 10)
+
+
 
 	var keys = barLegend.selectAll('li')
 		.data(higherEdSelections.arrayRaces)
@@ -464,7 +454,7 @@ function buildOptionPanel(chartType){
 
 	if (chartType === 'single-year-bar'){
 		//checkboxes for everything
-		d3.select('.blank-box.groupby').style('display', 'block');
+		// d3.select('.blank-box.groupby').style('display', 'block');
 
 		d3.select('#first-dynamic-menu').html(COLLEGE_SECTOR_CHECKBOXES)//controls initialized further down for this one
 
@@ -486,8 +476,8 @@ function buildOptionPanel(chartType){
 
 	} else if (chartType === 'sectors-as-lines'){
 		//races as radio buttons, sectors as checkboxes
-		d3.select('.blank-box.groupby').style('display', 'none');
-    d3.select('.blank-box.year').style('display', 'block');
+		// d3.select('.blank-box.groupby').style('display', 'none');
+    // d3.select('.blank-box.year').style('display', 'block');
 		d3.select('#first-dynamic-menu').append('p').attr('class', 'options-panel-section').text('Race/Ethnicity')
 		d3.select('#first-dynamic-menu').selectAll('div.race-ethnicity-radios')
 			.data(raceOptions)
@@ -506,8 +496,8 @@ function buildOptionPanel(chartType){
 
 	} else if (chartType === 'race-ethnicities-as-lines'){
 		//sectors as radio buttons, races as checkboxes
-		d3.select('.blank-box.groupby').style('display', 'none');
-    d3.select('.blank-box.year').style('display', 'block');
+		// d3.select('.blank-box.groupby').style('display', 'none');
+  //   d3.select('.blank-box.year').style('display', 'block');
 
 		d3.select('#first-dynamic-menu').html(COLLEGE_SECTOR_RADIOS)
 
@@ -780,7 +770,7 @@ var sliderTime =
 		.max(d3.max(dataTime))
 		.step(1000 * 60 * 60 * 24 * 365)
 		.width(220)
-		.tickFormat(function(d){ return "'" + d3.timeFormat('%y')(d)})
+		.tickFormat(function(d){ return '\'' + d3.timeFormat('%y')(d)})
 		.tickValues(dataTime)
 		.default(new Date(2017, 0, 1))
 		.on('onchange', function(val){
@@ -809,12 +799,12 @@ function callBarChart(year){
 function initializeStaticControls(){
 	//event listener party
 	d3.selectAll('.geography-choices').on('click', function(){
-		var userChoice = this.getAttribute("data-cat");
+		var userChoice = this.getAttribute('data-cat');
 		console.log(userChoice)
 		higherEdSelections.geography = userChoice
 
 		d3.selectAll('.geography-choices').classed('selected', false)
-		d3.select(this).classed("selected", !d3.select(this).classed("selected"))
+		d3.select(this).classed('selected', !d3.select(this).classed('selected'))
 
 		if ( userChoice === 'state'){
 			higherEdData.allData.filteredForState =  higherEdData.allData[SELECTED_DATASET].filter(function(d){
@@ -846,8 +836,8 @@ function initializeStaticControls(){
 			d3.select('#time-selection').style('display', 'block');
 			d3.select('#dropdown').style('display', 'none')
 			d3.select('#school-selection').style('display', 'none')
-			d3.select('.blank-box.groupby').style('display', 'block');
-      d3.select('.blank-box.year').style('display', 'none');
+			// d3.select('.blank-box.groupby').style('display', 'block');
+   //    d3.select('.blank-box.year').style('display', 'none');
 			// a little, duh, just move the chart action
 			if (higherEdSelections.chartType === 'one-school-all-races' || higherEdSelections.chartType === 'multiple-schools'){
 				showChart('single-year-bar')

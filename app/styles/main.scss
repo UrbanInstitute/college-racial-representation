@@ -247,6 +247,11 @@ g.grid > g.tick > line {
   float: right;
 }
 
+.bar-labels {
+  fill: $gray-7;
+  font-size: 11px;
+}
+
 
 // @mixin for-phone-only {
 //   @media (max-width: 599px) { @content; }
@@ -383,9 +388,10 @@ li.key-item {
 }
 
 .options-panel-section {
-  font-size: 21px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 400;
   margin-top: $spacing-unit * 0.5;
+  text-transform: uppercase;
 }
 
 p.button-title {
@@ -446,7 +452,7 @@ p.program-type {
 }
 
 .time-selector {
-  color: $gray-8;
+  color: $gray-6;
   font-weight: 400;
   cursor: pointer;
   display: inline-block;
