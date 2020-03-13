@@ -266,31 +266,29 @@ function drawBarChart(data){
 			      };
 		    })
 		  }, function(d){ return d.key })
-
-  barG.exit().remove()
-
-	var lilG = barG.enter().append('g')
+		.enter()
+		.append('g')
 		.attr('transform', function(d){ return 'translate(0,' + y1(d.key) + ')' } )
+  
 
-
-  var rects = lilG.append('rect')
+  barG.append('rect')
     .attr('y', 0 )
     .attr('x', function(d){ return +d.value > 0 ? x(0) : x(d.value) })
     .attr('fill', function(d){ return raceColorObj[d.key] })
-		.attr('height', y1.bandwidth())
-		.attr('width', function(d){ return +d.value > 0 ? x(d.value) - x(0) : (x(0) - x(d.value)) })
+	.attr('height', y1.bandwidth())
+	.attr('width', function(d){ return +d.value > 0 ? x(d.value) - x(0) : (x(0) - x(d.value)) })
 
-	rects.transition().duration(800)
+	barG.transition().duration(800)
 		.attr('x', function(d){ return d.value > 0 ? x(0) : x(d.value) })
 		.attr('width', function(d){ return d.value > 0 ? x(d.value) - x(0) : (x(0) - x(d.value)) })
 		.attr('y', 0 )
 		.attr('height', y1.bandwidth())
 
-	lilG.exit().remove();
-  rects.exit().remove();
+	barG.exit().remove()
+
 
   d3.selectAll('.bar-labels').remove();
-  var barLabels = lilG.append('text')
+  var barLabels = barG.append('text')
     .classed('bar-labels', true)
     .text(function(d){ return formatTwoDecimals(d.value) + '%' })
     .attr('x', function(d){ return  +d.value > 0 ? x(d.value) + 3 : x(d.value - 5 )})
@@ -396,7 +394,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		.attr('data-cat', function(d){ return d.key })
 
 	path.exit().remove();
-console.log(higherEdSelections.chartType)
+
 	if (topic === 'sector'){
 		var keys = raceLineLegend.selectAll('li')
 			.data(higherEdSelections.arrayRaces)
@@ -717,7 +715,8 @@ function makeDropdown(data){
 }
 
 function menuSelected(){
-	higherEdSelections.state = this.value
+	higherEdSelections.state = this.value;
+	d3.select('#single-year-container > h4 > span:nth-child(1)').text(higherEdSelections.state);
 
 	higherEdData.allData.filteredForState =  higherEdData.allData[higherEdSelections.geography + higherEdSelections.programLength].filter(function(d){
 		return d.fips_ipeds === higherEdSelections.state;
@@ -775,8 +774,8 @@ var sliderTime =
 		.default(new Date(2017, 0, 1))
 		.on('onchange', function(val){
 			higherEdSelections.year = timeFormat(val);
-			callBarChart(higherEdSelections.year);
-			d3.select('#single-year-container > h4 > span').text(timeFormat(val));
+			callBarChart(higherEdSelections.year); 
+			d3.select('#single-year-container > h4 > span:nth-child(2)').text(timeFormat(val));
 		});
 
 var gTime =
@@ -788,7 +787,7 @@ var gTime =
 		.attr('transform', 'translate(15,10)');
 
 gTime.call(sliderTime);
-d3.select('#single-year-container > h4 > span').text(timeFormat(sliderTime.value()));
+d3.select('#single-year-container > h4 > span:nth-child(2)').text(timeFormat(sliderTime.value()));
 // d3.select('p#value-time').text(d3.timeFormat('%Y')(sliderTime.value()));
 
 function callBarChart(year){
@@ -809,7 +808,7 @@ function initializeStaticControls(){
 
 
 		if ( userChoice === 'state'){
-
+			d3.select('#single-year-container > h4 > span:nth-child(1)').text(higherEdSelections.state);
 			SELECTED_DATASET = 'filteredForState';
 			SECTOR_KEY = higherEdSelections.programLength === 'four' ? 'fourcat' : 'twocat';
 
@@ -817,7 +816,7 @@ function initializeStaticControls(){
 			d3.select('#school-selection').style('display', 'none');
 
 			var states = higherEdData.allData.statefour.map(function(d){return d.fips_ipeds});
-			debugger;
+			
 			var menuData = states.filter(distinct);
 			makeDropdown(menuData);
 			d3.select('#dropdown').style('display', 'block');
@@ -836,13 +835,14 @@ function initializeStaticControls(){
 			d3.select('#time-selection').style('display', 'block');
 			d3.select('#dropdown').style('display', 'none')
 			d3.select('#school-selection').style('display', 'none')
-			// d3.select('.blank-box.groupby').style('display', 'block');
-   //    d3.select('.blank-box.year').style('display', 'none');
-			// a little, duh, just move the chart action
+
 			if (higherEdSelections.chartType === 'one-school-all-races' || higherEdSelections.chartType === 'multiple-schools'){
 				showChart('single-year-bar')
 			}
 		} else if ( userChoice === 'school' ){
+			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength;
+			higherEdSelections.chartType = 'one-school-all-races'
+
 			//this shit takes forever!!!
 			var schoolFours = higherEdData.allData.schoolfour.filter(function(d){
 				if (d.year ==='2015'){ return d.inst_name }
@@ -859,7 +859,9 @@ function initializeStaticControls(){
 			var schoolNames = schoolFours.concat(schoolTwos);
 			makeSchoolLookup(schoolNames);
 
-			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength;
+	      	d3.select('#time-selection').style('display', 'none');
+	      	d3.select('#dropdown').style('display', 'none');
+	      	d3.select('#school-selection').style('display', 'block');
 
 			var raceOptions = higherEdData.allData.nationalfour.columns.slice(2)
 			function checkboxTemplater(option){
@@ -867,11 +869,6 @@ function initializeStaticControls(){
 			    '<div class="c-cb"><input type="checkbox" class=" " name="sch-comparison-race" value="' + option + '" checked/><label for="' + option + '">' + translateRace[option] + '</label></div>'
 			        return text
 			}
-
-            //TODO list
-      d3.select('#time-selection').style('display', 'none');
-      d3.select('#dropdown').style('display', 'none');
-      d3.select('#school-selection').style('display', 'block');
 
 			d3.select('#comparison-menu').selectAll('div.race-ethnicity-checkboxes')
 				.data(raceOptions)
@@ -886,83 +883,91 @@ function initializeStaticControls(){
 			// --> changes the race menu from boxes to radios
 			// --> changes the lines on the chart from one per race to being individ schools for one race at a time
 
-			higherEdSelections.chartType = 'one-school-all-races'
+
 			showChart(higherEdSelections.chartType);
 
 			callSchoolChart();
 
-    }
+    	}
 
-    //all these shits use SELECTED_DATASET inside the filtering/nesting functions
+    //all these use SELECTED_DATASET inside the filtering/nesting functions
 
-		//format data and call bar chart
-		FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);
-		FILTERED_BY_YEAR = FILTERED_BY_YEAR.filter(function(d){return higherEdSelections.arraySectors.indexOf(d[SECTOR_KEY]) > -1  })
-		drawBarChart(FILTERED_BY_YEAR)
+	//format data and call bar chart
+	FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);
+	FILTERED_BY_YEAR = FILTERED_BY_YEAR.filter(function(d){return higherEdSelections.arraySectors.indexOf(d[SECTOR_KEY]) > -1  })
+	drawBarChart(FILTERED_BY_YEAR)
 
-		//format data and call line chart race
-		NESTED_BY_SECTOR = makeSectorNest();
+	//format data and call line chart race
+	NESTED_BY_SECTOR = makeSectorNest();
 
-		NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
-		drawLineChart(NESTED_BY_SECTOR, 'race', sectorLineSVG, sectorLineG, sectorLineYAxis);
+	NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
+	drawLineChart(NESTED_BY_SECTOR, 'race', sectorLineSVG, sectorLineG, sectorLineYAxis);
 
-		NESTED_BY_RACE = makeDemogNest(higherEdSelections.singleSector);
-		NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
-		drawLineChart(NESTED_BY_RACE, 'sector', raceEthnicityLineSVG, raceEthnicityLineG, raceLineYAxis)
-		//format data and call line chart sector
+	NESTED_BY_RACE = makeDemogNest(higherEdSelections.singleSector);
+	NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
+	drawLineChart(NESTED_BY_RACE, 'sector', raceEthnicityLineSVG, raceEthnicityLineG, raceLineYAxis)
+	//format data and call line chart sector
 
 	})
 
 	//if view is 'state' add state dropdown menu
 	//if view is 'school' add look up box for school name
-	d3.selectAll('.time-selector.main-choice').on('click', function(){
+	d3.selectAll('.time-selector').on('click', function(){
 		d3.event.stopPropagation();
 		var chart = this.getAttribute('value') //single-year-bar, sectors-as-lines, race-ethnicities-as-lines
 
 		higherEdSelections.chartType = chart;
-		d3.selectAll('.main-choice').classed('selected', false);
+
+
+
+		d3.selectAll('.time-selector').classed('selected', false);
 		d3.select(this).classed('selected', true);
 
     //the 'trends over time' button doesn't represent a specific chart but it
     //leads to a default, 'race-ethnicities-as-lines', so showing/hiding
     //the UI is part of the selection
 		if (chart === 'sectors-as-lines'){
+			d3.select('.time-selector.bar').classed('selected', false);
+			d3.select('.time-selector.line.main-choice').classed('selected', true);
 			drawLineChart(NESTED_BY_SECTOR, 'race', sectorLineSVG, sectorLineG, sectorLineYAxis)// data nested by sector or race; the selected radio ('topic'); svg
 		} else if (chart === 'race-ethnicities-as-lines'){
-
+			d3.select('.time-selector.bar').classed('selected', false);
+			d3.select('.time-selector.line.main-choice').classed('selected', true);
 			drawLineChart(NESTED_BY_RACE, 'sector', raceEthnicityLineSVG, raceEthnicityLineG, raceLineYAxis)
-		} else if (chart === 'single-year-bar'){
+		} else if ( chart === 'single-year-bar' ){
+			d3.select('.time-selector.bar').classed('selected', true);
+			d3.select('.time-selector.line.main-choice').classed('selected', false);
+		} 
 
-    }
+		// if (){
+		// 	    d3.selectAll('.sub-choice').classed('selected', false);
+  //   d3.select(this).classed('selected', true);
+		// }
 
 		showChart(chart);
 		buildOptionPanel(chart);
 	})
 
-  d3.selectAll('.time-selector.sub-choice').on('click', function(){
-    d3.event.stopPropagation();
+  // d3.selectAll('.time-selector.sub-choice').on('click', function(){
+  //   d3.event.stopPropagation();
 
-    var chart = this.getAttribute('value') //single-year-bar, sectors-as-lines, race-ethnicities-as-lines
+  //   var chart = this.getAttribute('value') //single-year-bar, sectors-as-lines, race-ethnicities-as-lines
 
-    higherEdSelections.chartType = chart;
-
-    d3.selectAll('.sub-choice').classed('selected', false);
-    d3.select(this).classed('selected', true);
-
-    if (chart === 'sectors-as-lines'){
-      drawLineChart(NESTED_BY_SECTOR, 'race', sectorLineSVG, sectorLineG, sectorLineYAxis);
-      showChart(chart);
-      buildOptionPanel(chart);
-    } else if (chart === 'race-ethnicities-as-lines'){
-      drawLineChart(NESTED_BY_RACE, 'sector', raceEthnicityLineSVG, raceEthnicityLineG, raceLineYAxis)
-      showChart(chart);
-      buildOptionPanel(chart);
-    }
-
-  })
+  //   higherEdSelections.chartType = chart;
 
 
-}
+
+  //   if (chart === 'sectors-as-lines'){
+  //     drawLineChart(NESTED_BY_SECTOR, 'race', sectorLineSVG, sectorLineG, sectorLineYAxis);
+  //     showChart(chart);
+  //     buildOptionPanel(chart);
+  //   } else if (chart === 'race-ethnicities-as-lines'){
+  //     drawLineChart(NESTED_BY_RACE, 'sector', raceEthnicityLineSVG, raceEthnicityLineG, raceLineYAxis)
+  //     showChart(chart);
+  //     buildOptionPanel(chart);
+  //   }
+  // })
+} //end initializeStaticContols
 
 function filterDataByYear(year){
 	//this might need to filter for all the things, year, race, and sector

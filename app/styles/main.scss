@@ -458,16 +458,12 @@ p.program-type {
   display: inline-block;
   font-size: 14px;
   text-transform: uppercase;
-}
-
-.time-selector {
-  // padding: 21px 10px;
     img {
-      padding-right: 10px;
-    }
+    padding-right: 10px;
+  }
 }
 
-.time-selector.selected {
+.time-selector.selected > span {
   color: $cyan-6;
   font-weight: 700;
 }
@@ -476,7 +472,8 @@ p.program-type {
   display: block;
   font-size: 18px;
 }
-.sub-choice {
+
+.time-selector.sub-choice {
   border: 1px solid $cyan-3;
   border-radius: 1px;
   display: inline-block;
@@ -489,6 +486,11 @@ p.program-type {
   text-transform: lowercase;
   width: 80px;
 }
+
+.time-selector.sub-choice.selected > span {
+  color: #ffffff;
+}
+
 
 .sub-choices {
   margin-left: 30px;
