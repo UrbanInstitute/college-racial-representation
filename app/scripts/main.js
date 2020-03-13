@@ -22,7 +22,7 @@ var higherEdSelections = {};
 	higherEdSelections.singleRace = 'dif_hispa',
 	higherEdSelections.singleSector = 'Public Non-Selective',
 	higherEdSelections.state = 'Alabama',
-  higherEdSelections.selectedSchool = 'Alabama A & M University',
+  	higherEdSelections.selectedSchool = 'Alabama A & M University',
 	higherEdSelections.arrayRaces = [],
 	higherEdSelections.arraySectors = []
 
@@ -32,7 +32,7 @@ var SECTOR_KEY = 'fourcat',
 	NESTED_BY_RACE,
 	FILTERED_BY_YEAR,
 	STATE_DATA,
-  SCHOOL_NAMES;
+  	SCHOOL_NAMES;
 
 var chartDivWidth = $("#chart-area-container").innerWidth(),
 	aspectRatio
@@ -810,16 +810,13 @@ function initializeStaticControls(){
 	//event listener party
 	d3.selectAll('.geography-choices').on('click', function(){
 		var userChoice = this.getAttribute("data-cat");
-		console.log(userChoice)
-		higherEdSelections.geography = userChoice
+		
+		higherEdSelections.geography = userChoice;
 
-		d3.selectAll('.geography-choices').classed('selected', false)
-		d3.select(this).classed("selected", !d3.select(this).classed("selected"))
+		d3.selectAll('.geography-choices').classed('selected', false);
+		d3.select(this).classed("selected", !d3.select(this).classed("selected"));
 
 		if ( userChoice === 'state'){
-			higherEdData.allData.filteredForState =  higherEdData.allData[SELECTED_DATASET].filter(function(d){
-				return d.fips_ipeds === higherEdSelections.state;
-			})
 
 			SELECTED_DATASET = 'filteredForState';
 			SECTOR_KEY = higherEdSelections.programLength === 'four' ? 'fourcat' : 'twocat';
@@ -828,14 +825,15 @@ function initializeStaticControls(){
 			d3.select('#school-selection').style('display', 'none');
 
 			var states = higherEdData.allData.statefour.map(function(d){return d.fips_ipeds});
+			debugger;
 			var menuData = states.filter(distinct);
 			makeDropdown(menuData);
-			d3.select('#dropdown').style('display', 'block')
+			d3.select('#dropdown').style('display', 'block');
 
 			higherEdData.allData.filteredForState =  higherEdData.allData[higherEdSelections.geography + higherEdSelections.programLength].filter(function(d){
-			return d.fips_ipeds === higherEdSelections.state;
+				return d.fips_ipeds === higherEdSelections.state;
 			})
-			// a little, duh, just move the chart action
+			
 			if (higherEdSelections.chartType === 'one-school-all-races' || higherEdSelections.chartType === 'multiple-schools'){
 				showChart('single-year-bar')
 			}
