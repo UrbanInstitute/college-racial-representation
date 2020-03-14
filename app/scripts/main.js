@@ -40,7 +40,7 @@ var chartDivWidth = $('#chart-area-container').innerWidth(),
 var margin = {top: 10, right: 10, bottom: 30, left: 40},
     barMargin = {top: 10, right: 10, bottom: 30, left: 0},
     width = 600 - margin.left - margin.right,
-    height = 1300 - margin.top - margin.bottom;
+    height = 700 - margin.top - margin.bottom;
 
 //the chart selections & their G's
 
@@ -255,7 +255,8 @@ function drawBarChart(data){
 	sectorGroups.exit().remove();
 
 //TODO add a g here and add the bar value
-	var barG = sectorGroups.selectAll('barG')
+//went back to no g for now so I can see if adding/removing bars is broken
+	var rects = sectorGroups.selectAll('rect')
 		.data(function (d) {
 		    return keys.filter(function(key){
 		    	return key !== SECTOR_KEY })
@@ -266,33 +267,29 @@ function drawBarChart(data){
 			      };
 		    })
 		  }, function(d){ return d.key })
-		.enter()
-		.append('g')
-		.attr('transform', function(d){ return 'translate(0,' + y1(d.key) + ')' } )
   
-
-  barG.append('rect')
-    .attr('y', 0 )
+  rects.enter().append('rect')
+    .attr('y', function(d){ return y1(d.key) })
     .attr('x', function(d){ return +d.value > 0 ? x(0) : x(d.value) })
     .attr('fill', function(d){ return raceColorObj[d.key] })
 	.attr('height', y1.bandwidth())
 	.attr('width', function(d){ return +d.value > 0 ? x(d.value) - x(0) : (x(0) - x(d.value)) })
 
-	barG.transition().duration(800)
+	rects.transition().duration(800)
 		.attr('x', function(d){ return d.value > 0 ? x(0) : x(d.value) })
 		.attr('width', function(d){ return d.value > 0 ? x(d.value) - x(0) : (x(0) - x(d.value)) })
-		.attr('y', 0 )
+		
 		.attr('height', y1.bandwidth())
 
-	barG.exit().remove()
+	rects.exit().remove()
 
 
-  d3.selectAll('.bar-labels').remove();
-  var barLabels = barG.append('text')
-    .classed('bar-labels', true)
-    .text(function(d){ return formatTwoDecimals(d.value) + '%' })
-    .attr('x', function(d){ return  +d.value > 0 ? x(d.value) + 3 : x(d.value - 5 )})
-    .attr('y', 10)
+  // d3.selectAll('.bar-labels').remove();
+  // var barLabels = barG.append('text')
+  //   .classed('bar-labels', true)
+  //   .text(function(d){ return formatTwoDecimals(d.value) + '%' })
+  //   .attr('x', function(d){ return  +d.value > 0 ? x(d.value) + 3 : x(d.value - 5 )})
+  //   .attr('y', 10)
 
 
 
@@ -379,7 +376,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		.append('path')
 		.attr('fill', 'none')
 		.attr('d', function(d){ return line(d.values)  })
-		.attr('stroke', function(d,i){ if (topic === 'sector'){ return color(d.key) } else if (topic === 'race'){
+		.attr('stroke', function(d,i){ if (topic === 'sector'){ return raceColorObj[d.key] } else if (topic === 'race'){
 			return color(d.values[i][SECTOR_KEY]) } })
 		.attr('stroke-width', 2)
 		.attr('data-cat', function(d){ return d.key })
@@ -389,7 +386,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 	path.transition()
 		.attr('d', function(d){ return line(d.values)  })
 		.attr('stroke-width', 2)
-		.attr('stroke', function(d,i){ if (topic === 'sector'){ return color(d.key) } else if (topic === 'race'){
+		.attr('stroke', function(d,i){ if (topic === 'sector'){ return raceColorObj[d.key] } else if (topic === 'race'){
 			return color(d.values[i][SECTOR_KEY]) } })
 		.attr('data-cat', function(d){ return d.key })
 
@@ -545,8 +542,11 @@ function buildOptionPanel(chartType){
 			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength
 			higherEdSelections.arraySectors = [twoYearTranslate[userChoice]]
 
-			d3.selectAll('.four-year').classed('checked', false)
-			d3.selectAll('.four-year.sector-boxes').property('checked', false)
+			d3.selectAll('.four-year').classed('checked', false);
+			d3.selectAll('.four-year.sector-boxes').property('checked', false);
+
+			d3.selectAll('.two-year').classed('inactive', false);
+			d3.selectAll('.four-year, .program-type').classed('inactive', true);
 
 		} else if (checkbox.classed('two-year') && higherEdSelections.programLength === 'two'){
 			//remove or add userchoice from the array
@@ -565,6 +565,9 @@ function buildOptionPanel(chartType){
 			higherEdSelections.arraySectors = [translate[userChoice]]
 			d3.selectAll('.two-year').classed('checked', false)
 			d3.selectAll('.two-year.sector-boxes').property('checked', false)
+
+			d3.selectAll('.two-year').classed('inactive', true);
+			d3.selectAll('.four-year, .program-type').classed('inactive', false);
 
 		} else if (checkbox.classed('four-year') && higherEdSelections.programLength === 'four'){
 			if (checkboxChecked){
@@ -624,7 +627,7 @@ function buildOptionPanel(chartType){
 		checkbox.classed('checked', !checkbox.classed('checked'));
 
 
-		//bar chart function refers to arrayRaces so we don't filter here
+		//bar chart function refers to arrayRaces so don't filter here
 		drawBarChart(FILTERED_BY_YEAR)
 		console.log(higherEdSelections.arrayRaces.length)
 		if (higherEdSelections.arrayRaces.length < 1){
@@ -835,6 +838,7 @@ function initializeStaticControls(){
 			d3.select('#time-selection').style('display', 'block');
 			d3.select('#dropdown').style('display', 'none')
 			d3.select('#school-selection').style('display', 'none')
+			d3.select('#single-year-container > h4 > span:nth-child(1)').text('US');
 
 			if (higherEdSelections.chartType === 'one-school-all-races' || higherEdSelections.chartType === 'multiple-schools'){
 				showChart('single-year-bar')

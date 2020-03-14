@@ -391,7 +391,7 @@ li.key-item {
   font-size: 18px;
   font-weight: 400;
   margin-top: $spacing-unit * 0.5;
-  text-transform: uppercase;
+  // text-transform: uppercase;
 }
 
 p.button-title {
@@ -404,6 +404,10 @@ p.program-length-hed {
   margin-bottom: 0;
 }
 
+p.program-length-hed.two-year {
+  margin-top: 25px;
+}
+
 p.program-type {
   font-weight: 700;
   margin-top: 14px;
@@ -411,12 +415,22 @@ p.program-type {
 }
 
 .c-cb, .radioTK, .race-ethnicity-radios {
-  color: $gray-7;
+  
   margin-left: 20px;
+  margin-top: 6px;
 }
 
 .race-ethnicity-radios > label > span, .radioTK > label {
   padding-left: 0.25rem;
+}
+
+.inactive {
+  color: $gray-6;
+}
+
+label.inactive:before {
+  border-color: $gray-4;
+  box-shadow: 0 0 0 1px $gray-4;
 }
 
 #school-selection {

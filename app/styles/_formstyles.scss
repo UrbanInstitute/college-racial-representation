@@ -29,7 +29,7 @@
  */
 .c-cb > label {
 	display: inline-block;
-	padding: .25em .5em;
+	padding: 9px 0 0 12px;
 	margin-bottom: 0;
 	vertical-align: top;
 }
@@ -67,8 +67,7 @@
  * Styles for the custom box boundary.
  */
 .c-cb > label:before {
-	border-color: #565656;
-	border-radius: 2px;
+	border-color: $cyan-6;
 	box-shadow: 0 0 0 1px #565656;
 	height: 1.125em;
 	left: .125em;
@@ -81,8 +80,8 @@
  */
 .c-cb > label:after {
 	border: 0;
-	border-bottom: 4px solid #565656;
-	border-right: 4px solid #565656;
+	border-bottom: 2px solid $cyan-6;
+	border-right: 2px solid $cyan-6;
 	height: .825em;
 	left: .425em;
 	top: .825em;
@@ -97,7 +96,7 @@
  */
 .c-cb > input:checked ~ label:before {
 	border-color: transparent;
-	box-shadow: 0 0 0 2px #0d5192;
+	box-shadow: 0 0 0 2px $cyan-6;
 }
 
 .c-cb > input:focus ~ label:before {
