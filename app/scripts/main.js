@@ -197,7 +197,7 @@ function drawBarChart(data){
 	var color = d3.scaleOrdinal()
 	    .range(colorArray);
 
-  var barChartHeight = 1200;
+  var barChartHeight = height;
   singleYearSVG.attr('height', barChartHeight + barMargin.top + barMargin.bottom)
   var numSectors = 7,
   heightOfOneSector = barChartHeight / numSectors,
@@ -379,8 +379,13 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		.attr('stroke', function(d,i){ if (topic === 'sector'){ return raceColorObj[d.key] } else if (topic === 'race'){
 			return color(d.values[i][SECTOR_KEY]) } })
 		.attr('stroke-width', 2)
-		.attr('data-cat', function(d){ return d.key })
-		.attr('class', function(d){ if (topic==='comparison' && d.key === higherEdSelections.selectedSchool){ return 'highlight-school' } })
+		.attr('class', function(d){ 
+			var string = d.key;
+			if (topic==='comparison' && d.key === higherEdSelections.selectedSchool){ 
+				string += ' highlight-school' 
+			} 
+			return string;
+		})
 
 
 	path.transition()
@@ -388,7 +393,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		.attr('stroke-width', 2)
 		.attr('stroke', function(d,i){ if (topic === 'sector'){ return raceColorObj[d.key] } else if (topic === 'race'){
 			return color(d.values[i][SECTOR_KEY]) } })
-		.attr('data-cat', function(d){ return d.key })
+		//.attr('data-cat', function(d){ return d.key })
 
 	path.exit().remove();
 
@@ -443,7 +448,7 @@ function buildOptionPanel(chartType){
 
 
 
-	//radio button one always goes up top
+	//empty these
 	d3.select('#first-dynamic-menu').text('')
 	d3.select('#second-dynamic-menu').text('')
 
@@ -748,6 +753,14 @@ function makeSchoolLookup(schoolNames){
 
      higherEdSelections.selectedSchool = ui.item.value;
 
+    var schoolDatum = higherEdData.allData[SELECTED_DATASET].filter(function(d){return d.inst_name === higherEdSelections.selectedSchool })[0]
+
+    // <p id="school-description">Sector: <span>4-year, selective public</span></p>
+
+    d3.select('#school-description > span').text(schoolDatum.slevel + ', ' + schoolDatum[SECTOR_KEY])
+
+    d3.select('#comparison-def > span').text(schoolDatum.fips_ipeds)
+
     if (d3.select('#one-school-all-races').classed('school-comparison')){
      	callComparisonChart();
     } else {
@@ -873,6 +886,9 @@ function initializeStaticControls(){
 			    '<div class="c-cb"><input type="checkbox" class=" " name="sch-comparison-race" value="' + option + '" checked/><label for="' + option + '">' + translateRace[option] + '</label></div>'
 			        return text
 			}
+
+			d3.select('#first-dynamic-menu').text('')
+			d3.select('#second-dynamic-menu').text('')
 
 			d3.select('#comparison-menu').selectAll('div.race-ethnicity-checkboxes')
 				.data(raceOptions)

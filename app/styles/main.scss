@@ -226,6 +226,11 @@ path.domain {
   display: none;
 }
 
+path.highlight-school {
+  stroke: $cyan-5;
+  stroke-width: 4;
+}
+
 h4.chart-title {
   color: $gray-8;
   font-size: 24px;
@@ -314,6 +319,11 @@ g.grid > g.tick > line {
       stroke: $cyan;
     }
 
+}
+
+#school-lookup {
+  margin-bottom: 10px;
+  width: 100%;
 }
 
 .zero-line {
@@ -436,6 +446,20 @@ label.inactive:before {
 #school-selection {
   display: none;
 }
+
+label.check-switch {
+  margin-bottom: 0;
+  padding-left: 0px;
+  text-transform: uppercase;
+}
+
+.explainer {
+  color: $gray-6;
+  font-size: 16px;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
 
 #second-dynamic-menu > label, #first-dynamic-menu > label {
   display: block;
