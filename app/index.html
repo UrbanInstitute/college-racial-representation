@@ -11,6 +11,7 @@
     <!-- build:css styles/vendor.css -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- endbuild -->
     <!-- build:css styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
@@ -68,10 +69,10 @@
 
       <div id="intro">
         <p>
-          A college degree can improve a person’s job prospects, wages, and quality of life, but not everyone has equal access to higher education.
+          A college degree can improve a person’s <a href="https://opportunityinsights.org/paper/undermatching/">job prospects, wages, and quality of life</a>, but not everyone has equal access to higher education.
         </p>
         <p>
-          College enrollment gaps between racial and ethnic groups persist, driven by <a href="https://next50.urban.org/question/structural-racism">structural racism</a>, other systemic barriers, and policies and practices that often aren’t designed to help underrepresented students access high-quality postsecondary education opportunities. These gaps can <a href="https://www.nber.org/papers/w23618">perpetuate earnings and wealth disparities</a> between racial and ethnic groups.
+          College <a href="https://www.equityinhighered.org/">enrollment gaps</a> between racial and ethnic groups persist, driven by <a href="https://next50.urban.org/question/structural-racism">systemic barriers</a>&#8212;like the <a href="https://www.urban.org/research/publication/bold-equitable-policy-solutions-are-needed-close-racial-and-gender-wealth-gaps">racial wealth gap</a>, <a href="https://www.americanprogress.org/issues/race/news/2019/11/04/476789/early-decision-harms-students-color-low-income-students/">inequitable admissions practices</a>, <a href="https://apps.urban.org/features/school-funding-do-poor-kids-get-fair-share/">underinvestment in K–12 education</a>, and <a href="https://www.nber.org/papers/w18586">varying student preferences</a>&#8212;as well as policies and practices that often aren’t designed to help underrepresented students access quality higherpostsecondary education opportunities. These gaps can <a href="https://www.nber.org/papers/w23618">perpetuate earnings and wealth disparities</a> between racial and ethnic groups.
         </p>
         <p>
            Most colleges can easily find a diverse group of potential students, but many schools have student bodies that don’t look like the pool of potential students they could enroll. We look at two-and four-year colleges and universities to see which racial and ethnic groups are over-and underrepresented based on the population of the school’s market. This market area varies depending on the type of school and the distance current students are willing to travel to attend that college.
@@ -88,22 +89,22 @@
       </p>
       <div class="scenario clickable" id="scenario1">
         <img src="images/icon-1.png"><br>
-        <span>White students becoming less overrepresented at highly selective public colleges </span>
+        <span>White students becoming less overrepresented at highly selective public colleges</span>
       </div>
       <div class="scenario clickable" id="scenario2">
         <img src="images/icon-2.png"><br>
-        <span>Hispanic representation rising in most college sectors in California</span>
+        <span>Hispanic representation is rising in most college sectors in California</span>
       </div>
       <div class="scenario clickable" id="scenario3">
         <img src="images/icon-3.png"><br>
-        <span>Black representation plummets at Wayne State University</span>
+        <span>Black representation is falling at Wayne State University</span>
       </div>
       <div class="clear"></div>
     </div>
 
 
     <div id="geography-selection">
-        <p class="be-choosy">Choose your display:</p>
+        <p class="be-choosy">What data do you want to explore?</p>
         <div class="geography-choices selected " data-cat="national">
           <!-- <input type="radio" class="geography-choices " data-cat="national" checked="checked"/> -->
           <span>National</span>
@@ -126,16 +127,43 @@
 
       <div id="school-selection">
         <p>College</p>
-        <input type="" name="" id="school-lookup" class="ui-autocomplete-input" autocomplete="off" value=""><br>
-        <!-- <p id="school-description">Sector: <span>4-year, selective public</span></p> -->
+        <input type="" name="" id="school-lookup" class="ui-autocomplete-input" autocomplete="off" value="Start typing..."><br>
+        <p id="school-description" class="explainer">Sector: <span>4-year, selective public</span></p>
         <label class="check-switch" for="switch_1">
           School comparison
           <input id="school-comparison" type="checkbox">
           <span aria-hidden="true"></span>
         </label>
+        <p id="comparison-def" class="explainer ">See data for all colleges in this sector in <span>Alabama</span></p>
         <div id="comparison-menu"></div>
       </div>
 
+
+      <div id="time-selection">
+      <p class="be-choosy">Choose a view</p>
+        <div class="time-selector bar main-choice selected " value="single-year-bar">
+          <img src="images/barIcon.png">
+          <span> Single year</span>
+          <div id="year-selector">
+            <div id="year-input"></div>
+          </div>
+        </div>
+
+
+        <div class="time-selector main-choice line " value="race-ethnicities-as-lines">
+          <img src="images/lineIcon.png">
+          <span>Trends over time</span>
+        </div>
+
+
+        <div class="time-selector line sub-choice " value="race-ethnicities-as-lines">
+          <span>by sector</span>
+        </div>
+
+        <div class="time-selector line sub-choice" value="sectors-as-lines">
+          <span>by race</span>
+        </div>
+      </div>
 
 
       <form action="#">
@@ -157,7 +185,7 @@
     <div id="chart-area-container">
       <div id="chart-frame">
         <div id="single-year-container" class="chart-div">
-          <h4 class="chart-title">Average Representation at US Colleges in <span>2017</span></h4>
+          <h4 class="chart-title">Average Representation at <span>US</span> Colleges in <span>2017</span></h4>
           <div class="legend"></div>
         </div>
         <div id="multi-year-by-race-container" class="chart-div">
@@ -193,13 +221,16 @@
           To figure out the potential pool of students in a college’s market, we first tracked the commuting distance that enrolled students traveled. We observed the distribution of commuting distance by students that attend each type of institution using the National Postsecondary Student Aid Study for 2015–16. These data summarize the distance from home that students are typically willing to travel to attend a college. We defined a college’s market radius using the 75th percentile of the distribution of commuting distance for each college leveland urbanicity type.
         </p>
         <p>
-          We then used data from the US Census Bureau’s American Community Survey five-year estimates at the census tract level to determine the demographics of people living within a college’s market. We used the population of 18-to-24-year-olds for potential four-year college students, and we used the population of 18-to-54-year-olds for potential two-year community college students. These age groups vary by institution level because nontraditional students are more likely to enroll in two-year colleges.
+          We then used data from the US Census Bureau’s American Community Survey five-year estimates at the census tract level to determine the demographics of people living within a college’s market. We used the population of 18-to-24-year-olds for potential four-year college students, and we used the population of 18-to-54-year-olds for potential two-year community college students. These age groups vary by institution level because nontraditional students are <a href="https://nces.ed.gov/pubsearch/pubsinfo.asp?pubid=2015025">more likely to enroll</a> in two-year colleges.
         </p>
         <p>
-          Our college representation measure is defined as the difference in a racial or ethnic group’s enrollment share at a college and its share of the college’s market population. If this difference is zero,the college’s enrollment share for a given group perfectly represents that group’s share of the population in the college’s market. If the measure is positive, a group is overrepresented in its enrollment share at the college. If the measure is negative, that group is underrepresented at the college.
+          Our college representation measure is defined as the difference in a racial or ethnic group’s enrollment share at a college and its share of the college’s market population. If this difference is zero, the college’s enrollment share for a given group perfectly represents that group’s share of the population in the college’s market. If the measure is positive, a group is overrepresented in its enrollment share at the college. If the measure is negative, that group is underrepresented at the college.
         </p>
         <p>
           Our national averages measure the average representativeness of colleges in the nation and are weighted by total college enrollment. Our state average estimates use a similar logic.
+        </p>
+        <p>
+          We use the Carnegie classifications of institutional selectivity, which categorizeuniversities into three groups: “nonselective”,“selective”, and “more selective”.
         </p>
         <p>
           Our dataset does not include private nonprofit two-year colleges, colleges that focus on distance education, colleges whose enrollment drops below 30 students during the study period, and colleges that appear less than five years in the IPEDS data study period. We also exclude the race or ethnicity group “other” because of concerns about interpretation and because our data sources may define this group differently.
@@ -246,6 +277,7 @@
     <script src="node_modules/jquery-ui-dist/jquery-ui.js"></script>
     <script src="node_modules/d3-simple-slider/dist/d3-simple-slider.js"></script>
     <script src="node_modules/d3/dist/d3.js"></script>
+    <script src="scripts/switch-checkbox.js"></script>
     <script src="scripts/halpurs.js"></script>
     <script src="scripts/graphic.js"></script>
     <script src="scripts/main.js"></script>

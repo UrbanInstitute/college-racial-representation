@@ -226,6 +226,11 @@ path.domain {
   display: none;
 }
 
+path.highlight-school {
+  stroke: $cyan-5;
+  stroke-width: 4;
+}
+
 h4.chart-title {
   color: $gray-8;
   font-size: 24px;
@@ -316,6 +321,11 @@ g.grid > g.tick > line {
 
 }
 
+#school-lookup {
+  margin-bottom: 10px;
+  width: 100%;
+}
+
 .zero-line {
   display: none;
   stroke: $gray-6;
@@ -391,7 +401,7 @@ li.key-item {
   font-size: 18px;
   font-weight: 700;
   margin-top: $spacing-unit * 0.5;
-
+  // text-transform: uppercase;
 }
 
 p.button-title {
@@ -405,6 +415,10 @@ p.program-length-hed {
   margin-bottom: 0;
 }
 
+p.program-length-hed.two-year {
+  margin-top: 25px;
+}
+
 p.program-type {
   font-weight: 700;
   margin-top: 14px;
@@ -413,15 +427,39 @@ p.program-type {
 
 .c-cb, .radioTK, .race-ethnicity-radios {
   margin-left: 20px;
+  margin-top: 6px;
 }
 
 .race-ethnicity-radios > label > span, .radioTK > label {
   padding-left: 0.25rem;
 }
 
+.inactive {
+  color: $gray-6;
+}
+
+label.inactive:before {
+  border-color: $gray-4;
+  box-shadow: 0 0 0 1px $gray-4;
+}
+
 #school-selection {
   display: none;
 }
+
+label.check-switch {
+  margin-bottom: 0;
+  padding-left: 0px;
+  text-transform: uppercase;
+}
+
+.explainer {
+  color: $gray-6;
+  font-size: 16px;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
 
 #second-dynamic-menu > label, #first-dynamic-menu > label {
   display: block;
@@ -458,16 +496,12 @@ p.program-type {
   display: inline-block;
   font-size: 14px;
   text-transform: uppercase;
-}
-
-.time-selector {
-  // padding: 21px 10px;
     img {
-      padding-right: 10px;
-    }
+    padding-right: 10px;
+  }
 }
 
-.time-selector.selected {
+.time-selector.selected > span {
   color: $cyan-6;
   font-weight: 700;
 }
@@ -476,7 +510,8 @@ p.program-type {
   display: block;
   font-size: 18px;
 }
-.sub-choice {
+
+.time-selector.sub-choice {
   border: 1px solid $cyan-3;
   border-radius: 1px;
   display: inline-block;
@@ -489,6 +524,11 @@ p.program-type {
   text-transform: lowercase;
   width: 80px;
 }
+
+.time-selector.sub-choice.selected > span {
+  color: #ffffff;
+}
+
 
 .sub-choices {
   margin-left: 30px;

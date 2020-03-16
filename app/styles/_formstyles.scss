@@ -29,7 +29,7 @@
  */
 .c-cb > label {
 	display: inline-block;
-	padding: .25em .5em;
+	padding: 9px 0 0 12px;
 	margin-bottom: 0;
 	vertical-align: top;
 }
@@ -67,8 +67,7 @@
  * Styles for the custom box boundary.
  */
 .c-cb > label:before {
-	border-color: #565656;
-	border-radius: 2px;
+	border-color: $cyan-6;
 	box-shadow: 0 0 0 1px #565656;
 	height: 1.125em;
 	left: .125em;
@@ -81,8 +80,8 @@
  */
 .c-cb > label:after {
 	border: 0;
-	border-bottom: 4px solid #565656;
-	border-right: 4px solid #565656;
+	border-bottom: 2px solid $cyan-6;
+	border-right: 2px solid $cyan-6;
 	height: .825em;
 	left: .425em;
 	top: .825em;
@@ -97,7 +96,7 @@
  */
 .c-cb > input:checked ~ label:before {
 	border-color: transparent;
-	box-shadow: 0 0 0 2px #0d5192;
+	box-shadow: 0 0 0 2px $cyan-6;
 }
 
 .c-cb > input:focus ~ label:before {
@@ -228,6 +227,90 @@
     box-shadow: none;
   }
 }
+
+// /* containing label */
+// .check-switch {
+// 	// border: 1px solid #565656;
+// 	display: block;
+// 	overflow: hidden;
+// 	padding: .5em;
+// 	position: relative;
+// }
+
+// .check-switch:hover {
+// 	box-shadow: 0 0 2px 1px #2196f3;
+// }
+
+// /* using the before/after pseudo elements of the span to create the "switch" */
+// .check-switch span:before,
+// .check-switch span:after {
+// 	border: 1px solid #565656;
+// 	content: "";
+// 	position: absolute;
+// 	top: 50%;
+// 	transform: translateY(-50%);
+// }
+
+// /* styling specific to the knob of the switch */
+// .check-switch span:after {
+// 	background: #fff;
+// 	border-radius: 100%;
+// 	height: 1.5em;
+// 	right: 1.5em;
+// 	transition: right .1825s ease-in-out;
+// 	width: 1.5em;
+// }
+
+// /* styling specific to the knob "container" */
+// .check-switch span:before {
+// 	background: #eee;
+// 	border-radius: 1.75em;
+// 	height: 1.75em;
+// 	right: .25em;
+// 	transition: background .2s ease-in-out;
+// 	width: 2.75em;
+// }
+
+//  // hide the actual checkbox from view, but not from keyboards or ATs.
+//  //   Instead of standard visually hidden styling, instead set opacity to
+//  //   almost 0 (not zero for ChomeVox legacy bug), pointer-events none, and
+//  //   then set to full height/width of container element so that VO focus
+//  //   ring outlines the component, instead of a tiny box within the component
+
+// .check-switch input {
+// 	height: 100%;
+// 	left: 0;
+// 	opacity: .0001;
+// 	position: absolute;
+// 	top: 0;
+// 	width: 100%;
+// }
+
+// .check-switch input:not([role="button"]) {
+// 	pointer-events: none;
+// }
+
+// .check-switch input:focus + span:before {
+// 	outline: 2px solid;
+// }
+
+// /* change the position of the knob to indicate it has been checked*/
+// .check-switch input:checked + span:after {
+// 	right: .25em;
+// }
+
+// /* update the color of the "container" to further visually indicate state */
+// .check-switch input:checked + span:before {
+// 	background: #2196f3;
+// }
+
+// /* 'color in' the switch knob in high contrast mode by giving it
+//    a large border */
+// @media screen and (-ms-high-contrast: active) {
+// 	.check-switch span:after {
+// 		background-color: windowText;
+// 	}
+// }
 
 
 
