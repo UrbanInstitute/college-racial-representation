@@ -20,7 +20,7 @@ var higherEdSelections = {};
 	higherEdSelections.year = '2017',
 	higherEdSelections.programLength = 'four',  //two, four
 	higherEdSelections.singleRace = 'dif_hispa',
-	higherEdSelections.singleSector = 'Public Non-Selective',
+	higherEdSelections.singleSector = 'Public Nonselective',
 	higherEdSelections.state = 'Alabama',
   higherEdSelections.selectedSchool = 'Alabama A & M University',
 	higherEdSelections.arrayRaces = [],
@@ -40,7 +40,7 @@ var chartDivWidth = $('#chart-area-container').innerWidth(),
 var margin = {top: 10, right: 10, bottom: 30, left: 40},
     barMargin = {top: 10, right: 10, bottom: 30, left: 0},
     width = 600 - margin.left - margin.right,
-    height = 1300 - margin.top - margin.bottom;
+    height = 700 - margin.top - margin.bottom;
 
 //the chart selections & their G's
 
@@ -97,10 +97,10 @@ var parseTime = d3.timeParse('%Y'),
 var translate = {
 	 'for-profit': 'For-Profit',
 	 'private-highly-selective': 'Private More Selective',
-	 'private-nonselective': 'Private Non-Selective',
+	 'private-nonselective': 'Private Nonselective',
 	 'private-selective': 'Private Selective',
 	 'public-highly-selective': 'Public More Selective',
-	 'public-nonselective': 'Public Non-Selective',
+	 'public-nonselective': 'Public Nonselective',
 	 'public-selective': 'Public Selective'
 }
 
@@ -197,7 +197,7 @@ function drawBarChart(data){
 	var color = d3.scaleOrdinal()
 	    .range(colorArray);
 
-  var barChartHeight = 1200;
+  var barChartHeight = height;
   singleYearSVG.attr('height', barChartHeight + barMargin.top + barMargin.bottom)
   var numSectors = 7,
   heightOfOneSector = barChartHeight / numSectors,
@@ -217,16 +217,17 @@ function drawBarChart(data){
 	    .rangeRound([y0.bandwidth(), 0])
 	    .padding(0.2)
 
-	var min = 0, max = 0;
-	for (var i = 0; i < data.length; i++){
-		for (var j = 0; j < higherEdSelections.arrayRaces.length; j++){
-			if ( +data[i][higherEdSelections.arrayRaces[j]] < min ){
-				min = +data[i][higherEdSelections.arrayRaces[j]]
-			} else if ( +data[i][higherEdSelections.arrayRaces[j]] > max ){
-				max = +data[i][higherEdSelections.arrayRaces[j]]
-			}
-		}
-	}
+  // I am not sure the scale should update, makes it harder to compare
+	// var min = 0, max = 0;
+	// for (var i = 0; i < data.length; i++){
+	// 	for (var j = 0; j < higherEdSelections.arrayRaces.length; j++){
+	// 		if ( +data[i][higherEdSelections.arrayRaces[j]] < min ){
+	// 			min = +data[i][higherEdSelections.arrayRaces[j]]
+	// 		} else if ( +data[i][higherEdSelections.arrayRaces[j]] > max ){
+	// 			max = +data[i][higherEdSelections.arrayRaces[j]]
+	// 		}
+	// 	}
+	// }
 
 	//regular scale for bar length
     var x = d3.scaleLinear()
@@ -237,8 +238,8 @@ function drawBarChart(data){
 		.data(data, function(d){ return d[SECTOR_KEY] })
 		.join('g')
 		  .attr('transform', function(d){ return 'translate(0,' + y0(d[SECTOR_KEY]) + ')' } )
-		  .attr('class', function(d){ if (d[SECTOR_KEY] === 'Public Non-Selective') { return 'Public Nonselective'}
-		  	else if (d[SECTOR_KEY] === 'Private Non-Selective'){ return 'Private Nonselective'} else {
+		  .attr('class', function(d){ if (d[SECTOR_KEY] === 'Public Nonselective') { return 'Public Nonselective'}
+		  	else if (d[SECTOR_KEY] === 'Private Nonselective'){ return 'Private Nonselective'} else {
 		  		return d[SECTOR_KEY]
 		  	} })
 		  .classed('sector', true)
@@ -272,7 +273,6 @@ function drawBarChart(data){
 	var lilG = barG.enter().append('g')
 		.attr('transform', function(d){ return 'translate(0,' + y1(d.key) + ')' } )
 
-
   var rects = lilG.append('rect')
     .attr('y', 0 )
     .attr('x', function(d){ return +d.value > 0 ? x(0) : x(d.value) })
@@ -295,8 +295,6 @@ function drawBarChart(data){
     .text(function(d){ return formatTwoDecimals(d.value) + '%' })
     .attr('x', function(d){ return  +d.value > 0 ? x(d.value) + 3 : x(d.value - 5 )})
     .attr('y', 10)
-
-
 
 	var keys = barLegend.selectAll('li')
 		.data(higherEdSelections.arrayRaces)
@@ -446,8 +444,6 @@ function buildOptionPanel(chartType){
 			sectorOptions.push(d[SECTOR_KEY])
 		})
 
-
-
 	//radio button one always goes up top
 	d3.select('#first-dynamic-menu').text('')
 	d3.select('#second-dynamic-menu').text('')
@@ -513,10 +509,10 @@ function buildOptionPanel(chartType){
 		var translateBack = {
 			 'For-Profit': 'for-profit',
 			 'Private More Selective': 'private-highly-selective',
-			 'Private Non-Selective': 'private-nonselective',
+			 'Private Nonselective': 'private-nonselective',
 			 'Private Selective': 'private-selective',
 			 'Public More Selective': 'public-highly-selective',
-			 'Public Non-Selective': 'public-nonselective',
+			 'Public Nonselective': 'public-nonselective',
 			 'Public Selective': 'public-selective'
 		}
 
@@ -915,9 +911,9 @@ function initializeStaticControls(){
 
 	//if view is 'state' add state dropdown menu
 	//if view is 'school' add look up box for school name
-	d3.selectAll('.time-selector.main-choice').on('click', function(){
+	d3.select('#time-selection').on('change', function(){
 		d3.event.stopPropagation();
-		var chart = this.getAttribute('value') //single-year-bar, sectors-as-lines, race-ethnicities-as-lines
+		var chart = this.value //single-year-bar, sectors-as-lines, race-ethnicities-as-lines
 
 		higherEdSelections.chartType = chart;
 		d3.selectAll('.main-choice').classed('selected', false);
@@ -1017,7 +1013,7 @@ function makeDemogNest(sector, isSchoolData){
 
 function prepareData(){
 	NESTED_BY_SECTOR = makeSectorNest();
-	NESTED_BY_RACE = makeDemogNest('Public Non-Selective');
+	NESTED_BY_RACE = makeDemogNest('Public Nonselective');
 
 	higherEdSelections.arraySectors = NESTED_BY_SECTOR.map(function(d){ return d.key })
 	higherEdSelections.arrayRaces = higherEdData.allData[SELECTED_DATASET].columns.slice(2)
