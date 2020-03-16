@@ -550,7 +550,7 @@ function buildOptionPanel(chartType){
 
 			d3.selectAll('.two-year').classed('inactive', false);
 			d3.selectAll('.four-year, .program-type').classed('inactive', true);
-
+    //staying within 2 year
 		} else if (checkbox.classed('two-year') && higherEdSelections.programLength === 'two'){
 			//remove or add userchoice from the array
 			if (checkboxChecked){
@@ -560,7 +560,7 @@ function buildOptionPanel(chartType){
 			} else {
 				higherEdSelections.arraySectors.push(twoYearTranslate[userChoice])
 			}
-
+    // switch from 2 to 4
 		} else if (checkbox.classed('four-year') && higherEdSelections.programLength === 'two'){
 			SECTOR_KEY = 'fourcat'
 			higherEdSelections.programLength = 'four'
@@ -571,7 +571,7 @@ function buildOptionPanel(chartType){
 
 			d3.selectAll('.two-year').classed('inactive', true);
 			d3.selectAll('.four-year, .program-type').classed('inactive', false);
-
+    // staying within 4
 		} else if (checkbox.classed('four-year') && higherEdSelections.programLength === 'four'){
 			if (checkboxChecked){
 				higherEdSelections.arraySectors = higherEdSelections.arraySectors.filter(function(d){
@@ -585,7 +585,12 @@ function buildOptionPanel(chartType){
 		checkbox.classed('checked', !checkbox.classed('checked'));
 
 		if (checkboxChecked && higherEdSelections.arraySectors.length < 1){
-			alert('Please pick at least one sector')
+			//alert('Please pick at least one sector')
+      var choiceString = higherEdSelections.programLength === 'four' ? translate[userChoice] : twoYearTranslate[userChoice]
+      higherEdSelections.arraySectors.push(choiceString)
+      //TODO - why this not worky
+      d3.select('.sector-boxes > div > input[value=' + userChoice + ']').property('checked', true)
+
 		} else {
 
 			NESTED_BY_SECTOR = makeSectorNest();
@@ -634,7 +639,7 @@ function buildOptionPanel(chartType){
 		drawBarChart(FILTERED_BY_YEAR)
 		console.log(higherEdSelections.arrayRaces.length)
 		if (higherEdSelections.arrayRaces.length < 1){
-			alert('Please pick one or more races')
+			alert('Please pick one or more races or ethnicities')
 		} else {
 			//take lines off
 			NESTED_BY_RACE = makeDemogNest(higherEdSelections.singleSector);
@@ -829,6 +834,9 @@ function initializeStaticControls(){
 			d3.select('#time-selection').style('display', 'block');
 			d3.select('#school-selection').style('display', 'none');
 
+      d3.select('#first-dynamic-menu').style('display', 'block')
+      d3.select('#second-dynamic-menu').style('display', 'block')
+
 			var states = higherEdData.allData.statefour.map(function(d){return d.fips_ipeds});
 
 			var menuData = states.filter(distinct);
@@ -851,9 +859,13 @@ function initializeStaticControls(){
 			d3.select('#school-selection').style('display', 'none')
 			d3.select('#single-year-container > h4 > span:nth-child(1)').text('US');
 
+      d3.select('#first-dynamic-menu').style('display', 'block')
+      d3.select('#second-dynamic-menu').style('display', 'block')
+
 			if (higherEdSelections.chartType === 'one-school-all-races' || higherEdSelections.chartType === 'multiple-schools'){
 				showChart('single-year-bar')
 			}
+      higherEdSelections.chartType = 'single-year-bar'
 		} else if ( userChoice === 'school' ){
 			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength;
 			higherEdSelections.chartType = 'one-school-all-races'
@@ -885,8 +897,8 @@ function initializeStaticControls(){
 			        return text
 			}
 
-			d3.select('#first-dynamic-menu').text('')
-			d3.select('#second-dynamic-menu').text('')
+			d3.select('#first-dynamic-menu').style('display', 'none')
+			d3.select('#second-dynamic-menu').style('display', 'none')
 
 			d3.select('#comparison-menu').selectAll('div.race-ethnicity-checkboxes')
 				.data(raceOptions)
@@ -933,11 +945,9 @@ function initializeStaticControls(){
 
 	d3.selectAll('.time-selector').on('click', function(){
 		d3.event.stopPropagation();
-		var chart = this.value //single-year-bar, sectors-as-lines, race-ethnicities-as-lines
+		var chart = this.getAttribute('value') //single-year-bar, sectors-as-lines, race-ethnicities-as-lines
 
 		higherEdSelections.chartType = chart;
-
-
 
 		d3.selectAll('.time-selector').classed('selected', false);
 		d3.select(this).classed('selected', true);
