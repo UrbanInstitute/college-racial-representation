@@ -231,6 +231,10 @@ path.highlight-school {
   stroke-width: 4;
 }
 
+path.other-school {
+  stroke: $gray-5;
+}
+
 h4.chart-title {
   color: $gray-8;
   font-size: 24px;
@@ -449,7 +453,7 @@ label.inactive:before {
 }
 
 #school-selection {
-  display: none; 
+  display: none;
 }
 
 label.check-switch {
