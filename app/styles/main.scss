@@ -322,7 +322,8 @@ g.grid > g.tick > line {
 }
 
 #school-lookup {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  margin-top: 10px;
   width: 100%;
 }
 
@@ -359,7 +360,7 @@ li.key-item {
   margin-bottom: 10px;
 }
 
-#time-selection > .be-choosy {
+h4.selection-label {
   font-size: 18px;
 }
 
@@ -448,7 +449,7 @@ label.inactive:before {
 }
 
 #school-selection {
-  display: none;
+  display: none; 
 }
 
 label.check-switch {
@@ -461,7 +462,8 @@ label.check-switch {
   color: $gray-6;
   font-size: 16px;
   font-style: italic;
-  margin-bottom: 10px;
+  line-height: 1.1;
+  margin-bottom: 20px;
 }
 
 

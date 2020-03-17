@@ -32,7 +32,8 @@ var SECTOR_KEY = 'fourcat',
 	NESTED_BY_RACE,
 	FILTERED_BY_YEAR,
 	STATE_DATA,
-  	SCHOOL_NAMES;
+  	SCHOOL_NAMES,
+  	RACE_OPTIONS;
 
 var chartDivWidth = $('#chart-area-container').innerWidth(),
 	aspectRatio
@@ -436,8 +437,8 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 
 function buildOptionPanel(chartType){
 
-	var raceOptions = higherEdData.allData.nationalfour.columns.slice(2),
-		sectorOptions = []
+	// var raceOptions = higherEdData.allData.nationalfour.columns.slice(2),
+		var sectorOptions = []
 
 		higherEdData.allData[SELECTED_DATASET].filter(function(d){
 			return d.year === '2015'
@@ -458,7 +459,7 @@ function buildOptionPanel(chartType){
 
 		d3.select('#second-dynamic-menu').append('p').attr('class', 'options-panel-section').text('Race/Ethnicity')
 		d3.select('#second-dynamic-menu').selectAll('div.race-ethnicity-checkboxes')
-			.data(raceOptions)
+			.data(RACE_OPTIONS)
 			.enter()
 			.append('div')
 			.classed('race-ethnicity-checkboxes', true)
@@ -478,7 +479,7 @@ function buildOptionPanel(chartType){
     // d3.select('.blank-box.year').style('display', 'block');
 		d3.select('#first-dynamic-menu').append('p').attr('class', 'options-panel-section').text('Race/Ethnicity')
 		d3.select('#first-dynamic-menu').selectAll('div.race-ethnicity-radios')
-			.data(raceOptions)
+			.data(RACE_OPTIONS)
 			.enter()
 			.append('div')
 			.classed('race-ethnicity-radios', true)
@@ -501,7 +502,7 @@ function buildOptionPanel(chartType){
 
 		d3.select('#second-dynamic-menu').append('p').attr('class', 'options-panel-section').text('Race/Ethnicity')
 		d3.select('#second-dynamic-menu').selectAll('div.race-ethnicity-checkboxes')
-			.data(raceOptions)
+			.data(RACE_OPTIONS)
 			.enter()
 			.append('div')
 			.classed('race-ethnicity-checkboxes', true)
@@ -618,7 +619,7 @@ function buildOptionPanel(chartType){
 	d3.selectAll('.race-ethnicity-checkboxes').on('click', function(){
 		var checkbox = d3.select(this)
 		var userChoice = checkbox.datum()
-
+debugger
 		if (checkbox.classed('checked')){
 			higherEdSelections.arrayRaces = higherEdSelections.arrayRaces.filter(function(d){
 				return d !== userChoice
@@ -660,7 +661,7 @@ function buildOptionPanel(chartType){
 }
 
 d3.select('#school-comparison').on('click', function(d){
-	var raceOptions = higherEdData.allData.nationalfour.columns.slice(2)
+	// var raceOptions = higherEdData.allData.nationalfour.columns.slice(2)
 	var div = d3.select('#one-school-all-races')
 
 	function radioButtonTemplater(option){
@@ -677,8 +678,9 @@ d3.select('#school-comparison').on('click', function(d){
   		callComparisonChart();
   		d3.select('#comparison-menu').html('')
 
+  		d3.select('#comparison-menu').html('<p class="options-panel-section">Race/Ethnicity</p>')
 		d3.select('#comparison-menu').selectAll('div.race-ethnicity-radios')
-			.data(raceOptions)
+			.data(RACE_OPTIONS)
 			.enter()
 			.append('div')
 			.classed('race-ethnicity-radios', true)
@@ -707,6 +709,14 @@ function callComparisonChart(){
 
 	d3.select('#one-school-all-races > h4 > span').text(higherEdSelections.state + ' ' + higherEdSelections.singleSector + 's ');
 	drawLineChart(nestedBySchool, 'comparison', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
+}
+
+
+function callSchoolChart(){
+  var schoolDataByRace = makeDemogNest(higherEdSelections.selectedSchool, true);
+  d3.select('#one-school-all-races > h4 > span').text(higherEdSelections.selectedSchool);
+  //schoolDataByRace = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
+  drawLineChart(schoolDataByRace, 'sector', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
 }
 
 function makeDropdown(data){
@@ -834,8 +844,8 @@ function initializeStaticControls(){
 			d3.select('#time-selection').style('display', 'block');
 			d3.select('#school-selection').style('display', 'none');
 
-      d3.select('#first-dynamic-menu').style('display', 'block')
-      d3.select('#second-dynamic-menu').style('display', 'block')
+	        d3.select('#first-dynamic-menu').style('display', 'block')
+	        d3.select('#second-dynamic-menu').style('display', 'block')
 
 			var states = higherEdData.allData.statefour.map(function(d){return d.fips_ipeds});
 
@@ -859,13 +869,13 @@ function initializeStaticControls(){
 			d3.select('#school-selection').style('display', 'none')
 			d3.select('#single-year-container > h4 > span:nth-child(1)').text('US');
 
-      d3.select('#first-dynamic-menu').style('display', 'block')
-      d3.select('#second-dynamic-menu').style('display', 'block')
+	        d3.select('#first-dynamic-menu').style('display', 'block')
+	        d3.select('#second-dynamic-menu').style('display', 'block')
 
 			if (higherEdSelections.chartType === 'one-school-all-races' || higherEdSelections.chartType === 'multiple-schools'){
 				showChart('single-year-bar')
 			}
-      higherEdSelections.chartType = 'single-year-bar'
+      		higherEdSelections.chartType = 'single-year-bar'
 		} else if ( userChoice === 'school' ){
 			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength;
 			higherEdSelections.chartType = 'one-school-all-races'
@@ -890,29 +900,18 @@ function initializeStaticControls(){
 	      	d3.select('#dropdown').style('display', 'none');
 	      	d3.select('#school-selection').style('display', 'block');
 
-			var raceOptions = higherEdData.allData.nationalfour.columns.slice(2)
-			function checkboxTemplater(option){
-			    var text =
-			    '<div class="c-cb"><input type="checkbox" class=" " name="sch-comparison-race" value="' + option + '" checked/><label for="' + option + '">' + translateRace[option] + '</label></div>'
-			        return text
-			}
-
 			d3.select('#first-dynamic-menu').style('display', 'none')
 			d3.select('#second-dynamic-menu').style('display', 'none')
 
+			//school chart gets checkboxes for race, comparison chart gets radio for sectors
+
 			d3.select('#comparison-menu').selectAll('div.race-ethnicity-checkboxes')
-				.data(raceOptions)
+				.data(RACE_OPTIONS)
 				.enter()
 				.append('div')
 				.classed('race-ethnicity-checkboxes', true)
 				.classed('checked', true)
 				.html(function(d){ return checkboxTemplater(d) })
-
-
-			//show switch offering 'school comparison'
-			// --> changes the race menu from boxes to radios
-			// --> changes the lines on the chart from one per race to being individ schools for one race at a time
-
 
 			showChart(higherEdSelections.chartType);
 
@@ -1012,17 +1011,11 @@ function makeSectorNest(){
 	return nest;
 }
 
-function callSchoolChart(){
-  var schoolDataByRace = makeDemogNest(higherEdSelections.selectedSchool, true);
-  d3.select('#one-school-all-races > h4 > span').text(higherEdSelections.selectedSchool);
-  //schoolDataByRace = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
-  drawLineChart(schoolDataByRace, 'sector', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
-}
 
 function makeDemogNest(sector, isSchoolData){
-	var raceOptions = higherEdData.allData.nationalfour.columns.slice(2),
-	nestedByDemog = [],
-	filtered;
+	
+	var nestedByDemog = [],
+		filtered;
 
 	if (isSchoolData){
 		filtered = higherEdData.allData[SELECTED_DATASET].filter(function(d){
@@ -1036,12 +1029,12 @@ function makeDemogNest(sector, isSchoolData){
 						})
 	}
 
-	for (var i = 0; i < raceOptions.length; i++){
-		nestedByDemog.push({'key': raceOptions[i], 'values': []})
+	for (var i = 0; i < RACE_OPTIONS.length; i++){
+		nestedByDemog.push({'key': RACE_OPTIONS[i], 'values': []})
 		filtered.forEach(function(yearData){
 			var obj = {
 				'year': yearData.year,
-				'value': yearData[raceOptions[i]]
+				'value': yearData[RACE_OPTIONS[i]]
 			}
 			nestedByDemog[i].values.push(obj)
 		})
@@ -1058,9 +1051,11 @@ function prepareData(){
 }
 
 function init(){
+	RACE_OPTIONS = higherEdData.allData.nationalfour.columns.slice(2)
 	prepareData();
 	buildOptionPanel('single-year-bar');
 	initializeStaticControls();
+
 
 	//draw your default chart, bars for 2017: all races/sectors
 	FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);
