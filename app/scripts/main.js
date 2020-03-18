@@ -68,7 +68,9 @@ var chartDivWidth = $('#chart-area-container').innerWidth(),
 
 var margin = {top: 10, right: 10, bottom: 30, left: 40},
     barMargin = {top: 10, right: 10, bottom: 30, left: 0},
-    width = 600 - margin.left - margin.right,
+    // width = parseInt(d3.select("#chart-area-container").style("width")),
+    // width = width - margin.left - margin.right,
+    width = 600,
     height = 700 - margin.top - margin.bottom;
 
 //the chart selections & their G's
@@ -490,7 +492,6 @@ function drawLineChart(data, topic, svg, g, axisSelection){
   }
 
 }
-
 
 function buildOptionPanel(chartType){
 
@@ -1107,6 +1108,8 @@ function init(){
 	FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);
 	drawBarChart(FILTERED_BY_YEAR);
 
+  // var OPTIONS_PANEL_TOTAL_WIDTH = parseInt(d3.select("#options-panel").style("width")) +
+  //   parseInt(d3.select("#options-panel").style("margin-right"))
 
 }
 
