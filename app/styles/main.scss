@@ -356,7 +356,6 @@ li.key-item {
 }
 
 
-
 // menu styling
 .be-choosy {
   font-size: 30px;
@@ -434,17 +433,18 @@ p.program-type {
   margin-bottom: 0;
 }
 
-.c-cb, .radioTK, .race-ethnicity-radios {
-  margin-left: 20px;
+.c-cb, .n-radio, .race-ethnicity-radios {
+  margin-left: 10px;
   margin-top: 6px;
 }
 
-.race-ethnicity-radios > label > span, .radioTK > label {
-  padding-left: 0.25rem;
-}
 
 .inactive {
   color: $gray-6;
+}
+
+label {
+  margin-bottom: 0;
 }
 
 label.inactive:before {
@@ -475,6 +475,12 @@ label.check-switch {
   display: block;
   margin-bottom: 0.25rem;
 }
+
+#second-dynamic-menu > div > div > label > span, #first-dynamic-menu > div > div > label > span, 
+#comparison-menu > div > div > label > span, #first-dynamic-menu > div > label > span {
+  padding-left: 5px;
+}
+
 
 .blank-box {
   background-color: rgba(255,255,255,0.5);

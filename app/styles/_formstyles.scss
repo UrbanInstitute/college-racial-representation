@@ -173,7 +173,7 @@
 
 .n-radio-label {
   display: inline-block;
-  padding: .5em 0;
+  padding: .35em 0;
 }
 
 .n-radio {
@@ -226,6 +226,63 @@
     border: 6px solid;
     box-shadow: none;
   }
+}
+
+.n-radio-label {
+	display: inline-block;
+	padding: .35em 0;
+}
+
+.n-radio {
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	appearance: none; /* in case this ever gets supported */
+	background: #fff;
+	border-radius: 100%;
+	border: 1px solid transparent;
+	box-shadow:
+		0 0 0 2px rgba(18, 113, 158, 1),
+		inset 0 0 0 0px rgba(18, 113, 158, 0);
+	display: inline-block;
+	height: 1em;
+	margin-right: .25em;
+	transition:
+		border-color .2s ease-in-out,
+		box-shadow .2s ease-in-out;
+	vertical-align: text-bottom;
+	width: 1em;
+}
+
+.n-radio:focus {
+	border-color: transparent;
+	box-shadow:
+		0 0 0 2px rgba(18, 113, 158, 1),
+		inset 0 0 0 0px rgba(18, 113, 158, 1);
+}
+
+.n-radio:checked {
+	border-color: #fff;
+	box-shadow:
+		0 0 0 2px rgba(18, 113, 158, 1),
+		inset 0 0 0 6px rgba(18, 113, 158, 1);
+}
+
+.n-radio:checked:focus {
+	box-shadow:
+		0 0 0 3px rgba(18, 113, 158, 1),
+		inset 0 0 0 3px rgba(18, 113, 158, 1);
+}
+
+.n-radio[disabled],
+.n-radio[disabled] + span {
+	opacity: .4;
+}
+
+@media screen and (-ms-high-contrast: active) {
+	.n-radio:checked {
+		border: 6px solid;
+		box-shadow: none;
+	}
 }
 
 // /* containing label */

@@ -15,15 +15,18 @@
 //axis labels repeat a billion times and layer up
 //in state view, clicking a 2 year college causes some error
 // --> I think this is bc two-year colleges aren't actually loaded?
+//data needs to be changed out
 
 //FEATURES
+//make chart responsive
 //mouseover on legend highlights the corresponding line
 //mouseover on comparison chart shows the name of the school in teh right margin
 //clicking data highlights should do something
+//add downloadable chart image
+//make the URL update
 
 //STYLING
-//checkbox
-//radio buttons
+
 //dropdown menus
 //data hgihgliht boxes
 
@@ -162,16 +165,22 @@ var raceColorObj = {
 var distinct = function(value, index, self){ return self.indexOf(value) === index; }
 
 // radio button template:
+// <div>
+//   <label class="n-radio-label">
+//     <input type="radio" class="sector-radios n-radio " id="public-nonselective" name="sector-radios" value="public-nonselective" >
+//     <span>>Nonselective</span>
+//   </label>
+// </div>
 function radioButtonTemplater(option){
-var text =
-'<label for="' + option + '"><input type="radio" class=" " name="' + higherEdSelections.chartType + '" value="' + option + '" /><span>' + translateRace[option] + '</span></label>'
-    return text
+var html =
+'<div><label class="n-radio-label"><input type="radio" class="n-radio " name="' + higherEdSelections.chartType + '" value="' + option + '" /><span>' + translateRace[option] + '</span></label></div>'
+    return html
 }
 // checkbox template
 function checkboxTemplater(option){
-var text =
+var html =
 '<div class="c-cb"><input type="checkbox" class=" " name="' + higherEdSelections.chartType + '" value="' + option + '" checked/><label for="' + option + '">' + translateRace[option] + '</label></div>'
-    return text
+    return html
 }
 
 function widthUnder(w){
@@ -920,6 +929,7 @@ function initializeStaticControls(){
 				showChart('single-year-bar')
 			}
       		higherEdSelections.chartType = 'single-year-bar'
+      		buildOptionPanel(higherEdSelections.chartType)
 		} else if ( userChoice === 'school' ){
 			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength;
 			higherEdSelections.chartType = 'one-school-all-races'
