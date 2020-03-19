@@ -137,7 +137,7 @@ $green-8: #370B0A;
     background-image: url(../images/header.png);
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: 50% 50%;
+    background-position: top;
     margin-top: 54px;
     // height: 910px;
 }
@@ -286,7 +286,7 @@ h4.chart-title {
 #chart-frame {
     white-space: nowrap;
     display: inline-block;
-    // width: 700px;
+    margin-top: $spacing-unit;
 }
 
 .school-comparison {

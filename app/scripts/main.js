@@ -12,6 +12,7 @@
 //TODOs
 
 //BUGS
+//moving around between geographies the time selectors don't line up with the chart shown
 //axis labels repeat a billion times and layer up
 //in state view, clicking a 2 year college causes some error
 // --> I think this is bc two-year colleges aren't actually loaded?
@@ -63,61 +64,23 @@ var SECTOR_KEY = 'fourcat',
   	SCHOOL_NAMES,
   	RACE_OPTIONS;
 
-var OPTIONS_PANEL_TOTAL_WIDTH = parseInt(d3.select("#options-panel").style("width")) + parseInt(d3.select("#options-panel").style("margin-right")),
-	PAGE_CONTAINER_WIDTH = parseInt(d3.select(".page-container").style("width")),
-	CHART_HOLE = PAGE_CONTAINER_WIDTH -OPTIONS_PANEL_TOTAL_WIDTH
+var optionsPanelTotalWidth = parseInt(d3.select("#options-panel").style("width")) + parseInt(d3.select("#options-panel").style("margin-right")),
+	pageContainerWidth = parseInt(d3.select(".page-container").style("width")),
+	chartHole = pageContainerWidth - optionsPanelTotalWidth
 
-d3.selectAll(".chart-div, #chart-area-container").style("width", CHART_HOLE + 'px')
+d3.selectAll(".chart-div, #chart-area-container").style("width", chartHole + 'px')
 //svg, .chart-div, #chart-area-container all need to be same width
-
-// //responsive map, thanks Chris: http://eyeseast.github.io/visible-data/2013/08/26/responsive-d3/
-// d3.select(window).on("resize", resize);
-
-// var storedWidth = document.body.clientWidth;
-
-// function resize(){
-//   //can't rely on mobile resize events, they fire too much
-//   //https://stackoverflow.com/questions/17328742/mobile-chrome-fires-resize-event-on-scroll
-//   if (storedWidth !== document.body.clientWidth){
-//     console.log("diff")
-
-//     storedWidth = window.innerWidth;
-
-//     width = parseInt(d3.select("#map-container").style("width"));
-//     width = width - margin.left - margin.right;
-//     height = width * mapRatio;
-
-//     // update projection
-//     projection
-//         .translate([width / 2, height / 2])
-//         .scale(width);
-
-//     // resize the map container
-//     usMap
-//         .style("width", width)
-//         .style("height", height);
-
-//     // resize the map
-//     usMap.selectAll(".state").attr("d", path);
-//     usMap.selectAll(".city").attr("transform", function(d) {
-//       return "translate("+ projection([d.lon, d.lat])+")";
-//     })
-//   }
-// }
-
-
 
 var margin = {top: 10, right: 10, bottom: 30, left: 40},
     barMargin = {top: 10, right: 10, bottom: 30, left: 0},
-    // width = parseInt(d3.select("#chart-area-container").style("width")),
-    // width = width - margin.left - margin.right,
-    width = CHART_HOLE,
-    height = 700 - margin.top - margin.bottom;
+    width = chartHole - margin.left - margin.right,
+    aspectRatio = 0.9,
+    height = (chartHole * aspectRatio) - margin.top - margin.bottom;
 
-//the chart selections & their G's
+var xLine, xBar;
 
+//******The chart selections & their G's
 //bar chart
-
 var singleYearSVG = d3.select('#single-year-container').append('svg')
     .attr('width', width + barMargin.left + barMargin.right)
 
@@ -161,6 +124,66 @@ var oneSchoolLegend = d3.select('#one-school-all-races > div.legend').append('ul
 var oneSchoolYAxis = oneSchoolSVG.append('g')
   .attr('class', 'grid')
   .attr('transform', 'translate(' + margin.left + ',0)')
+
+//http://eyeseast.github.io/visible-data/2013/08/26/responsive-d3/
+d3.select(window).on("resize", resize);
+
+var storedWidth = document.body.clientWidth;
+
+function resize(){
+  //can't rely on mobile resize events, they fire too much
+  //https://stackoverflow.com/questions/17328742/mobile-chrome-fires-resize-event-on-scroll
+  if (storedWidth !== document.body.clientWidth){
+    console.log("diff")
+
+    storedWidth = window.innerWidth;
+
+    optionsPanelTotalWidth = parseInt(d3.select("#options-panel").style("width")) + parseInt(d3.select("#options-panel").style("margin-right"))
+    pageContainerWidth = parseInt(d3.select(".page-container").style("width"))
+    chartHole = pageContainerWidth - optionsPanelTotalWidth
+
+    var width = chartHole - margin.left - margin.right,
+      height = (chartHole * aspectRatio) - margin.top - margin.bottom
+
+    //resize the containers
+    d3.selectAll('#single-year-container, #by-sector-container, #by-race-container, #one-school-all-races')
+        .style('width', width + 'px')
+
+    singleYearSVG
+        .attr("width", width)
+        .attr("height", height);
+    byRaceSVG
+        .attr("width", width)
+        .attr("height", height);
+
+    bySectorSVG
+        .attr("width", width)
+        .attr("height", height);
+
+    oneSchoolSVG
+        .attr("width", width)
+        .attr("height", height);
+
+    //update the scales
+    //xLine.range()
+
+    xBar.rangeRound([barMargin.left, width - barMargin.right])
+
+    //here you would somehow resize the stuff on the chart: lines, bars, axis lines
+    d3.selectAll('rect')
+      .attr('x', function(d){ return +d.value > 0 ? xBar(0) : xBar(d.value) })
+      .attr('fill', function(d){ return raceColorObj[d.key] })
+      .attr('width', function(d){ return +d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
+
+
+
+    // resize the map
+    // usMap.selectAll(".state").attr("d", path);
+    // usMap.selectAll(".city").attr("transform", function(d) {
+    //   return "translate("+ projection([d.lon, d.lat])+")";
+    // })
+  }
+}
 
 var parseTime = d3.timeParse('%Y'),
   timeFormat = d3.timeFormat('%Y'),
@@ -249,10 +272,10 @@ function showChart(chartType){
 
 	var chartScootch = {
 		'single-year-bar': 0,
-		'by-race-chart': CHART_HOLE * -1,
-		'by-sector-chart': CHART_HOLE * -2,
-    	'one-school-all-races': CHART_HOLE * -3,
-    	'multiple-schools': CHART_HOLE * -4
+		'by-race-chart': chartHole * -1,
+		'by-sector-chart': chartHole * -2,
+    	'one-school-all-races': chartHole * -3,
+    	'multiple-schools': chartHole * -4
 	}
 	d3.select('#single-year-container').transition().style('margin-left', chartScootch[chartType] + 'px')
 }
@@ -308,7 +331,7 @@ function drawBarChart(data){
 	// }
 
 	//regular scale for bar length
-    var x = d3.scaleLinear()
+  xBar = d3.scaleLinear()
 	    .domain([-30,30])
 	    .rangeRound([barMargin.left, width - barMargin.right])
 
@@ -327,7 +350,7 @@ function drawBarChart(data){
 	var sectorLabels = sectorGroups.append('text')
 			.classed('sector-label', true)
 			.text(function(d){ return d[SECTOR_KEY] })
-			.attr('x', x(0))//barMargin.left)
+			.attr('x', xBar(0))//barMargin.left)
       .attr('y', 0)//-10)
       .style('text-transform', 'uppercase')
 
@@ -349,14 +372,14 @@ function drawBarChart(data){
 
   rects.enter().append('rect')
     .attr('y', function(d){ return y1(d.key) })
-    .attr('x', function(d){ return +d.value > 0 ? x(0) : x(d.value) })
+    .attr('x', function(d){ return +d.value > 0 ? xBar(0) : xBar(d.value) })
     .attr('fill', function(d){ return raceColorObj[d.key] })
-	.attr('height', y1.bandwidth())
-	.attr('width', function(d){ return +d.value > 0 ? x(d.value) - x(0) : (x(0) - x(d.value)) })
+  	.attr('height', y1.bandwidth())
+  	.attr('width', function(d){ return +d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
 
 	rects.transition().duration(800)
-		.attr('x', function(d){ return d.value > 0 ? x(0) : x(d.value) })
-		.attr('width', function(d){ return d.value > 0 ? x(d.value) - x(0) : (x(0) - x(d.value)) })
+		.attr('x', function(d){ return d.value > 0 ? xBar(0) : xBar(d.value) })
+		.attr('width', function(d){ return d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
 
 		.attr('height', y1.bandwidth())
 
@@ -394,7 +417,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		'comparison': higherEdSelections.singleRace
 	}
 	//scales
-	var x = d3.scaleTime()
+	xLine = d3.scaleTime()
 		.range([margin.left, width - margin.right])
 		.domain([parseTime(MIN_YEAR), parseTime(MAX_YEAR)])
 
@@ -414,7 +437,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 
 	var line = d3.line()
 		// .defined(function(d){ return !isNaN(d) })
-		.x(function(d){ return x(parseTime(d.year)) })
+		.x(function(d){ return xLine(parseTime(d.year)) })
 		.y(function(d){ return y(+d[selected[topic]]) })
 
   //color is totally dependent on order, in the colorArray and in the data
@@ -424,7 +447,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 	svg.append('g')
 		.attr('class','x-axis')
 		.attr('transform', 'translate(' + margin.left + ',' + (height - margin.bottom) + ')')
-		.call(d3.axisBottom(x).tickFormat(d3.timeFormat('%Y')));
+		.call(d3.axisBottom(xLine).tickFormat(d3.timeFormat('%Y')));
 
 	var yAxis = d3.axisLeft(y)
 		.tickSize(-width)
@@ -952,7 +975,7 @@ function initializeStaticControls(){
 				return d.fips_ipeds === higherEdSelections.state;
 			})
 
-			if (higherEdSelections.chartType === 'one-school-all-races' || higherEdSelections.chartType === 'multiple-schools'){
+		if (higherEdSelections.chartType === 'one-school-all-races' || higherEdSelections.chartType === 'multiple-schools'){
 				showChart('single-year-bar')
 			}
 			higherEdSelections.chartType = 'single-year-bar'
@@ -970,8 +993,8 @@ function initializeStaticControls(){
 			if (higherEdSelections.chartType === 'one-school-all-races' || higherEdSelections.chartType === 'multiple-schools'){
 				showChart('single-year-bar')
 			}
-      		higherEdSelections.chartType = 'single-year-bar'
-      		buildOptionPanel(higherEdSelections.chartType)
+  		higherEdSelections.chartType = 'single-year-bar'
+  		buildOptionPanel(higherEdSelections.chartType)
 		} else if ( userChoice === 'school' ){
 			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength;
 			higherEdSelections.chartType = 'one-school-all-races'
@@ -1000,22 +1023,18 @@ function initializeStaticControls(){
 
     	}
 
-    //all these use SELECTED_DATASET inside the filtering/nesting functions
+    if (userChoice !== 'school'){
+        //all these use SELECTED_DATASET inside the filtering/nesting functions
+    	callBarChart(higherEdSelections.year);
 
-	//format data and call bar chart
-	callBarChart(higherEdSelections.year);
+    	NESTED_BY_SECTOR = makeSectorNest();
+    	NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
+    	drawLineChart(NESTED_BY_SECTOR, 'race', byRaceSVG, byRaceG, byRaceAxis);
 
-	//format data and call line chart race
-	NESTED_BY_SECTOR = makeSectorNest();
-
-	NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
-	drawLineChart(NESTED_BY_SECTOR, 'race', byRaceSVG, byRaceG, byRaceAxis);
-
-	NESTED_BY_RACE = makeDemogNest(higherEdSelections.singleSector);
-	NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
-	drawLineChart(NESTED_BY_RACE, 'sector', bySectorSVG, bySectorG, bySectorYAxis)
-	//format data and call line chart sector
-
+    	NESTED_BY_RACE = makeDemogNest(higherEdSelections.singleSector);
+    	NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
+    	drawLineChart(NESTED_BY_RACE, 'sector', bySectorSVG, bySectorG, bySectorYAxis)
+    }
 	})
 
 	//if view is 'state' add state dropdown menu
