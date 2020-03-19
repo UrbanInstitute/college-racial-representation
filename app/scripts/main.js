@@ -26,7 +26,7 @@
 //make the URL update
 
 //STYLING
-
+//'cover' not doing what you'd think on cover image
 //dropdown menus
 //data hgihgliht boxes
 
@@ -70,42 +70,42 @@ var OPTIONS_PANEL_TOTAL_WIDTH = parseInt(d3.select("#options-panel").style("widt
 d3.selectAll(".chart-div, #chart-area-container").style("width", CHART_HOLE + 'px')
 //svg, .chart-div, #chart-area-container all need to be same width
 
-//responsive map, thanks Chris: http://eyeseast.github.io/visible-data/2013/08/26/responsive-d3/
-d3.select(window).on("resize", resize);
+// //responsive map, thanks Chris: http://eyeseast.github.io/visible-data/2013/08/26/responsive-d3/
+// d3.select(window).on("resize", resize);
 
-var storedWidth = document.body.clientWidth;
+// var storedWidth = document.body.clientWidth;
 
-function resize(){
-  //can't rely on mobile resize events, they fire too much
-  //https://stackoverflow.com/questions/17328742/mobile-chrome-fires-resize-event-on-scroll
-  if (storedWidth !== document.body.clientWidth){
-    console.log("diff")
+// function resize(){
+//   //can't rely on mobile resize events, they fire too much
+//   //https://stackoverflow.com/questions/17328742/mobile-chrome-fires-resize-event-on-scroll
+//   if (storedWidth !== document.body.clientWidth){
+//     console.log("diff")
 
-    storedWidth = window.innerWidth;
+//     storedWidth = window.innerWidth;
 
-    width = parseInt(d3.select("#map-container").style("width"));
-    width = width - margin.left - margin.right;
-    height = width * mapRatio;
+//     width = parseInt(d3.select("#map-container").style("width"));
+//     width = width - margin.left - margin.right;
+//     height = width * mapRatio;
 
-    // update projection
-    projection
-        .translate([width / 2, height / 2])
-        .scale(width);
+//     // update projection
+//     projection
+//         .translate([width / 2, height / 2])
+//         .scale(width);
 
-    // resize the map container
-    usMap
-        .style("width", width)
-        .style("height", height);
+//     // resize the map container
+//     usMap
+//         .style("width", width)
+//         .style("height", height);
 
-    // resize the map
-    usMap.selectAll(".state").attr("d", path);
-    usMap.selectAll(".city").attr("transform", function(d) {
-      return "translate("+ projection([d.lon, d.lat])+")";
-    })
-  }
-}
+//     // resize the map
+//     usMap.selectAll(".state").attr("d", path);
+//     usMap.selectAll(".city").attr("transform", function(d) {
+//       return "translate("+ projection([d.lon, d.lat])+")";
+//     })
+//   }
+// }
 
-	
+
 
 var margin = {top: 10, right: 10, bottom: 30, left: 40},
     barMargin = {top: 10, right: 10, bottom: 30, left: 0},
@@ -245,14 +245,14 @@ function getBarW(){
 function showChart(chartType){
 	//have 2 divs for bar/line that slide in/out cleanly
 	//var contentWidth = (widthUnder(1085)) ? window.innerWidth + 20 : d3.select("#chartAreaContainer").node().getBoundingClientRect().width
-	var contentWidth = 600
+
 
 	var chartScootch = {
 		'single-year-bar': 0,
-		'by-race-chart': contentWidth * -1,
-		'by-sector-chart': contentWidth * -2,
-    	'one-school-all-races': contentWidth * -3,
-    	'multiple-schools': contentWidth * -4
+		'by-race-chart': CHART_HOLE * -1,
+		'by-sector-chart': CHART_HOLE * -2,
+    	'one-school-all-races': CHART_HOLE * -3,
+    	'multiple-schools': CHART_HOLE * -4
 	}
 	d3.select('#single-year-container').transition().style('margin-left', chartScootch[chartType] + 'px')
 }
