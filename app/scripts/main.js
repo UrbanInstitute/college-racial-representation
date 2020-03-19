@@ -63,14 +63,55 @@ var SECTOR_KEY = 'fourcat',
   	SCHOOL_NAMES,
   	RACE_OPTIONS;
 
-var chartDivWidth = $('#chart-area-container').innerWidth(),
-	aspectRatio
+var OPTIONS_PANEL_TOTAL_WIDTH = parseInt(d3.select("#options-panel").style("width")) + parseInt(d3.select("#options-panel").style("margin-right")),
+	PAGE_CONTAINER_WIDTH = parseInt(d3.select(".page-container").style("width")),
+	CHART_HOLE = PAGE_CONTAINER_WIDTH -OPTIONS_PANEL_TOTAL_WIDTH
+
+d3.selectAll(".chart-div, #chart-area-container").style("width", CHART_HOLE + 'px')
+//svg, .chart-div, #chart-area-container all need to be same width
+
+//responsive map, thanks Chris: http://eyeseast.github.io/visible-data/2013/08/26/responsive-d3/
+d3.select(window).on("resize", resize);
+
+var storedWidth = document.body.clientWidth;
+
+function resize(){
+  //can't rely on mobile resize events, they fire too much
+  //https://stackoverflow.com/questions/17328742/mobile-chrome-fires-resize-event-on-scroll
+  if (storedWidth !== document.body.clientWidth){
+    console.log("diff")
+
+    storedWidth = window.innerWidth;
+
+    width = parseInt(d3.select("#map-container").style("width"));
+    width = width - margin.left - margin.right;
+    height = width * mapRatio;
+
+    // update projection
+    projection
+        .translate([width / 2, height / 2])
+        .scale(width);
+
+    // resize the map container
+    usMap
+        .style("width", width)
+        .style("height", height);
+
+    // resize the map
+    usMap.selectAll(".state").attr("d", path);
+    usMap.selectAll(".city").attr("transform", function(d) {
+      return "translate("+ projection([d.lon, d.lat])+")";
+    })
+  }
+}
+
+	
 
 var margin = {top: 10, right: 10, bottom: 30, left: 40},
     barMargin = {top: 10, right: 10, bottom: 30, left: 0},
     // width = parseInt(d3.select("#chart-area-container").style("width")),
     // width = width - margin.left - margin.right,
-    width = 600,
+    width = CHART_HOLE,
     height = 700 - margin.top - margin.bottom;
 
 //the chart selections & their G's
@@ -1107,10 +1148,6 @@ function init(){
 	//draw your default chart, bars for 2017: all races/sectors
 	FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);
 	drawBarChart(FILTERED_BY_YEAR);
-
-  // var OPTIONS_PANEL_TOTAL_WIDTH = parseInt(d3.select("#options-panel").style("width")) +
-  //   parseInt(d3.select("#options-panel").style("margin-right"))
-
 }
 
 d3.csv('data/national-2yr.csv').then(function(nationaltwo){
