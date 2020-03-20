@@ -12,11 +12,12 @@
 //TODOs
 
 //BUGS
-//moving around between geographies the time selectors don't line up with the chart shown
+
 //axis labels repeat a billion times and layer up
 //in state view, clicking a 2 year college causes some error
-// --> I think this is bc two-year colleges aren't actually loaded?
-//data needs to be changed out
+//switching over from natl to state with some 2years selected, teh input panel in wrong state when it loads
+
+
 
 //FEATURES
 //make chart responsive
@@ -27,12 +28,16 @@
 //make the URL update
 
 //STYLING
+//style the slider
 //'cover' not doing what you'd think on cover image
 //dropdown menus
 //data hgihgliht boxes
 
 //TEXT
 //add axis titles
+
+//THINGS TO CHECK
+//I took out 'dif_othra' and kept in 'dif_twora' which became 'multiracial'. correct?
 
 
 
@@ -45,7 +50,7 @@ var higherEdData = {};
 // the user selections
 var higherEdSelections = {};
 	higherEdSelections.geography = 'national', //national, state, school
-	higherEdSelections.chartType = 'single-year-bar', //single-year-bar, by-sector-chart, by-race-chart, one-school-all-races, multiple-schools
+	higherEdSelections.chartType = 'single-year-bar', //single-year-bar, by-sector-chart, by-race-chart, one-school-all-races-container, multiple-schools
 	higherEdSelections.year = '2017',
 	higherEdSelections.programLength = 'four',  //two, four
 	higherEdSelections.singleRace = 'dif_hispa',
@@ -77,7 +82,7 @@ var margin = {top: 10, right: 20, bottom: 30, left: 40},
     aspectRatio = 0.9,
     height = (chartHole * aspectRatio) - margin.top - margin.bottom;
 
-var xLine, xBar, 
+var xLine, xBar,
 	y = d3.scaleLinear()
 		.range([height - margin.bottom, margin.top]);
 
@@ -117,19 +122,19 @@ var bySectorYAxis = bySectorSVG.append('g')
   .attr('class', 'grid')
   .attr('transform', 'translate(' + margin.left + ',0)')
 
-var oneSchoolSVG = d3.select('#one-school-all-races').append('svg')
+var oneSchoolSVG = d3.select('#one-school-all-races-container').append('svg')
     .attr('width', width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom)
 var oneSchoolG = oneSchoolSVG.append('g')
     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-var oneSchoolLegend = d3.select('#one-school-all-races > div.legend').append('ul')
+var oneSchoolLegend = d3.select('#one-school-all-races-container > div.legend').append('ul')
   .attr('class', 'key')
 var oneSchoolYAxis = oneSchoolSVG.append('g')
   .attr('class', 'grid')
   .attr('transform', 'translate(' + margin.left + ',0)')
 
 //http://eyeseast.github.io/visible-data/2013/08/26/responsive-d3/
-d3.select(window).on("resize", resize);
+//d3.select(window).on("resize", resize);
 
 var storedWidth = document.body.clientWidth;
 
@@ -149,7 +154,7 @@ function resize(){
       height = (chartHole * aspectRatio) - margin.top - margin.bottom
 
     //resize the containers
-    d3.selectAll('#single-year-container, #by-sector-container, #by-race-container, #one-school-all-races')
+    d3.selectAll('#single-year-container, #by-sector-container, #by-race-container, #one-school-all-races-container')
         .style('width', width + 'px')
 
     d3.selectAll(".chart-div, #chart-area-container").style("width", width + 'px')
@@ -174,15 +179,15 @@ function resize(){
     xBar.rangeRound([barMargin.left, width - barMargin.right])
 
     var topicDependentKey = {
-		'by-race-chart': higherEdSelections.singleRace, //"dif_hispa", "dif_white".. etc
-		'by-sector-chart': 'value', //bc this data object just has one sector at a time
+		'by-race-chart': 'value', //"dif_hispa", "dif_white".. etc
+		'by-sector-chart': higherEdSelections.singleRace, //bc this data object just has one sector at a time
 		'multiple-schools': higherEdSelections.singleRace,
-		'one-school-all-races': higherEdSelections.singleRace
+		'one-school-all-races-container': higherEdSelections.singleRace
 	}
 
     var line = d3.line()
-		.x(function(d){ return xLine(parseTime(d.year)) })
-		.y(function(d){ return y(+d[topicDependentKey]) })
+  		.x(function(d){ return xLine(parseTime(d.year)) })
+  		.y(function(d){ return y(+d[topicDependentKey]) })
 
     //here you would somehow resize the stuff on the chart: lines, bars, axis lines
     d3.selectAll('rect')
@@ -192,6 +197,9 @@ function resize(){
 
     d3.selectAll('path.data-line')
     	.attr('d', function(d){ return line(d.values)  })
+
+    d3.selectAll('g.tick > line')
+      .attr('x2', chartHole - margin.left)
 
     showChart(higherEdSelections.chartType);
 
@@ -287,7 +295,7 @@ function showChart(chartType){
 		'single-year-bar': 0,
 		'by-race-chart': chartHole  * -1,
 		'by-sector-chart': chartHole * -2,
-    	'one-school-all-races': chartHole * -3,
+    	'one-school-all-races-container': chartHole * -3,
     	'multiple-schools': chartHole * -4
 	}
 	d3.select('#single-year-container').transition().style('margin-left', chartScootch[chartType] + 'px')
@@ -499,12 +507,13 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 	      })
 		.attr('stroke-width', 2)
 		.attr('class', function(d){
-			var string = 'data-line';
+			var string = 'data-line ';
 			if (topic==='comparison'){
-	        	string += 'other-school '
 	        if (d.key === higherEdSelections.selectedSchool){
 		         string += 'highlight-school '
-		        }
+		        } else {
+              string += 'other-school '
+            }
 		     }
 				return string;
 			})
@@ -541,7 +550,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 			.text(function(d){ return d })
 	}
 
-  if (higherEdSelections.chartType === 'one-school-all-races') {
+  if (higherEdSelections.chartType === 'one-school-all-races-container') {
     oneSchoolLegend.selectAll('li').remove();
     var keys = oneSchoolLegend.selectAll('li')
       .data(higherEdSelections.arrayRaces)
@@ -649,7 +658,7 @@ function buildOptionPanel(chartType){
 
 		d3.selectAll('.race-ethnicity-checkboxes > div > input')
 			.property('checked', function(d){ return higherEdSelections.arrayRaces.indexOf(this.value) > -1 });
-	} else if (chartType === 'one-school-all-races'){
+	} else if (chartType === 'one-school-all-races-container'){
       d3.select('#time-selection').style('display', 'none');
       d3.select('#dropdown').style('display', 'none');
       d3.select('#school-selection').style('display', 'block');
@@ -795,7 +804,7 @@ function buildOptionPanel(chartType){
 			NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
 		}
 
-		if (chartType === 'one-school-all-races'){
+		if (chartType === 'one-school-all-races-container'){
 	      var schoolDataByRace = makeDemogNest(higherEdSelections.selectedSchool, true).filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
 	      drawLineChart(schoolDataByRace, 'sector', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
 	    } else if (chartType === 'by-race-chart'){
@@ -823,11 +832,11 @@ function buildOptionPanel(chartType){
 
 d3.select('#school-comparison').on('click', function(d){
   //toggle the chart type
-  if (higherEdSelections.chartType === 'one-school-all-races'){
+  if (higherEdSelections.chartType === 'one-school-all-races-container'){
     higherEdSelections.chartType = 'multiple-schools';
     callComparisonChart();
   } else {
-    higherEdSelections.chartType = 'one-school-all-races';
+    higherEdSelections.chartType = 'one-school-all-races-container';
     callSchoolChart();
   }
 
@@ -849,13 +858,13 @@ function callComparisonChart(){
 	//put race radios on dynamic menu one
 	var nestedBySchool = d3.nest().key(function(d){ return d.inst_name }).entries(comparisons);
 
-	d3.select('#one-school-all-races > h4 > span').text(higherEdSelections.state + ' ' + higherEdSelections.singleSector + 's ');
+	d3.select('#one-school-all-races-container > h4 > span').text(higherEdSelections.state + ' ' + higherEdSelections.singleSector + 's ');
 	drawLineChart(nestedBySchool, 'comparison', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
 }
 
 function callSchoolChart(){
   var schoolDataByRace = makeDemogNest(higherEdSelections.selectedSchool, true);
-  d3.select('#one-school-all-races > h4 > span').text(higherEdSelections.selectedSchool);
+  d3.select('#one-school-all-races-container > h4 > span').text(higherEdSelections.selectedSchool);
   //schoolDataByRace = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
   drawLineChart(schoolDataByRace, 'sector', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
 }
@@ -988,9 +997,11 @@ function initializeStaticControls(){
 				return d.fips_ipeds === higherEdSelections.state;
 			})
 
-		if (higherEdSelections.chartType === 'one-school-all-races' || higherEdSelections.chartType === 'multiple-schools'){
+		  if (higherEdSelections.chartType === 'one-school-all-races-container' || higherEdSelections.chartType === 'multiple-schools'){
 				showChart('single-year-bar')
 			}
+      d3.selectAll('.time-selector').classed('selected', false);
+      d3.select('.time-selector.main-choice.bar').classed('selected', true);
 			higherEdSelections.chartType = 'single-year-bar'
 
 		} else if ( userChoice === 'national' ){
@@ -1002,39 +1013,37 @@ function initializeStaticControls(){
 
 	        d3.select('#first-dynamic-menu').style('display', 'block')
 	        d3.select('#second-dynamic-menu').style('display', 'block')
-
-			if (higherEdSelections.chartType === 'one-school-all-races' || higherEdSelections.chartType === 'multiple-schools'){
+      //the chart types aren't shared between school and national/state, so it amkes sense to reset
+      //to default bar chart when going back to national or state from school
+			if (higherEdSelections.chartType === 'one-school-all-races-container' || higherEdSelections.chartType === 'multiple-schools'){
 				showChart('single-year-bar')
 			}
+      d3.selectAll('.time-selector').classed('selected', false);
+      d3.select('.time-selector.main-choice.bar').classed('selected', true);
   		higherEdSelections.chartType = 'single-year-bar'
-  		buildOptionPanel(higherEdSelections.chartType)
+
 		} else if ( userChoice === 'school' ){
+
+      d3.select('#school-comparison').property('checked', false)
+
 			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength;
-			higherEdSelections.chartType = 'one-school-all-races'
+			higherEdSelections.chartType = 'one-school-all-races-container'
 
-			//this shit takes forever!!!
-			var schoolFours = higherEdData.allData.schoolfour.filter(function(d){
+			var schoolNames = higherEdData.allData.schoolfour.filter(function(d){
 				if (d.year ==='2015'){ return d.inst_name }
 			}).map(function(d){
 				return d.inst_name
 			})
 
-			var schoolTwos = higherEdData.allData.schooltwo.filter(function(d){
-				if (d.year ==='2015'){ return d.inst_name }
-			}).map(function(d){
-				return d.inst_name
-			})
-
-			var schoolNames = schoolFours.concat(schoolTwos);
 			makeSchoolLookup(schoolNames);
 
-      buildOptionPanel('one-school-all-races')
+      buildOptionPanel('one-school-all-races-container')
 
 			showChart(higherEdSelections.chartType);
 
 			callSchoolChart();
 
-    	}
+    }
 
     if (userChoice !== 'school'){
         //all these use SELECTED_DATASET inside the filtering/nesting functions
@@ -1048,6 +1057,9 @@ function initializeStaticControls(){
     	NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
     	drawLineChart(NESTED_BY_RACE, 'sector', bySectorSVG, bySectorG, bySectorYAxis)
     }
+
+    buildOptionPanel(higherEdSelections.chartType)
+
 	})
 
 	//if view is 'state' add state dropdown menu
@@ -1186,9 +1198,9 @@ d3.csv('data/national-2yr.csv').then(function(nationaltwo){
 	higherEdData.allData.nationaltwo = nationaltwo;
 	d3.csv('data/national-4yr.csv').then(function(nationalfour){
 		higherEdData.allData.nationalfour = nationalfour;
-		d3.csv('data/school-2yr.csv').then(function(schooltwo){
-			higherEdData.allData.schooltwo = schooltwo;
-			d3.csv('data/school-4yr.csv').then(function(schoolfour){
+			d3.csv('data/schools.csv').then(function(schoolfour){
+        //I combined all schools into one csv and am calling all schools 'schoolfour', '
+        //I know this is wrong but it seems easier
 				higherEdData.allData.schoolfour = schoolfour;
 				d3.csv('data/state-2yr.csv').then(function(statetwo){
 					higherEdData.allData.statetwo = statetwo;
@@ -1199,7 +1211,6 @@ d3.csv('data/national-2yr.csv').then(function(nationaltwo){
 				})
 			})
 		})
-	})
 })
 
 
