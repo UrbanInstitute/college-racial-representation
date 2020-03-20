@@ -71,13 +71,16 @@ var optionsPanelTotalWidth = parseInt(d3.select("#options-panel").style("width")
 d3.selectAll(".chart-div, #chart-area-container").style("width", chartHole + 'px')
 //svg, .chart-div, #chart-area-container all need to be same width
 
-var margin = {top: 10, right: 10, bottom: 30, left: 40},
+var margin = {top: 10, right: 20, bottom: 30, left: 40},
     barMargin = {top: 10, right: 10, bottom: 30, left: 0},
     width = chartHole - margin.left - margin.right,
     aspectRatio = 0.9,
     height = (chartHole * aspectRatio) - margin.top - margin.bottom;
 
-var xLine, xBar;
+var xLine, xBar, 
+	y = d3.scaleLinear()
+		.range([height - margin.bottom, margin.top]);
+
 
 //******The chart selections & their G's
 //bar chart
@@ -140,14 +143,16 @@ function resize(){
 
     optionsPanelTotalWidth = parseInt(d3.select("#options-panel").style("width")) + parseInt(d3.select("#options-panel").style("margin-right"))
     pageContainerWidth = parseInt(d3.select(".page-container").style("width"))
-    chartHole = pageContainerWidth - optionsPanelTotalWidth
+    chartHole = pageContainerWidth - optionsPanelTotalWidth - margin.left - margin.right
 
-    var width = chartHole - margin.left - margin.right,
+    var width = chartHole,
       height = (chartHole * aspectRatio) - margin.top - margin.bottom
 
     //resize the containers
     d3.selectAll('#single-year-container, #by-sector-container, #by-race-container, #one-school-all-races')
         .style('width', width + 'px')
+
+    d3.selectAll(".chart-div, #chart-area-container").style("width", width + 'px')
 
     singleYearSVG
         .attr("width", width)
@@ -165,9 +170,19 @@ function resize(){
         .attr("height", height);
 
     //update the scales
-    //xLine.range()
-
+    xLine.range([margin.left, width - margin.right])
     xBar.rangeRound([barMargin.left, width - barMargin.right])
+
+    var topicDependentKey = {
+		'by-race-chart': higherEdSelections.singleRace, //"dif_hispa", "dif_white".. etc
+		'by-sector-chart': 'value', //bc this data object just has one sector at a time
+		'multiple-schools': higherEdSelections.singleRace,
+		'one-school-all-races': higherEdSelections.singleRace
+	}
+
+    var line = d3.line()
+		.x(function(d){ return xLine(parseTime(d.year)) })
+		.y(function(d){ return y(+d[topicDependentKey]) })
 
     //here you would somehow resize the stuff on the chart: lines, bars, axis lines
     d3.selectAll('rect')
@@ -175,13 +190,11 @@ function resize(){
       .attr('fill', function(d){ return raceColorObj[d.key] })
       .attr('width', function(d){ return +d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
 
+    d3.selectAll('path.data-line')
+    	.attr('d', function(d){ return line(d.values)  })
 
+    showChart(higherEdSelections.chartType);
 
-    // resize the map
-    // usMap.selectAll(".state").attr("d", path);
-    // usMap.selectAll(".city").attr("transform", function(d) {
-    //   return "translate("+ projection([d.lon, d.lat])+")";
-    // })
   }
 }
 
@@ -272,7 +285,7 @@ function showChart(chartType){
 
 	var chartScootch = {
 		'single-year-bar': 0,
-		'by-race-chart': chartHole * -1,
+		'by-race-chart': chartHole  * -1,
 		'by-sector-chart': chartHole * -2,
     	'one-school-all-races': chartHole * -3,
     	'multiple-schools': chartHole * -4
@@ -428,17 +441,17 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 	var max = d3.max(data, function(d){return d3.max(d.values, function(d){return +d[selected[topic]] }) })
 		max = max < 5 ? 5 : max * domainInflater ;
 
-	var y = d3.scaleLinear()
-		.range([height - margin.bottom, margin.top])
-		.domain([
+
+		y.domain([
 			min,
 			max
 		]);
 
 	var line = d3.line()
-		// .defined(function(d){ return !isNaN(d) })
 		.x(function(d){ return xLine(parseTime(d.year)) })
 		.y(function(d){ return y(+d[selected[topic]]) })
+		// .defined(function(d){ return !isNaN(d) })
+
 
   //color is totally dependent on order, in the colorArray and in the data
 	color.domain(data.map(function(d){return d.key}))
@@ -479,22 +492,22 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		.attr('fill', 'none')
 		.attr('d', function(d){ return line(d.values)  })
 		.attr('stroke', function(d,i){
-      if (topic === 'sector'){
-        return raceColorObj[d.key]
-      } else if (topic === 'race'){
-			 return color(d.values[i][SECTOR_KEY]) }
-      })
+	      if (topic === 'sector'){
+	        return raceColorObj[d.key]
+	      } else if (topic === 'race'){
+				 return color(d.values[i][SECTOR_KEY]) }
+	      })
 		.attr('stroke-width', 2)
 		.attr('class', function(d){
-			var string = '';
+			var string = 'data-line';
 			if (topic==='comparison'){
-        string = 'other-school '
-        if (d.key === higherEdSelections.selectedSchool){
-          string = 'highlight-school '
-        }
-      }
-			return string;
-		})
+	        	string += 'other-school '
+	        if (d.key === higherEdSelections.selectedSchool){
+		         string += 'highlight-school '
+		        }
+		     }
+				return string;
+			})
   //TODO append text with teh school name to show on mouseover
 
 	path.transition()
