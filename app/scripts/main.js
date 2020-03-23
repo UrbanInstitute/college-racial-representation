@@ -12,7 +12,6 @@
 //TODOs
 
 //BUGS
-
 //axis labels repeat a billion times and layer up
 //in state view, clicking a 2 year college causes some error
 //switching over from natl to state with some 2years selected, teh input panel in wrong state when it loads
@@ -37,7 +36,7 @@
 //add axis titles
 
 //THINGS TO CHECK
-//I took out 'dif_othra' and kept in 'dif_twora' which became 'multiracial'. correct?
+//I took out 'dif_othra' and kept in 'dif_twora' which became 'multiracial'. Correct?
 
 
 
@@ -249,6 +248,16 @@ var raceColorObj = {
   'dif_twora': '#fdbf11'
 }
 
+var sectorColorObj = {
+  'for-profit': '#0a4c6a',
+  'private-more-selective': '#9d9d9d',
+  'private-nonselective': '#1696d2',
+  'private-selective': '#55b748',
+  'public-more-selective': '#ec008b',
+  'public-nonselective': '#000000',
+  'public-selective': '#fdbf11'
+}
+
 var distinct = function(value, index, self){ return self.indexOf(value) === index; }
 
 // radio button template:
@@ -437,6 +446,10 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		'sector': 'value', //bc this data object just has one sector at a time
 		'comparison': higherEdSelections.singleRace
 	}
+	if (higherEdSelections.chartType === 'multiple-schools'){
+		margin.right = 150
+		d3.selectAll('g.tick > line').attr('x2', chartHole - margin.right)
+	}
 	//scales
 	xLine = d3.scaleTime()
 		.range([margin.left, width - margin.right])
@@ -503,20 +516,27 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 	      if (topic === 'sector'){
 	        return raceColorObj[d.key]
 	      } else if (topic === 'race'){
-				 return color(d.values[i][SECTOR_KEY]) }
+			return sectorColorObj[classify(d.values[i][SECTOR_KEY])] 
+			}
 	      })
 		.attr('stroke-width', 2)
-		.attr('class', function(d){
+		.attr('class', function(d,i){
 			var string = 'data-line ';
 			if (topic==='comparison'){
-	        if (d.key === higherEdSelections.selectedSchool){
-		         string += 'highlight-school '
-		        } else {
-              string += 'other-school '
-            }
+		        if (d.key === higherEdSelections.selectedSchool){
+			         string += 'highlight-school '
+			        } else {
+	              string += 'other-school '
+	            }
 		     }
+		   if (topic === 'sector'){
+	        string += d.key
+	      } else if (topic === 'race'){
+				 string += classify(d.values[i][SECTOR_KEY])
+	      }
 				return string;
-			})
+		})
+		.attr('data-cat', function(d){ return classify(d.key) })
   //TODO append text with teh school name to show on mouseover
 
 	path.transition()
@@ -534,19 +554,23 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 			.enter()
 			.append('li')
 			.attr('class', function(d){ return d })
+			.attr('data-cat', function(d){ return d })
 			.classed('key-item', true)
 			.classed('race', true)
-			.style('border-left', function(d){ return '17px solid ' + color(d) })
+			.style('border-left', function(d){ return '17px solid ' + raceColorObj[d] })
 			.text(function(d){ return translateRace[d] })
-	} else if (topic === 'race') {
+	} 
+
+	if (topic === 'race') {
 		var keys = byRaceLegend.selectAll('li')
 			.data(data.map(function(d){return d.key})) //list of sectors
 			.enter()
 			.append('li')
-			.attr('class', function(d){ return d })
+			.attr('class', function(d){ return classify(d) })
+			.attr('data-cat', function(d){ return classify(d) })
 			.classed('key-item', true)
 			.classed('race', true)
-			.style('border-left', function(d){ return '17px solid ' + color(d) })
+			.style('border-left', function(d){ return '17px solid' + sectorColorObj[classify(d)] })
 			.text(function(d){ return d })
 	}
 
@@ -559,7 +583,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
       .attr('class', function(d){ return d })
       .classed('key-item', true)
       .classed('race', true)
-      .style('border-left', function(d){ return '17px solid ' + color(d) })
+      .style('border-left', function(d){ return '17px solid ' + raceColorObj[d] })
       .text(function(d){ return translateRace[d] })
   }
 
@@ -575,9 +599,52 @@ function drawLineChart(data, topic, svg, g, axisSelection){
       .classed('race', true)
       .style('border-left', function(d,i){ return '17px solid ' + schoolComparisonColors[i] })
       .text(function(d){ return d })
+
+
+    svg.selectAll('text.school-name')
+    	.data(data)
+    	.enter()
+    	.append('text')
+    	.classed('school-name', true)
+    	.text(function(d){ return d.key })
+    	.attr('opacity', 0)
+    	.attr('class', function(d){ return classify(d.key) })
+    	// .attr('x', chartHole)
+
   }
+  
+d3.selectAll('.key-item').on('mouseover', function(){
+	var category = this.getAttribute('data-cat');
+	d3.selectAll('.data-line')
+		.style('opacity', 0.5)
+		.attr('stroke-width', 1)
+	d3.selectAll('.' + category)
+		.style('opacity', 1)
+		.attr('stroke-width', 4)
+})
+
+d3.selectAll('.key-item').on('mouseout', function(){
+	d3.selectAll('.data-line')
+		.style('opacity', 1)
+		.attr('stroke-width', 2)
+})
+
+d3.selectAll('.data-line').on('mouseover', function(){
+	var school = this.getAttribute('data-cat');
+	d3.select('text.' + school)
+		.attr('opacity', 1)
+		.attr('x', chartHole - margin.right)
+		.attr('y', function(d){ 
+    		var last = d.values.length - 1; 
+    		return y(+d.values[last][higherEdSelections.singleRace]);
+    	})
+})
+
+
 
 }
+
+
 
 function buildOptionPanel(chartType){
 
