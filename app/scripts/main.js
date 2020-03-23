@@ -20,7 +20,6 @@
 
 //FEATURES
 //make chart responsive
-//mouseover on legend highlights the corresponding line
 //mouseover on comparison chart shows the name of the school in teh right margin
 //clicking data highlights should do something
 //add downloadable chart image
@@ -255,7 +254,9 @@ var sectorColorObj = {
   'private-selective': '#55b748',
   'public-more-selective': '#ec008b',
   'public-nonselective': '#000000',
-  'public-selective': '#fdbf11'
+  'public-selective': '#fdbf11',
+  'public-2-year': '',
+  'for-profit-2-year': ''
 }
 
 var distinct = function(value, index, self){ return self.indexOf(value) === index; }
@@ -516,7 +517,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 	      if (topic === 'sector'){
 	        return raceColorObj[d.key]
 	      } else if (topic === 'race'){
-			return sectorColorObj[classify(d.values[i][SECTOR_KEY])] 
+			return sectorColorObj[classify(d.values[i][SECTOR_KEY])]
 			}
 	      })
 		.attr('stroke-width', 2)
@@ -559,7 +560,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 			.classed('race', true)
 			.style('border-left', function(d){ return '17px solid ' + raceColorObj[d] })
 			.text(function(d){ return translateRace[d] })
-	} 
+	}
 
 	if (topic === 'race') {
 		var keys = byRaceLegend.selectAll('li')
@@ -612,7 +613,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
     	// .attr('x', chartHole)
 
   }
-  
+
 d3.selectAll('.key-item').on('mouseover', function(){
 	var category = this.getAttribute('data-cat');
 	d3.selectAll('.data-line')
@@ -634,8 +635,8 @@ d3.selectAll('.data-line').on('mouseover', function(){
 	d3.select('text.' + school)
 		.attr('opacity', 1)
 		.attr('x', chartHole - margin.right)
-		.attr('y', function(d){ 
-    		var last = d.values.length - 1; 
+		.attr('y', function(d){
+    		var last = d.values.length - 1;
     		return y(+d.values[last][higherEdSelections.singleRace]);
     	})
 })
@@ -756,6 +757,19 @@ function buildOptionPanel(chartType){
       d3.select('input[value=' + higherEdSelections.singleRace + ']').property('checked', true);
   }
 
+  if (higherEdSelections.programLength === 'four'){
+      d3.selectAll('.two-year').classed('checked', false)
+      d3.selectAll('.two-year.sector-boxes').property('checked', false)
+
+      d3.selectAll('.two-year').classed('inactive', true);
+      d3.selectAll('.four-year, .program-type').classed('inactive', false);
+  } else {
+          d3.selectAll('.four-year').classed('checked', false);
+      d3.selectAll('.four-year.sector-boxes').property('checked', false);
+
+      d3.selectAll('.two-year').classed('inactive', false);
+      d3.selectAll('.four-year, .program-type').classed('inactive', true);
+  }
 	//event listener after party:
 
 	//sector boxes - updates arraySector
@@ -769,6 +783,7 @@ function buildOptionPanel(chartType){
 			'two-year-public': 'Public 2-year',
 			'two-year-private': 'For-Profit 2-year'
 		}
+
 			//switching from 4 year to 2
 		if (checkbox.classed('two-year') && higherEdSelections.programLength === 'four'){
 			//switch over all the checked's and reset the arraySectors to just be the new userchoice
@@ -813,6 +828,8 @@ function buildOptionPanel(chartType){
 				higherEdSelections.arraySectors.push(translate[userChoice])
 			}
 		}
+    console.log(userChoice)
+    console.log(higherEdSelections.arraySectors)
 									//equivalent to toggleClass
 		checkbox.classed('checked', !checkbox.classed('checked'));
 
@@ -822,16 +839,15 @@ function buildOptionPanel(chartType){
       higherEdSelections.arraySectors.push(choiceString)
       //TODO - why this not worky
       d3.select('.sector-boxes > div > input[value=' + userChoice + ']').property('checked', true)
-
 		} else {
-
 			NESTED_BY_SECTOR = makeSectorNest();
+      debugger
 			NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
 			drawLineChart(NESTED_BY_SECTOR, 'race', byRaceSVG, byRaceG, byRaceAxis);
 		}
 		callBarChart(higherEdSelections.year);
 
-	})
+	})//end sector boxes
 
 	//sector radios - updates singleSector
 	d3.selectAll('.sector-radios').on('click', function(){
