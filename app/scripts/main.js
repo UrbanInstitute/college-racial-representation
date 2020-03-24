@@ -14,6 +14,9 @@
 //BUGS
 //axis labels repeat a billion times and layer up
 //the sector radios don't show up with one checked the second time through
+//the legend is messed up
+//the axis are on top of the data
+//slider giving back the wrong year - my guess is its a zero index blerp
 
 //FEATURES
 //make chart responsive
@@ -22,7 +25,6 @@
 //make the URL update
 
 //STYLING
-//style the slider
 //'cover' not doing what you'd think on cover image
 //dropdown menus
 //data hgihgliht boxes
@@ -142,7 +144,7 @@ var oneSchoolYAxis = oneSchoolSVG.append('g')
   .attr('transform', 'translate(' + margin.left + ',0)')
 
 //http://eyeseast.github.io/visible-data/2013/08/26/responsive-d3/
-//d3.select(window).on("resize", resize);
+d3.select(window).on("resize", resize);
 
 var storedWidth = document.body.clientWidth;
 
@@ -460,8 +462,8 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		'comparison': higherEdSelections.singleRace
 	}
 	if (higherEdSelections.chartType === 'multiple-schools'){
-		var div = d3.select("body").append("div")	
-		    .attr("class", "tooltip")				
+		var div = d3.select("body").append("div")
+		    .attr("class", "tooltip")
 		    .style("opacity", 0);
 	}
 	//scales
@@ -619,13 +621,13 @@ function drawLineChart(data, topic, svg, g, axisSelection){
       .text(function(d){ return d })
 
     d3.selectAll(".data-line").on("mouseover", function(d){
-    	div.style("opacity", .9);		
-        div.html(d.key)	
-            .style("left", (d3.event.pageX) + "px")		
+    	div.style("opacity", .9);
+        div.html(d.key)
+            .style("left", (d3.event.pageX) + "px")
             .style("top", (d3.event.pageY - 28) + "px");
-        d3.select(this).attr("stroke-width", 4)	
-        }).on("mouseout", function(d) {		
-        	div.style("opacity", 0);	
+        d3.select(this).attr("stroke-width", 4)
+        }).on("mouseout", function(d) {
+        	div.style("opacity", 0);
         	d3.select(this).attr("stroke-width", 2)
         });
 
@@ -817,7 +819,7 @@ function buildOptionPanel(chartType){
 				higherEdSelections.arraySectors.push(translate[userChoice])
 			}
 		}
-									
+
 		checkbox.classed('checked', !checkbox.classed('checked'));
 		//if the box is being unchecked and the selections array is empty
 		if (selectionIndex > 0 && higherEdSelections.arraySectors.length < 1){
@@ -844,7 +846,7 @@ function buildOptionPanel(chartType){
 		} else {
 			convertSelectors('four')
 		}
-		
+
 		NESTED_BY_RACE = makeDemogNest(higherEdSelections.singleSector);
 		NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
 		drawLineChart(NESTED_BY_RACE, 'sector', bySectorSVG, bySectorG, bySectorYAxis);
@@ -1020,6 +1022,7 @@ var sliderTime =
 		.tickFormat(function(d){ return '\'' + d3.timeFormat('%y')(d)})
 		.tickValues(dataTime)
 		.default(new Date(2017, 0, 1))
+    .handle(["M 1, 0 m -8.5, 0 a 8,8 0 1,0 16,0 a 8,8 0 1,0 -16,0"]) //draw a circle as a path: https://stackoverflow.com/questions/5737975/circle-drawing-with-svgs-arc-path
 		.on('onchange', function(val){
 			higherEdSelections.year = timeFormat(val);
 			callBarChart(higherEdSelections.year);
@@ -1036,6 +1039,8 @@ var gTime =
 
 gTime.call(sliderTime);
 d3.select('#single-year-container > h4 > span:nth-child(2)').text(timeFormat(sliderTime.value()));
+
+
 // d3.select('p#value-time').text(d3.timeFormat('%Y')(sliderTime.value()));
 
 function initializeStaticControls(){
@@ -1049,7 +1054,6 @@ function initializeStaticControls(){
 		d3.selectAll('.geography-choices').classed('selected', false)
 		d3.select(this).classed('selected', !d3.select(this).classed('selected'))
 
-
 		if ( userChoice === 'state'){
 			//UI changes
 			d3.select('#single-year-container > h4 > span:nth-child(1)').text(higherEdSelections.state);
@@ -1059,12 +1063,18 @@ function initializeStaticControls(){
 			d3.select('#time-selection').style('display', 'block');
 			d3.select('#school-selection').style('display', 'none');
 
-	        d3.select('#first-dynamic-menu').style('display', 'block');
-	        d3.select('#second-dynamic-menu').style('display', 'block');
+	    d3.select('#first-dynamic-menu').style('display', 'block');
+	    d3.select('#second-dynamic-menu').style('display', 'block');
 
-	        d3.selectAll('.time-selector').classed('selected', false);
-		    d3.select('.time-selector.main-choice.bar').classed('selected', true);
-			
+	    d3.selectAll('.time-selector').classed('selected', false);
+
+      if (higherEdSelections.chartType === 'by-sector-chart' || higherEdSelections.chartType === 'by-race-chart'){
+        d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
+        d3.select("div.sub-choice[value='" + higherEdSelections.chartType + "']").classed('selected', true)
+      } else {
+        d3.select('.time-selector.main-choice.bar').classed('selected', true);
+      }
+
 			//global selectors
 			SELECTED_DATASET = 'filteredForState';
 			SECTOR_KEY = higherEdSelections.programLength === 'four' ? 'fourcat' : 'twocat';
@@ -1090,17 +1100,19 @@ function initializeStaticControls(){
 			d3.select('#dropdown').style('display', 'none')
 			d3.select('#school-selection').style('display', 'none')
 			d3.select('#single-year-container > h4 > span:nth-child(1)').text('US');
+      d3.select('#by-race-container > h4 > span:nth-child(2)').text('US');
+      d3.select('#by-sector-container > h4 > span:nth-child(2)').text('US');
 
-	        d3.select('#first-dynamic-menu').style('display', 'block')
-	        d3.select('#second-dynamic-menu').style('display', 'block')
+      d3.select('#first-dynamic-menu').style('display', 'block')
+      d3.select('#second-dynamic-menu').style('display', 'block')
 			//selectors updated
 			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength
 		      //the chart types aren't shared between school and national/state, so it amkes sense to reset
 		      //to default bar chart when going back to national or state from school
 			if (higherEdSelections.chartType === 'one-school-all-races-container' || higherEdSelections.chartType === 'multiple-schools'){
 				showChart('single-year-bar')
-		        d3.selectAll('.time-selector').classed('selected', false);
-		        d3.select('.time-selector.main-choice.bar').classed('selected', true);
+		      d3.selectAll('.time-selector').classed('selected', false);
+		      d3.select('.time-selector.main-choice.bar').classed('selected', true);
 		  		higherEdSelections.chartType = 'single-year-bar'
 			}
 
@@ -1249,6 +1261,8 @@ function init(){
 	buildOptionPanel('single-year-bar');
 	initializeStaticControls();
 
+  //janky but move the numbers on the slider, can't find the option in the package: https://github.com/johnwalley/d3-simple-slider
+  d3.selectAll("#year-input > svg > g > g.axis > g > text").attr("y", 12)
 
 	//draw your default chart, bars for 2017: all races/sectors
 	FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);

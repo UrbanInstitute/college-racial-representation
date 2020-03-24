@@ -229,13 +229,13 @@ p.scenario {
 
 // chart specific
 
-div.tooltip { 
+div.tooltip {
   background-color: #FFFFFF;
-  font-family: Lato;    
-  font-size: 14px;  
-  padding: 1px;   
-  pointer-events: none;     
-  position: absolute;              
+  font-family: Lato;
+  font-size: 14px;
+  padding: 1px;
+  pointer-events: none;
+  position: absolute;
 }
 
 g.tick > text {
@@ -346,8 +346,26 @@ li.key-item {
 
 // menu panel styling
 
+#year-input > svg > g > g.slider > g > path {
+  fill: $cyan-6;
+  stroke: $cyan-6;
+}
+
+#year-input > svg > g > g.slider > line.track-inset {
+  stroke: $gray-4;
+}
+
+#year-input > svg > g > g.slider > line.track {
+  stroke: $gray-4;
+}
+
+#year-input > svg > g > g.axis > g > line {
+  stroke: none;
+}
+
 h4.selection-label {
   font-size: 18px;
+  margin-bottom: 20px;
 }
 
 p.button-title {
@@ -494,7 +512,7 @@ label.inactive:before {
   font-weight: 400;
   cursor: pointer;
   display: inline-block;
-  font-size: 14px;
+  font-size: 16px;
   text-transform: uppercase;
     img {
     padding-right: 10px;
@@ -511,6 +529,7 @@ label.inactive:before {
   border-radius: 1px;
   display: inline-block;
   font-weight: 400;
+  font-size: 14px;
   line-height: 1.1;
   margin-top: 15px;
   margin-right: 10px;
@@ -531,7 +550,8 @@ label.inactive:before {
 }
 
 #year-selector {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 
