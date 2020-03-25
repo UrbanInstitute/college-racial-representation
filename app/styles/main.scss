@@ -147,6 +147,7 @@ $green-8: #370B0A;
 }
 
 div.page-container {
+  padding-top: $spacing-unit;
   margin: 0 auto;
   width: 80%;
   // position: relative;
@@ -208,8 +209,7 @@ h1 {
 // scenario buttons
 
 #scenarios {
-  border-top: 1px solid $cyan-6;
-  border-bottom: 1px solid $cyan-6;
+  margin-left: 3.3%;
   padding: 20px 0;
 }
 
@@ -218,14 +218,42 @@ p.scenario {
 }
 
 .scenario {
+  background-color: #ECECEC;
   float: left;
-  margin-right: 5%;
-  width: 20%;
+  padding: 25px 20px 20px 10px;
+  width: 30%;
+
+    img {
+      float: left;
+      margin-bottom: 10px;
+      vertical-align: top;
+      width: 120px;
+    }
+
+    h5 {
+      color: $cyan-6;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    p {
+      margin-bottom: 5px;
+    }
+
+    p.scenario-trigger {
+      color: #008BB0;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: underline;
+    }
 }
 
-.scenario.clickable {
-
+#scenario2 {
+  margin-left: 3%;
+  margin-right: 3%;
 }
+
 
 // chart specific
 

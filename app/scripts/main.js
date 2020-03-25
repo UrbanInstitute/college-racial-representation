@@ -15,8 +15,7 @@
 //axis labels repeat a billion times and layer up
 //the sector radios don't show up with one checked the second time through
 //the legend is messed up
-//the axis are on top of the data
-//slider giving back the wrong year - my guess is its a zero index blerp
+//the axis lines are on top of the data
 
 //FEATURES
 //make chart responsive
@@ -27,7 +26,7 @@
 //STYLING
 //'cover' not doing what you'd think on cover image
 //dropdown menus
-//data hgihgliht boxes
+
 
 //TEXT
 //add axis titles
@@ -101,10 +100,8 @@ var xLine, xBar,
 //bar chart
 var singleYearSVG = d3.select('#single-year-container').append('svg')
     .attr('width', width + barMargin.left + barMargin.right)
-
 var barChartG = singleYearSVG.append('g')
     .attr('transform', 'translate(' + barMargin.left + ',' + barMargin.top + ')');
-
 var barLegend = d3.select('#single-year-container > div.legend').append('ul')
   .attr('class', 'key')
 
@@ -112,39 +109,39 @@ var barLegend = d3.select('#single-year-container > div.legend').append('ul')
 var byRaceSVG = d3.select('#by-sector-container').append('svg')
     .attr('width', width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom)
-var byRaceG = byRaceSVG.append('g')
-    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 var byRaceLegend = d3.select('#by-sector-container > div.legend').append('ul')
   .attr('class', 'key')
 var byRaceAxis = byRaceSVG.append('g')
   .attr('class', 'grid')
   .attr('transform', 'translate(' + margin.left + ',0)')
+var byRaceG = byRaceSVG.append('g')
+    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 // races are radios
 var bySectorSVG = d3.select('#by-race-container').append('svg')
     .attr('width', width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom)
-var bySectorG = bySectorSVG.append('g')
-    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 var bySectorLegend = d3.select('#by-race-container > div.legend').append('ul')
   .attr('class', 'key')
 var bySectorYAxis = bySectorSVG.append('g')
   .attr('class', 'grid')
   .attr('transform', 'translate(' + margin.left + ',0)')
+var bySectorG = bySectorSVG.append('g')
+    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 var oneSchoolSVG = d3.select('#one-school-all-races-container').append('svg')
     .attr('width', width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom)
-var oneSchoolG = oneSchoolSVG.append('g')
-    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 var oneSchoolLegend = d3.select('#one-school-all-races-container > div.legend').append('ul')
   .attr('class', 'key')
 var oneSchoolYAxis = oneSchoolSVG.append('g')
   .attr('class', 'grid')
   .attr('transform', 'translate(' + margin.left + ',0)')
+var oneSchoolG = oneSchoolSVG.append('g')
+    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 //http://eyeseast.github.io/visible-data/2013/08/26/responsive-d3/
-d3.select(window).on("resize", resize);
+// d3.select(window).on("resize", resize);
 
 var storedWidth = document.body.clientWidth;
 
@@ -245,11 +242,6 @@ var translateRace = {
 var MIN_YEAR = 2009,
     MAX_YEAR = 2017;
 
-var colorArray = ['#ec008b','#55b748','#1696d2','#9d9d9d','#fdbf11','#000000','#0a4c6a', '#351123']
-
-var color = d3.scaleOrdinal()
-    .range(colorArray)
-
 var raceColorObj = {
   'dif_white': '#0a4c6a',
   'dif_hispa': '#9d9d9d',
@@ -340,8 +332,6 @@ function drawBarChart(data){
 		return obj
 	})
 
-	var color = d3.scaleOrdinal()
-	    .range(colorArray);
 
   var barChartHeight = height;
   singleYearSVG.attr('height', barChartHeight + barMargin.top + barMargin.bottom)
@@ -479,21 +469,14 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		max = max < 5 ? 5 : max * domainInflater ;
 
 
-		y.domain([
-			min,
-			max
-		]);
+	y.domain([min, max]);
 
 	var line = d3.line()
 		.x(function(d){ return xLine(parseTime(d.year)) })
 		.y(function(d){ return y(+d[selected[topic]]) })
 		// .defined(function(d){ return !isNaN(d) })
 
-
-  //color is totally dependent on order, in the colorArray and in the data
-	color.domain(data.map(function(d){return d.key}))
-
-	//d3.select(".x-axis").remove();
+	d3.select(".x-axis").remove();
 	svg.append('g')
 		.attr('class','x-axis')
 		.attr('transform', 'translate(' + margin.left + ',' + (height - margin.bottom) + ')')
@@ -997,6 +980,7 @@ function makeSchoolLookup(schoolNames){
       // <p id="school-description">Sector: <span>4-year, selective public</span></p>
 
       d3.select('#school-description > span').text(schoolDatum.slevel + ', ' + schoolDatum[SECTOR_KEY])
+ 
       d3.select('#comparison-def > span').text(schoolDatum.fips_ipeds)
 
       if (higherEdSelections.chartType === 'multiple-schools'){
@@ -1007,10 +991,10 @@ function makeSchoolLookup(schoolNames){
     }
   });
 }
-
+//MIN_YEAR is 2009
 // Time
  var dataTime = d3.range(0, 9).map(function(d) {
-    return new Date(MIN_YEAR + d, 0, 1);
+    return new Date(MIN_YEAR + d, 10, 3);
   });
 
 var sliderTime =
@@ -1021,9 +1005,10 @@ var sliderTime =
 		.width(220)
 		.tickFormat(function(d){ return '\'' + d3.timeFormat('%y')(d)})
 		.tickValues(dataTime)
-		.default(new Date(2017, 0, 1))
+		.default(new Date(2017, 10, 3))
     .handle(["M 1, 0 m -8.5, 0 a 8,8 0 1,0 16,0 a 8,8 0 1,0 -16,0"]) //draw a circle as a path: https://stackoverflow.com/questions/5737975/circle-drawing-with-svgs-arc-path
 		.on('onchange', function(val){
+			
 			higherEdSelections.year = timeFormat(val);
 			callBarChart(higherEdSelections.year);
 			d3.select('#single-year-container > h4 > span:nth-child(2)').text(timeFormat(val));
@@ -1035,13 +1020,14 @@ var gTime =
 		.attr('width', 250)
 		.attr('height', 60)
 		.append('g')
-		.attr('transform', 'translate(15,10)');
+		.attr('transform', 'translate(15,15)');
 
 gTime.call(sliderTime);
 d3.select('#single-year-container > h4 > span:nth-child(2)').text(timeFormat(sliderTime.value()));
 
 
-// d3.select('p#value-time').text(d3.timeFormat('%Y')(sliderTime.value()));
+
+
 
 function initializeStaticControls(){
 	//event listener party
@@ -1263,6 +1249,7 @@ function init(){
 
   //janky but move the numbers on the slider, can't find the option in the package: https://github.com/johnwalley/d3-simple-slider
   d3.selectAll("#year-input > svg > g > g.axis > g > text").attr("y", 12)
+  d3.select("#year-input > svg > g > g.slider > g > text").attr("y", 19).style("font-size", 14)
 
 	//draw your default chart, bars for 2017: all races/sectors
 	FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);
