@@ -348,6 +348,11 @@ h4.chart-title {
   width: 100%;
 }
 
+.y-axis-label {
+  fill: $gray-6;
+  font-style: italic;
+}
+
 .zero-line {
   display: none;
   stroke: $gray-6;
