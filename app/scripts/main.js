@@ -318,7 +318,7 @@ function showChart(chartType){
 	d3.select('#first-chart-container').transition().style('margin-left', chartScootch[chartType] + 'px')
 }
 
-function drawBarChart(data){
+function drawBarChart(data, animate){
 	var keys = higherEdSelections.arrayRaces.slice() //higherEdData.allData[SELECTED_DATASET].columns.slice(1);
 
 	keys.push(SECTOR_KEY);
@@ -420,11 +420,19 @@ function drawBarChart(data){
   
   .append('rect')
     .attr('y', function(d){ return y1(d.key) })
-    .attr('x', function(d){ return +d.value > 0 ? xBar(0) : xBar(d.value) })
+    .attr('x', function(d){
+    	return animate ? xBar(0) : +d.value > 0 ? xBar(0) : xBar(d.value)
+    })
     .attr('fill', function(d){ return raceColorObj[d.key] })
   	.attr('height', y1.bandwidth())
-  	.attr('width', function(d){ return +d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
-
+  	.attr("width",function(d){ return animate ? 0 : +d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
+  	if(animate){
+	  rects.transition()
+	  	.attr('width', function(d){ return +d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
+	    .attr('x', function(d){
+	    	return +d.value > 0 ? xBar(0) : xBar(d.value)
+	    })
+	}
 	rects.transition().duration(800)
 		.attr('x', function(d){ return d.value > 0 ? xBar(0) : xBar(d.value) })
 		.attr('width', function(d){ return d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
@@ -875,7 +883,7 @@ function buildOptionPanel(chartType){
 		checkbox.classed('checked', !checkbox.classed('checked'));
 
 		//bar chart function refers to arrayRaces so don't filter here
-		drawBarChart(FILTERED_BY_YEAR)
+		drawBarChart(FILTERED_BY_YEAR, true)
 
 		if (higherEdSelections.arrayRaces.length < 1){
 			//alert('Please pick one or more races or ethnicities')
@@ -927,7 +935,7 @@ function callBarChart(year){
   FILTERED_BY_YEAR = filterDataByYear(year).filter(function(d){
     return higherEdSelections.arraySectors.indexOf(d[SECTOR_KEY]) > -1
   })
-  drawBarChart(FILTERED_BY_YEAR)
+  drawBarChart(FILTERED_BY_YEAR, false)
 }
 
 function callComparisonChart(){
@@ -1272,7 +1280,7 @@ function init(){
 
 	//draw your default chart, bars for 2017: all races/sectors
 	FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);
-	drawBarChart(FILTERED_BY_YEAR);
+	drawBarChart(FILTERED_BY_YEAR, false);
 }
 
 d3.csv('data/national-2yr.csv').then(function(nationaltwo){
