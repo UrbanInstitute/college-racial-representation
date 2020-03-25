@@ -98,10 +98,10 @@ var xLine, xBar,
 
 //******The chart selections & their G's
 //bar chart
-var singleYearSVG = d3.select('#first-chart-container').append('svg')
-    .attr('width', width + barMargin.left + barMargin.right)
-var barChartG = singleYearSVG.append('g')
-    .attr('transform', 'translate(' + barMargin.left + ',' + barMargin.top + ')');
+var singleYearContainer = d3.select('#first-chart-container').append('div')
+    .style('width', (width + barMargin.left + barMargin.right) + "px")
+// var barChartG = singleYearSVG.append('g')
+    // .attr('transform', 'translate(' + barMargin.left + ',' + barMargin.top + ')');
 var barLegend = d3.select('#first-chart-container > div.legend').append('ul')
   .attr('class', 'key')
 
@@ -167,9 +167,9 @@ function resize(){
 
     d3.selectAll(".chart-div, #chart-area-container").style("width", width + 'px')
 
-    singleYearSVG
-        .attr("width", width)
-        .attr("height", height);
+    // singleYearContainer
+    //     .style("width", width)
+    //     .attr("height", height);
     byRaceSVG
         .attr("width", width)
         .attr("height", height);
@@ -332,24 +332,26 @@ function drawBarChart(data){
 	})
 
 
-  var barChartHeight = height;
-  singleYearSVG.attr('height', barChartHeight + barMargin.top + barMargin.bottom)
-  var numSectors = 7,
-  heightOfOneSector = barChartHeight / numSectors,
-  numCurrentSectors = data.length,
-  barChartHeight = barChartHeight - (heightOfOneSector * (numSectors - numCurrentSectors))
+  var 	barChartHeight = 200,
+  		barChartWidth = d3.select("#first-chart-container").node().getBoundingClientRect().width * .5 - 30;
+  // singleYearSVG.attr('height', barChartHeight + barMargin.top + barMargin.bottom)
+  // var numSectors = 7,
+  // heightOfOneSector = barChartHeight / numSectors,
+  // numCurrentSectors = data.length
+  // barChartHeight = barChartHeight - (heightOfOneSector * (numSectors - numCurrentSectors))
+
 
 
 	//scale used to place each sector
 	var y0 = d3.scaleBand()
 	    .domain(data.map(function(d){ return d[SECTOR_KEY] }) ) //returns lists of sectors
-	    .rangeRound([barChartHeight - barMargin.bottom, barMargin.top])
+	    .rangeRound([barChartHeight, 0])
 	    .paddingInner(0.3)
-
+// console.log(y0.bandwidth())
 	//scale used to place each race within sector
     var y1 = d3.scaleBand()
 	    .domain(higherEdSelections.arrayRaces)
-	    .rangeRound([y0.bandwidth(), 0])
+	    .rangeRound([barChartHeight - barMargin.top - barMargin.bottom, 0])
 	    .padding(0.2)
 
   // I am not sure the scale should update, makes it harder to compare
@@ -367,32 +369,40 @@ function drawBarChart(data){
 	//regular scale for bar length
   xBar = d3.scaleLinear()
 	    .domain([-30,30])
-	    .rangeRound([barMargin.left, width - barMargin.right])
+	    .rangeRound([0, barChartWidth - barMargin.right])
 
-	var sectorGroups = barChartG.selectAll('g.sector')
+	var sectorContainers = singleYearContainer.selectAll('div.sector')
 		.data(data, function(d){ return d[SECTOR_KEY] })
-		.join('g')
-		  .attr('transform', function(d){ return 'translate(0,' + y0(d[SECTOR_KEY]) + ')' } )
+		.join('div')
+		  // .attr('transform', function(d){ return 'translate(0,' + y0(d[SECTOR_KEY]) + ')' } )
 		  .attr('class', function(d){ if (d[SECTOR_KEY] === 'Public Nonselective') { return 'Public Nonselective'}
 		  	else if (d[SECTOR_KEY] === 'Private Nonselective'){ return 'Private Nonselective'} else {
 		  		return d[SECTOR_KEY]
 		  	} })
 		  .classed('sector', true)
+	sectorContainers.selectAll("svg").remove()
+	console.log(barChartWidth, barChartHeight)
+	
+	var sectorGroups = sectorContainers
+		.append("svg").attr("width",barChartWidth).attr("height", barChartHeight)
+		.append("g")
+		.attr("transform", "translate(0,20)")
 
 	d3.selectAll('.sector-label').remove(); //shrug emoji?
 
 	var sectorLabels = sectorGroups.append('text')
 			.classed('sector-label', true)
 			.text(function(d){ return d[SECTOR_KEY] })
-			.attr('x', xBar(0))//barMargin.left)
+			.attr('x', 10)//barMargin.left)
       .attr('y', 0)//-10)
       .style('text-transform', 'uppercase')
 
-	sectorGroups.exit().remove();
+
+	sectorContainers.exit().remove();
 
 //TODO add a g here and add the bar value
 //went back to no g for now so I can see if adding/removing bars is broken
-	var rects = sectorGroups.selectAll('rect')
+	var barG = sectorGroups.selectAll('g')
 		.data(function (d) {
 		    return keys.filter(function(key){
 		    	return key !== SECTOR_KEY })
@@ -404,7 +414,9 @@ function drawBarChart(data){
 		    })
 		  }, function(d){ return d.key })
 
-  rects.enter().append('rect')
+  var rects = barG.enter()
+  // .append("g")
+  .append('rect')
     .attr('y', function(d){ return y1(d.key) })
     .attr('x', function(d){ return +d.value > 0 ? xBar(0) : xBar(d.value) })
     .attr('fill', function(d){ return raceColorObj[d.key] })
@@ -420,12 +432,12 @@ function drawBarChart(data){
 	rects.exit().remove()
 
 
-  // d3.selectAll('.bar-labels').remove();
-  // var barLabels = barG.append('text')
-  //   .classed('bar-labels', true)
-  //   .text(function(d){ return formatTwoDecimals(d.value) + '%' })
-  //   .attr('x', function(d){ return  +d.value > 0 ? x(d.value) + 3 : x(d.value - 5 )})
-  //   .attr('y', 10)
+  d3.selectAll('.bar-labels').remove();
+  var barLabels = barG.append('text')
+    .classed('bar-labels', true)
+    .text(function(d){ return formatTwoDecimals(d.value) + '%' })
+    .attr('x', function(d){ return  +d.value > 0 ? xBar(d.value) + 3 : xBar(d.value - 5 )})
+    .attr('y', function(d){ return y1(d.key) })
 
 	var keys = barLegend.selectAll('li')
 		.data(higherEdSelections.arrayRaces)
