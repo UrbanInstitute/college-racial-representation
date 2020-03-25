@@ -332,6 +332,19 @@ function drawBarChart(data, animate){
 	})
 
 
+	// console.log(data)
+	var allBarValues = []
+	for(var i = 0; i < data.length; i++){
+		var datum = Object.entries(data[i])
+		for(var j = 0; j < datum.length; j++){
+			var key = datum[j][0],
+				value = datum[j][1]
+			if(key.search("dif") != -1) allBarValues.push(+value)
+		}
+
+	}
+	// console.log(allBarValues, d3.extent(allBarValues))
+
   var 	barChartHeight = 200,
   		barChartWidth = d3.select("#first-chart-container").node().getBoundingClientRect().width * .5 - 30;
   // singleYearSVG.attr('height', barChartHeight + barMargin.top + barMargin.bottom)
@@ -368,7 +381,7 @@ function drawBarChart(data, animate){
 
 	//regular scale for bar length
   xBar = d3.scaleLinear()
-	    .domain([-30,30])
+	    .domain(d3.extent(allBarValues))
 	    .rangeRound([0, barChartWidth - barMargin.right])
 
 	var sectorContainers = singleYearContainer.selectAll('div.sector')
@@ -843,7 +856,7 @@ function buildOptionPanel(chartType){
 			NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
 			drawLineChart(NESTED_BY_SECTOR, 'race', byRaceSVG, byRaceG, byRaceAxis);
 		}
-		callBarChart(higherEdSelections.year);
+		callBarChart(higherEdSelections.year, true);
 
 	})//end sector boxes
 
@@ -931,11 +944,11 @@ d3.select('#school-comparison').on('click', function(d){
   buildOptionPanel(higherEdSelections.chartType);
 })
 
-function callBarChart(year){
+function callBarChart(year, animate){
   FILTERED_BY_YEAR = filterDataByYear(year).filter(function(d){
     return higherEdSelections.arraySectors.indexOf(d[SECTOR_KEY]) > -1
   })
-  drawBarChart(FILTERED_BY_YEAR, false)
+  drawBarChart(FILTERED_BY_YEAR, animate)
 }
 
 function callComparisonChart(){
@@ -983,7 +996,7 @@ function menuSelected(){
 		return d.fips_ipeds === higherEdSelections.state;
 	})
 
-  callBarChart(higherEdSelections.year);
+  callBarChart(higherEdSelections.year, true);
 
 	//format data and call line chart race
 	NESTED_BY_SECTOR = makeSectorNest();
@@ -1037,7 +1050,7 @@ var sliderTime =
 		.on('onchange', function(val){
 
 			higherEdSelections.year = timeFormat(val);
-			callBarChart(higherEdSelections.year);
+			callBarChart(higherEdSelections.year, false);
 			d3.select('#first-chart-container > h4 > span:nth-child(2)').text(timeFormat(val));
 		});
 
@@ -1150,7 +1163,7 @@ function initializeStaticControls(){
 
     if (userChoice !== 'school'){
         //all these use SELECTED_DATASET inside the filtering/nesting functions
-    	callBarChart(higherEdSelections.year);
+    	callBarChart(higherEdSelections.year, true);
 
     	NESTED_BY_SECTOR = makeSectorNest();
     	NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
