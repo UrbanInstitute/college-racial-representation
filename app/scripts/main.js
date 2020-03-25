@@ -12,24 +12,20 @@
 //TODOs
 
 //BUGS
-//axis labels repeat a billion times and layer up
 //the sector radios don't show up with one checked the second time through
 //the legend is messed up
-//the axis lines are on top of the data
 
 //FEATURES
 //make chart responsive
-//clicking data highlights should do something
 //add downloadable chart image
 //make the URL update
 
 //STYLING
 //'cover' not doing what you'd think on cover image
 //dropdown menus
+//school comparison checkbox needs to be a switch
+//disable box on the year-input	
 
-
-//TEXT
-//add axis titles
 
 //THINGS TO CHECK
 //I took out 'dif_othra' and kept in 'dif_twora' which became 'multiracial'. Correct?
@@ -469,11 +465,18 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 
 	y.domain([min, max]);
 
-  d3.select(".y-axis-label").remove();
+  d3.selectAll(".axis-label").remove();
   svg.append('text')
     .text(yAxisText)
-    .attr('y', y(max))
-    .attr('class', 'y-axis-label')
+    .attr('y', margin.top)
+    .attr('class', 'axis-label')
+
+  svg.append('text')
+  	.text(xAxisText)
+  	.attr('y', height + margin.bottom)
+  	.attr('x', width/2)
+  	.attr('class', 'axis-label')
+    
 //was trying to get last item in svg.selectAll('.grid > .tick'), if that's a thing to set the y for the axis label
 	var line = d3.line()
 		.x(function(d){ return xLine(parseTime(d.year)) })
@@ -598,7 +601,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
     oneSchoolLegend.selectAll('li').remove();
     var schoolComparisonColors = ['#D2D2D2', '#1696D2']
     var keys = oneSchoolLegend.selectAll('li')
-      .data(['Selected school', 'Other school'])
+      .data(['Other school', 'Selected school'])
       .enter()
       .append('li')
       .attr('class', function(d){ return d })
@@ -639,13 +642,13 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 
 function buildOptionPanel(chartType){
 
-		var sectorOptions = []
+	var sectorOptions = []
 
-		higherEdData.allData[SELECTED_DATASET].filter(function(d){
-			return d.year === '2015'
-		}).forEach(function(d){
-			sectorOptions.push(d[SECTOR_KEY])
-		})
+	higherEdData.allData[SELECTED_DATASET].filter(function(d){
+		return d.year === '2015'
+	}).forEach(function(d){
+		sectorOptions.push(d[SECTOR_KEY])
+	})
 
 	//empty these
 	d3.select('#first-dynamic-menu').text('')
@@ -733,6 +736,9 @@ function buildOptionPanel(chartType){
         .classed('race-ethnicity-checkboxes', true)
         .classed('checked', true)
         .html(function(d){ return checkboxTemplater(d) })
+
+     d3.selectAll('.race-ethnicity-checkboxes > div > input')
+			.property('checked', function(d){ return higherEdSelections.arrayRaces.indexOf(this.value) > -1 });
   } else if (chartType === 'multiple-schools'){
 
       d3.select('#comparison-menu').html('<p class="options-panel-section">Race/Ethnicity</p>')
@@ -870,8 +876,7 @@ function buildOptionPanel(chartType){
 		}
 
 		if (chartType === 'one-school-all-races-container'){
-	      var schoolDataByRace = makeDemogNest(higherEdSelections.selectedSchool, true).filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
-	      drawLineChart(schoolDataByRace, 'sector', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
+	      callSchoolChart();
 	    } else if (chartType === 'by-race-chart'){
 	      drawLineChart(NESTED_BY_RACE, 'sector', bySectorSVG, bySectorG, bySectorYAxis);
 	    } else if (chartType === 'by-sector-chart'){
@@ -930,7 +935,7 @@ function callComparisonChart(){
 function callSchoolChart(){
   var schoolDataByRace = makeDemogNest(higherEdSelections.selectedSchool, true);
   d3.select('#fourth-chart-container > h4 > span').text(higherEdSelections.selectedSchool);
-  //schoolDataByRace = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
+  schoolDataByRace = schoolDataByRace.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
   drawLineChart(schoolDataByRace, 'sector', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
 }
 
@@ -960,7 +965,7 @@ function menuSelected(){
 		return d.fips_ipeds === higherEdSelections.state;
 	})
 
-  callBarChart(higherEdSelections.year);
+    callBarChart(higherEdSelections.year);
 
 	//format data and call line chart race
 	NESTED_BY_SECTOR = makeSectorNest();
@@ -1053,17 +1058,18 @@ function initializeStaticControls(){
 			d3.select('#time-selection').style('display', 'block');
 			d3.select('#school-selection').style('display', 'none');
 
-	    d3.select('#first-dynamic-menu').style('display', 'block');
-	    d3.select('#second-dynamic-menu').style('display', 'block');
+		    d3.select('#first-dynamic-menu').style('display', 'block');
+		    d3.select('#second-dynamic-menu').style('display', 'block');
 
-	    d3.selectAll('.time-selector').classed('selected', false);
+		    d3.selectAll('.time-selector').classed('selected', false);
 
-      if (higherEdSelections.chartType === 'by-sector-chart' || higherEdSelections.chartType === 'by-race-chart'){
-        d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
-        d3.select("div.sub-choice[value='" + higherEdSelections.chartType + "']").classed('selected', true)
-      } else {
-        d3.select('.time-selector.main-choice.bar').classed('selected', true);
-      }
+	      if (higherEdSelections.chartType === 'by-sector-chart' || higherEdSelections.chartType === 'by-race-chart'){
+	        d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
+	        d3.select(".disable-box").style("display", "none")
+	        d3.select("div.sub-choice[value='" + higherEdSelections.chartType + "']").classed('selected', true)
+	      } else {
+	        d3.select('.time-selector.main-choice.bar').classed('selected', true);
+	      }
 
 			//global selectors
 			SELECTED_DATASET = 'filteredForState';
@@ -1083,6 +1089,7 @@ function initializeStaticControls(){
 			if (higherEdSelections.chartType === 'one-school-all-races-container' || higherEdSelections.chartType === 'multiple-schools'){
 				showChart('single-year-bar')
 				higherEdSelections.chartType = 'single-year-bar'
+				d3.select(".disable-box").style("display", "none")
 			}
 
 		} else if ( userChoice === 'national' ){
@@ -1090,11 +1097,11 @@ function initializeStaticControls(){
 			d3.select('#dropdown').style('display', 'none')
 			d3.select('#school-selection').style('display', 'none')
 			d3.select('#first-chart-container > h4 > span:nth-child(1)').text('US');
-      d3.select('#second-chart-container > h4 > span:nth-child(2)').text('US');
-      d3.select('#third-chart-container > h4 > span:nth-child(2)').text('US');
+      		d3.select('#second-chart-container > h4 > span:nth-child(2)').text('US');
+		    d3.select('#third-chart-container > h4 > span:nth-child(2)').text('US');
 
-      d3.select('#first-dynamic-menu').style('display', 'block')
-      d3.select('#second-dynamic-menu').style('display', 'block')
+		    d3.select('#first-dynamic-menu').style('display', 'block')
+		    d3.select('#second-dynamic-menu').style('display', 'block')
 			//selectors updated
 			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength
 		      //the chart types aren't shared between school and national/state, so it amkes sense to reset
@@ -1103,6 +1110,7 @@ function initializeStaticControls(){
 				showChart('single-year-bar')
 		      d3.selectAll('.time-selector').classed('selected', false);
 		      d3.select('.time-selector.main-choice.bar').classed('selected', true);
+		      d3.select(".disable-box").style("display", "none")
 		  		higherEdSelections.chartType = 'single-year-bar'
 			}
 
@@ -1157,6 +1165,7 @@ function initializeStaticControls(){
 		if (chart === 'by-sector-chart'){
 			d3.select('.time-selector.bar').classed('selected', false);
 			d3.select('.time-selector.line.main-choice').classed('selected', true);
+			d3.select(".disable-box").style("display", "inline-block")
 			d3.select('#third-chart-container > h4 > span:nth-child(1)').text(translateRace[higherEdSelections.singleRace]);
 			if (higherEdSelections.geography === 'state'){
 				d3.select('#third-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
@@ -1167,6 +1176,7 @@ function initializeStaticControls(){
 			d3.select('.time-selector.bar').classed('selected', false);
 			d3.select('.time-selector.line.main-choice').classed('selected', true);
 			d3.select('#second-chart-container > h4 > span:nth-child(1)').text(higherEdSelections.singleSector);
+			d3.select(".disable-box").style("display", "inline-block")
 			if (higherEdSelections.geography === 'state'){
 				d3.select('#second-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
 			}
@@ -1174,10 +1184,120 @@ function initializeStaticControls(){
 		} else if ( chart === 'single-year-bar' ){
 			d3.select('.time-selector.bar').classed('selected', true);
 			d3.select('.time-selector.line.main-choice').classed('selected', false);
+			d3.select(".disable-box").style("display", "none")
 		}
 
 		showChart(chart);
 		buildOptionPanel(chart);
+	})
+
+	d3.selectAll('.scenario.clickable').on('click', function(d){
+		var scenarioID = this.getAttribute('id')
+
+		if (scenarioID === 'scenario1'){
+			higherEdSelections.arrayRaces = ["dif_white"]
+			higherEdSelections.singleSector = "Public More Selective"
+			higherEdSelections.chartType = 'by-race-chart'
+			higherEdSelections.geography = 'national'
+			higherEdSelections.programLength = 'four'
+			SELECTED_DATASET = 'nationalfour'
+			SECTOR_KEY = 'fourcat'
+
+			d3.select('#time-selection').style('display', 'block');
+			d3.select('#dropdown').style('display', 'none')
+			d3.select('#school-selection').style('display', 'none')
+			d3.select('#first-chart-container > h4 > span:nth-child(1)').text('US');
+      		d3.select('#second-chart-container > h4 > span:nth-child(2)').text('US');
+		    d3.select('#third-chart-container > h4 > span:nth-child(2)').text('US');
+
+		    d3.select('#first-dynamic-menu').style('display', 'block')
+		    d3.select('#second-dynamic-menu').style('display', 'block')
+
+		    d3.select('.race').classed('selected', true);
+			d3.select('.time-selector.bar').classed('selected', false);
+			d3.select(".disable-box").style("display", "inline-block")
+			d3.select('.time-selector.line.main-choice').classed('selected', true);
+			d3.select('#second-chart-container > h4 > span:nth-child(1)').text(higherEdSelections.singleSector);
+
+
+			NESTED_BY_RACE = makeDemogNest(higherEdSelections.singleSector);
+	    	NESTED_BY_RACE = NESTED_BY_RACE.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
+	    	drawLineChart(NESTED_BY_RACE, 'sector', bySectorSVG, bySectorG, bySectorYAxis)
+
+		} else if (scenarioID === 'scenario2') {
+			higherEdSelections.singleRace = "dif_hispa"
+			higherEdSelections.arraySectors = ["For-Profit", "Private More Selective", "Private Nonselective", "Private Selective", "Public More Selective", "Public Nonselective", "Public Selective"]
+			higherEdSelections.chartType = 'by-sector-chart'
+			higherEdSelections.geography = 'state'
+			higherEdSelections.programLength = 'four'
+			SELECTED_DATASET = 'filteredForState'
+			SECTOR_KEY = 'fourcat'
+			higherEdSelections.state = 'California'
+
+			d3.select('#first-chart-container > h4 > span:nth-child(1)').text(higherEdSelections.state);
+			d3.select('#third-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
+			d3.select('#second-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
+
+			d3.select('#time-selection').style('display', 'block');
+			d3.select('#school-selection').style('display', 'none');
+
+		    d3.select('#first-dynamic-menu').style('display', 'block');
+		    d3.select('#second-dynamic-menu').style('display', 'block');
+
+		    d3.selectAll('.time-selector').classed('selected', false);
+	        d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
+	        d3.select(".disable-box").style("display", "inline-block")
+	        d3.select("div.sub-choice[value='" + higherEdSelections.chartType + "']").classed('selected', true);
+	        
+
+			//create state dropdown menu
+			var states = higherEdData.allData.statefour.map(function(d){return d.fips_ipeds});
+			var menuData = states.filter(distinct);
+			makeDropdown(menuData);
+			d3.select('#dropdown').style('display', 'block');
+			d3.select('#dropdown').selectAll('option').property('selected', function(d){ return d === higherEdSelections.state })
+
+			//filter state data to just selected state
+			higherEdData.allData.filteredForState =  higherEdData.allData[higherEdSelections.geography + higherEdSelections.programLength].filter(function(d){
+				return d.fips_ipeds === higherEdSelections.state;
+			})
+			// if coming from a chart type that isn't shared by 'state' view, show the bar chart as default
+			if (higherEdSelections.chartType === 'one-school-all-races-container' || higherEdSelections.chartType === 'multiple-schools'){
+				showChart('single-year-bar')
+				higherEdSelections.chartType = 'single-year-bar'
+			}
+
+	    	NESTED_BY_SECTOR = makeSectorNest();
+	    	NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
+	    	drawLineChart(NESTED_BY_SECTOR, 'race', byRaceSVG, byRaceG, byRaceAxis);
+		} else if (scenarioID === 'scenario3'){
+			higherEdSelections.arrayRaces = ["dif_black"]
+			higherEdSelections.chartType = 'one-school-all-races-container'
+			higherEdSelections.geography = 'school'
+			higherEdSelections.programLength = 'four'
+			SELECTED_DATASET = 'schoolfour'
+			SECTOR_KEY = 'fourcat'
+			higherEdSelections.state = 'Michigan'
+			higherEdSelections.selectedSchool = 'Wayne State University'
+
+			d3.select('#school-comparison').property('checked', false);
+			d3.select('#fourth-chart-container > h4 > span').text('Wayne State University')
+
+			var schoolNames = higherEdData.allData.schoolfour.filter(function(d){
+				if (d.year ==='2015'){ return d.inst_name }
+			}).map(function(d){
+				return d.inst_name
+			})
+
+			makeSchoolLookup(schoolNames);
+			callSchoolChart();
+
+			d3.select("#school-lookup").attr("value", "Wayne State University")
+		}
+		d3.selectAll('div.geography-choices').classed('selected', false)
+		d3.select('div.geography-choices[data-cat="' + higherEdSelections.geography + '"]').classed('selected', true)
+		buildOptionPanel(higherEdSelections.chartType)
+		showChart(higherEdSelections.chartType)
 	})
 } //end initializeStaticContols
 
