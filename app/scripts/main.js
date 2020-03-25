@@ -413,9 +413,11 @@ function drawBarChart(data){
 			      };
 		    })
 		  }, function(d){ return d.key })
+		.enter()
+		.append("g")
 
-  var rects = barG.enter()
-  // .append("g")
+  var rects = barG
+  
   .append('rect')
     .attr('y', function(d){ return y1(d.key) })
     .attr('x', function(d){ return +d.value > 0 ? xBar(0) : xBar(d.value) })
@@ -436,8 +438,9 @@ function drawBarChart(data){
   var barLabels = barG.append('text')
     .classed('bar-labels', true)
     .text(function(d){ return formatTwoDecimals(d.value) + '%' })
-    .attr('x', function(d){ return  +d.value > 0 ? xBar(d.value) + 3 : xBar(d.value - 5 )})
-    .attr('y', function(d){ return y1(d.key) })
+    .attr('x', function(d){ return  +d.value > 0 ? xBar(d.value) + 3 : xBar(d.value - 2 )})
+    .attr('text-anchor', function(d){ return  +d.value > 0 ? "start" : "end" })
+    .attr('y', function(d){ return y1(d.key) + y1.bandwidth()*.5 + 3 })
 
 	var keys = barLegend.selectAll('li')
 		.data(higherEdSelections.arrayRaces)
