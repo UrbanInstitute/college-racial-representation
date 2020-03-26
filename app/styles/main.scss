@@ -133,17 +133,20 @@ $green-8: #370B0A;
 * LAYOUT
 *******************************************/
 
+
 #heroimage {
     background-image: url(../images/header.png);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: top;
     margin-top: 54px;
-    // height: 910px;
+    margin-bottom: 450px;
 }
 
-.title-and-top {
-
+#title-and-top {
+    max-width: 900px;
+    margin: 0 auto;
+    width: 70%;
 }
 
 div.page-container {
@@ -176,15 +179,21 @@ h1 {
 .clear {
   clear: both;
 }
-
+.hed{
+  background: white;
+  margin-bottom: 0px;
+  padding-top: 30px;
+  padding-bottom: .5rem;
+}
 .dateline {
+  background: white;
   font-size: 18px;
-  margin-bottom: $spacing-unit;
+  padding-bottom: $spacing-unit;
+  margin-bottom: 0px;
 }
 
 .title-content {
   text-align: center;
-  margin-bottom: 0.5* $spacing-unit;
   padding-top: 450px;
 }
 
@@ -194,9 +203,11 @@ h1 {
   margin-right: auto;
   margin-left: auto;
   margin-bottom: 80px;
+  padding-top: 25px;
   text-align: left;
-  width: 70%;
+  background: #fff;
 }
+
 
 
 
