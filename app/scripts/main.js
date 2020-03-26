@@ -303,7 +303,6 @@ function showChart(chartType){
 	//have 2 divs for bar/line that slide in/out cleanly
 	//var contentWidth = (widthUnder(1085)) ? window.innerWidth + 20 : d3.select("#chartAreaContainer").node().getBoundingClientRect().width
 
-
 	var chartScootch = {
 		'single-year-bar': 0,
 		'by-race-chart': chartHole  * -1,
@@ -311,6 +310,7 @@ function showChart(chartType){
     	'one-school-all-races-container': chartHole * -3,
     	'multiple-schools': chartHole * -4
 	}
+	console.log(chartScootch[chartType])
 	d3.select('#first-chart-container').transition().style('margin-left', chartScootch[chartType] + 'px')
 }
 
