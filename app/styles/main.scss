@@ -238,6 +238,7 @@ p.scenario {
     }
 
     p {
+      color: $gray-8;
       margin-bottom: 5px;
     }
 
@@ -258,9 +259,15 @@ p.scenario {
 // chart specific
 
 div.tooltip {
-  background-color: #FFFFFF;
+  color: #000000;
+  text-shadow:
+   -1px -1px 0 #FFFFFF,  
+    1px -1px 0 #FFFFFF,
+    -1px 1px 0 #FFFFFF,
+     1px 1px 0 #FFFFFF;
   font-family: Lato;
   font-size: 14px;
+  font-weight: 700;
   padding: 1px;
   pointer-events: none;
   position: absolute;
@@ -353,7 +360,7 @@ div.sector{
   width: 100%;
 }
 
-.y-axis-label {
+.axis-label {
   fill: $gray-6;
   font-style: italic;
 }
@@ -383,6 +390,17 @@ li.key-item {
 }
 
 // menu panel styling
+
+.disable-box {
+  background-color: rgba(255,255,255,0.7);
+    display: none;
+    height: 90px;
+    position: absolute;
+    right: -1px;
+    top: 20px;
+    width: 265px;
+    z-index: 2;
+}
 
 #year-input > svg > g > g.slider > g > path {
   fill: $cyan-6;
@@ -551,6 +569,7 @@ label.inactive:before {
   cursor: pointer;
   display: inline-block;
   font-size: 16px;
+  position: relative;
   text-transform: uppercase;
     img {
     padding-right: 10px;
@@ -574,7 +593,7 @@ label.inactive:before {
   padding: 3px 5px;
   text-align: center;
   text-transform: lowercase;
-  width: 80px;
+  width: 118px;
 }
 
 .time-selector.sub-choice.selected > span {
