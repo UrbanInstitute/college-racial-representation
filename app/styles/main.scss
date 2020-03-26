@@ -304,6 +304,7 @@ h4.chart-title {
 div.sector{
   display: inline-block;
   float: left;
+  margin-bottom: 30px;
 }
 #bar-chart {
   display: inline;
@@ -369,6 +370,10 @@ div.sector{
   display: none;
   stroke: $gray-6;
   stroke-width: 3;
+}
+.bar.y.axis{
+  stroke: $black;
+  stroke-width: 1px;
 }
 
 
