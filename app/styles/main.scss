@@ -301,7 +301,10 @@ h4.chart-title {
   margin-bottom: 25px;
   // text-align: center;
 }
-
+div.sector{
+  display: inline-block;
+  float: left;
+}
 #bar-chart {
   display: inline;
   float: right;
@@ -326,7 +329,9 @@ h4.chart-title {
   white-space: normal;
 //  width: 600px;
 }
-
+#first-chart-container{
+  float: left
+}
 #chart-frame {
     white-space: nowrap;
     display: inline-block;
