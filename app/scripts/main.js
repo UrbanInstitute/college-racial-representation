@@ -317,6 +317,17 @@ function drawBarChart(data, animate){
 	var keys = higherEdSelections.arrayRaces.slice() //higherEdData.allData[SELECTED_DATASET].columns.slice(1);
 
 	keys.push(SECTOR_KEY);
+
+
+	//some jankyness right now. Basically want the following behavior when using the year slider:
+		//do not animate the bars
+		//set x domain based on all possible year values for the selected dataset and keys
+	//all other options (where animate == true) have the opposite behavior, namely
+		//bars animate
+		//x domain is set just based on the data that is displayed
+	//so could rename "animate" var to, like, "isNotYearInput" if you like, or keep as is, or discuss
+	var isYearInput = !animate
+
 	//make your data an array of objects
 	data = data.map(function(sector){
 		var obj = {}
@@ -327,18 +338,30 @@ function drawBarChart(data, animate){
 	})
 
 
-	// console.log(data)
+	// console.log(higherEdData.allData[SELECTED_DATASET], animate)
 	var allBarValues = []
-	for(var i = 0; i < data.length; i++){
-		var datum = Object.entries(data[i])
-		for(var j = 0; j < datum.length; j++){
-			var key = datum[j][0],
-				value = datum[j][1]
-			if(key.search("dif") != -1) allBarValues.push(+value)
-		}
+	//could be more elegant...eh
+	if(isYearInput){
+		for(var i = 0; i < higherEdData.allData[SELECTED_DATASET].length; i++){
+			var datum = Object.entries(higherEdData.allData[SELECTED_DATASET][i])
+			for(var j = 0; j < datum.length; j++){
+				var key = datum[j][0],
+					value = datum[j][1]
+				if(key.search("dif") != -1 && keys.indexOf(key) != -1 ) allBarValues.push(+value)
+			}
 
+		}
+	}else{
+		for(var i = 0; i < data.length; i++){
+			var datum = Object.entries(data[i])
+			for(var j = 0; j < datum.length; j++){
+				var key = datum[j][0],
+					value = datum[j][1]
+				if(key.search("dif") != -1) allBarValues.push(+value)
+			}
+
+		}
 	}
-	// console.log(allBarValues, d3.extent(allBarValues))
 
   var 	barChartHeight = 200,
   		barChartWidth = d3.select("#first-chart-container").node().getBoundingClientRect().width * .5 - 30;
@@ -359,7 +382,7 @@ function drawBarChart(data, animate){
 	//scale used to place each race within sector
     var y1 = d3.scaleBand()
 	    .domain(higherEdSelections.arrayRaces)
-	    .rangeRound([barChartHeight - barMargin.top - barMargin.bottom, 0])
+	    .rangeRound([barChartHeight - barMargin.top - barMargin.bottom, 20])
 	    .padding(0.2)
 
   // I am not sure the scale should update, makes it harder to compare
@@ -377,7 +400,7 @@ function drawBarChart(data, animate){
 	//regular scale for bar length
   xBar = d3.scaleLinear()
 	    .domain(d3.extent(allBarValues))
-	    .rangeRound([0, barChartWidth - barMargin.right])
+	    .rangeRound([50, barChartWidth - barMargin.right-50])
 
 	var sectorContainers = singleYearContainer.selectAll('div.sector')
 		.data(data, function(d){ return d[SECTOR_KEY] })
@@ -391,10 +414,30 @@ function drawBarChart(data, animate){
 	sectorContainers.selectAll("svg").remove()
 	console.log(barChartWidth, barChartHeight)
 	
-	var sectorGroups = sectorContainers
+	var sectorSvgs = sectorContainers
 		.append("svg").attr("width",barChartWidth).attr("height", barChartHeight)
-		.append("g")
-		.attr("transform", "translate(0,20)")
+		
+var sectorGroups = sectorSvgs.append("g")
+		.attr("transform", "translate(0,12)")
+
+
+//define a pattern fill for negative bars. See below for implementation. I leave to you to add to the legend.
+sectorSvgs
+  .append('defs')
+  .append('pattern')
+    .attr('id', 'verticalHatch')
+    .attr('patternUnits', 'userSpaceOnUse')
+    .attr('width', 5)
+    .attr('height', 5)
+  .append('line')
+    .attr("x1",0)
+    .attr("x2",0)
+    .attr("y1",0)
+    .attr("y2",5)
+    .attr('stroke', '#fff')
+    .attr('stroke-width', 3);
+
+
 
 	d3.selectAll('.sector-label').remove(); //shrug emoji?
 
@@ -425,7 +468,6 @@ function drawBarChart(data, animate){
 		.append("g")
 
   var rects = barG
-  
   .append('rect')
     .attr('y', function(d){ return y1(d.key) })
     .attr('x', function(d){
@@ -447,16 +489,62 @@ function drawBarChart(data, animate){
 
 		.attr('height', y1.bandwidth())
 
+//as in some of my other edits I'm sure a nicer way to do this without repeated code but...moving quickly!
+  var hatchRects = barG
+  .append('rect')
+    .attr('y', function(d){ return y1(d.key) })
+    .attr('x', function(d){
+    	return animate ? xBar(0) : +d.value > 0 ? xBar(0) : xBar(d.value)
+    })
+    .attr('fill', 'url(#verticalHatch)')
+  	.attr('height', y1.bandwidth())
+  	.attr("width",function(d){ return animate ? 0 : +d.value > 0 ? 0 : (xBar(0) - xBar(d.value)) })
+  	if(animate){
+	  hatchRects.transition()
+	  	.attr('width', function(d){ return +d.value > 0 ? 0 : (xBar(0) - xBar(d.value)) })
+	    .attr('x', function(d){
+	    	return +d.value > 0 ? xBar(0) : xBar(d.value)
+	    })
+	}
+	// hatchRects.transition().duration(800)
+	// 	.attr('x', function(d){ return d.value > 0 ? xBar(0) : xBar(d.value) })
+	// 	.attr('width', function(d){ return d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
+
+	// 	.attr('height', y1.bandwidth())
+
+
+
+
+
 	rects.exit().remove()
+	hatchRects.exit().remove()
+
+
+  var yAxis = sectorGroups.append("line")
+  	.attr("x1",xBar(0))
+  	.attr("x2",xBar(0))
+  	.attr("y1", 10)
+  	.attr("y2",barChartHeight - 30)
+  	.attr("class", "bar y axis")
 
 
   d3.selectAll('.bar-labels').remove();
   var barLabels = barG.append('text')
     .classed('bar-labels', true)
     .text(function(d){ return formatTwoDecimals(d.value) + '%' })
-    .attr('x', function(d){ return  +d.value > 0 ? xBar(d.value) + 3 : xBar(d.value - 2 )})
+    .attr('x', function(d){
+    	return animate ? xBar(0) : +d.value > 0 ? xBar(d.value) + 3 : xBar(d.value) - 2 
+    })
     .attr('text-anchor', function(d){ return  +d.value > 0 ? "start" : "end" })
     .attr('y', function(d){ return y1(d.key) + y1.bandwidth()*.5 + 3 })
+
+    if(animate){
+    	barLabels.transition()
+		    .attr('x', function(d){
+		    	return +d.value > 0 ? xBar(d.value) + 3 : xBar(d.value) - 2 
+		    })
+    }
+
 
 	var keys = barLegend.selectAll('li')
 		.data(higherEdSelections.arrayRaces)
@@ -1003,7 +1091,6 @@ function menuSelected(){
 	})
 
   callBarChart(higherEdSelections.year, true);
-
 
 	//format data and call line chart race
 	NESTED_BY_SECTOR = makeSectorNest();
