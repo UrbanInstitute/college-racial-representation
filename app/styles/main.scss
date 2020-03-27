@@ -326,11 +326,13 @@ div.sector{
 
 .chart-div {
   display: inline-block;
+  // float: left;
   white-space: normal;
-//  width: 600px;
 }
+
+
 #first-chart-container{
-  float: left
+  // float: left
 }
 #chart-frame {
     white-space: nowrap;
@@ -424,6 +426,10 @@ h4.selection-label {
   margin-bottom: 20px;
 }
 
+#school-selection > h4.selection-label {
+  margin-bottom: 0px;
+}
+
 p.button-title {
   margin: 0;
 }
@@ -511,7 +517,7 @@ label.inactive:before {
   font-size: 16px;
   font-style: italic;
   line-height: 1.1;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .inactive {
@@ -522,6 +528,23 @@ label.inactive:before {
 .main-choice {
   display: block;
   font-size: 18px;
+}
+
+.collapsible {
+    padding-bottom: $spacing-unit/2;
+}
+
+.collapsed {
+  display: none;
+}
+
+.minimize {
+  color: $gray-6;
+  cursor: pointer;
+  font-size: 30px;
+  font-weight: 300;
+  left: 110px;
+  position: relative;
 }
 
 #options-panel {
@@ -535,7 +558,7 @@ label.inactive:before {
 .options-panel-section {
   font-size: 18px;
   font-weight: 700;
-  margin-top: $spacing-unit * 0.5;
+  margin-top: 10px;
   // text-transform: uppercase;
 }
 
@@ -548,6 +571,11 @@ label.inactive:before {
   margin-bottom: 0.25rem;
 }
 
+#first-dynamic-menu, #second-dynamic-menu, #comparison-menu {
+  border-top: 1px solid $gray-5;
+}
+
+
 #second-dynamic-menu > div > div > label > span, #first-dynamic-menu > div > div > label > span,
 #comparison-menu > div > div > label > span, #first-dynamic-menu > div > label > span {
   padding-left: 5px;
@@ -558,8 +586,8 @@ label.inactive:before {
 }
 
 #time-selection {
-  border-bottom: 1px solid $gray-5;
-  padding-bottom: $spacing-unit * 0.5;
+  // border-bottom: 1px solid $gray-5;
+  padding-bottom: 35px;
   width: 100%;
 }
 
@@ -611,6 +639,67 @@ label.inactive:before {
   margin-top: 10px;
 }
 
+//checkswitch: https://codepen.io/mburnette/pen/LxNxNg
+
+p.label {
+  color: $gray-8;
+  display: inline;
+  padding-right: 30px;
+  text-transform: uppercase;
+}
+
+
+input#school-comparison[type=checkbox]{
+  height: 0;
+  width: 0;
+  visibility: hidden;
+  margin-bottom: 20px;  
+}
+
+label.check-switch {
+  cursor: pointer;
+  text-indent: -9999px;
+  width: 53px;
+  height: 30px;
+  background: $gray-5;
+  display: inline-block;
+  border-radius: 100px;
+  position: relative;
+  top: 10px;
+}
+
+label.check-switch:after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 90px;
+  transition: 0.3s;
+}
+
+input#school-comparison:checked + label {
+  background: $cyan-6;
+}
+
+input#school-comparison:checked + label:after {
+  left: calc(100% - 5px);
+  transform: translateX(-100%);
+}
+
+label.check-switch:active:after {
+  width: 130px;
+}
+
+// centering
+// body {
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   height: 100vh;
+// }
 
 
 

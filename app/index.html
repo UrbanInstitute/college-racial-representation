@@ -136,11 +136,10 @@
         <h4 class="selection-label">College</h4>
         <input type="" name="" id="school-lookup" class="ui-autocomplete-input" autocomplete="off" value="Start typing..."><br>
         <p id="school-description" class="explainer">Sector: <span>4-year, selective public</span></p>
-        <label class="check-switch" for="switch_1">
-          School comparison
-          <input id="school-comparison" type="checkbox">
-          <span aria-hidden="true"></span>
-        </label>
+        <p class="label">School comparison</p>
+        <input id="school-comparison" type="checkbox">
+        <label class="check-switch" for="school-comparison"></label>
+        
         <p id="comparison-def" class="explainer ">See data for all colleges in this sector in <span>Alabama</span></p>
         <div id="comparison-menu"></div>
       </div>
@@ -271,7 +270,6 @@
     <script src="node_modules/jquery-ui-dist/jquery-ui.js"></script>
     <script src="node_modules/d3-simple-slider/dist/d3-simple-slider.js"></script>
     <script src="node_modules/d3/dist/d3.js"></script>
-    <script src="scripts/switch-checkbox.js"></script>
     <script src="scripts/halpurs.js"></script>
     <script src="scripts/main.js"></script>
     <!-- endbuild -->

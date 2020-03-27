@@ -24,11 +24,10 @@
 //'cover' not doing what you'd think on cover image
 //dropdown menus
 //school comparison checkbox needs to be a switch
-//disable box on the year-input	
 
 
 //THINGS TO CHECK
-//I took out 'dif_othra' and kept in 'dif_twora' which became 'multiracial'. Correct?
+//I took out 'dif_othra' and kept in (was dif_twora) 'dif_multi' which became 'multiracial'. Correct?
 //should there be alert text when you have zero selected races or sectors? just don't allow deselecting last one?
 
 
@@ -79,6 +78,7 @@ var optionsPanelTotalWidth = parseInt(d3.select("#options-panel").style("width")
 	chartHole = pageContainerWidth - optionsPanelTotalWidth
 
 d3.selectAll(".chart-div, #chart-area-container").style("width", chartHole + 'px')
+d3.select('#chart-frame').style('width', chartHole * 4 + 'px')
 //svg, .chart-div, #chart-area-container all need to be same width
 
 var margin = {top: 15, right: 20, bottom: 30, left: 40},
@@ -90,6 +90,9 @@ var margin = {top: 15, right: 20, bottom: 30, left: 40},
 var xLine, xBar,
 	y = d3.scaleLinear()
 		.range([height - margin.bottom, margin.top]);
+
+var MIN_YEAR = 2009,
+    MAX_YEAR = 2017;
 
 
 //******The chart selections & their G's
@@ -233,11 +236,8 @@ var translateRace = {
 	'dif_asian': 'Asian',
 	'dif_amind': 'American Indian',
 	'dif_pacis': 'Pacific Islander',
-	'dif_twora': 'Multiracial'
+	'dif_multi': 'Multiracial'
 }
-
-var MIN_YEAR = 2009,
-    MAX_YEAR = 2017;
 
 var raceColorObj = {
   'dif_white': '#0a4c6a',
@@ -247,7 +247,7 @@ var raceColorObj = {
   'dif_amind': '#ec008b',
   'dif_pacis': '#000000',
   'dif_othra': '#fdbf11',
-  'dif_twora': '#fdbf11'
+  'dif_multi': '#fdbf11'
 }
 
 var sectorColorObj = {
@@ -310,7 +310,6 @@ function showChart(chartType){
     	'one-school-all-races-container': chartHole * -3,
     	'multiple-schools': chartHole * -4
 	}
-	console.log(chartScootch[chartType])
 	d3.select('#first-chart-container').transition().style('margin-left', chartScootch[chartType] + 'px')
 }
 
@@ -594,44 +593,36 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 
 	path.exit().remove();
 
-	if (topic === 'sector'){
-		var keys = bySectorLegend.selectAll('li')
-			.data(higherEdSelections.arrayRaces)
+	function makeLegend(selection, data, useRaceTranslators){
+		data.sort(d3.ascending)
+		d3.selectAll('li.key-item').remove();
+		var keys = selection.selectAll('li')
+			.data(data)
 			.enter()
 			.append('li')
-			.attr('class', function(d){ return d })
-			.attr('data-cat', function(d){ return d })
+			.attr('class', function(d){ return useRaceTranslators ? classify(d) : d })
+			.attr('data-cat', function(d){ return useRaceTranslators ? classify(d) : d })
 			.classed('key-item', true)
-			.classed('race', true)
-			.style('border-left', function(d){ return '17px solid ' + raceColorObj[d] })
-			.text(function(d){ return translateRace[d] })
+			.classed('race', useRaceTranslators)
+			.style('border-left', function(d){ 
+				var color = useRaceTranslators ? raceColorObj[d] : sectorColorObj[classify(d)];
+				return '17px solid ' + color;
+			})
+			.text(function(d){ return useRaceTranslators ? translateRace[d] : d ; })
+	}
+
+	if (topic === 'sector'){
+		makeLegend(bySectorLegend, higherEdSelections.arrayRaces, true)
 	}
 
 	if (topic === 'race') {
-		var keys = byRaceLegend.selectAll('li')
-			.data(data.map(function(d){return d.key})) //list of sectors
-			.enter()
-			.append('li')
-			.attr('class', function(d){ return classify(d) })
-			.attr('data-cat', function(d){ return classify(d) })
-			.classed('key-item', true)
-			.classed('race', true)
-			.style('border-left', function(d){ return '17px solid' + sectorColorObj[classify(d)] })
-			.text(function(d){ return d })
+		var data = data.map(function(d){return d.key})
+		makeLegend(byRaceLegend, data, false)
 	}
 
-  if (higherEdSelections.chartType === 'one-school-all-races-container') {
-    oneSchoolLegend.selectAll('li').remove();
-    var keys = oneSchoolLegend.selectAll('li')
-      .data(higherEdSelections.arrayRaces)
-      .enter()
-      .append('li')
-      .attr('class', function(d){ return d })
-      .classed('key-item', true)
-      .classed('race', true)
-      .style('border-left', function(d){ return '17px solid ' + raceColorObj[d] })
-      .text(function(d){ return translateRace[d] })
-  }
+  	if (higherEdSelections.chartType === 'one-school-all-races-container') {
+  	  	makeLegend(oneSchoolLegend, higherEdSelections.arrayRaces, true)
+  	}
 
   if (higherEdSelections.chartType === 'multiple-schools'){
     oneSchoolLegend.selectAll('li').remove();
@@ -656,8 +647,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
         	div.style("opacity", 0);
         	d3.select(this).attr("stroke-width", 2)
         });
-
-  }
+    }
 
 	d3.selectAll('.key-item').on('mouseover', function(){
 		var category = this.getAttribute('data-cat');
@@ -696,7 +686,8 @@ function buildOptionPanel(chartType){
 		d3.select('#first-dynamic-menu').html(COLLEGE_SECTOR_CHECKBOXES)//controls initialized further down for this one
 
 		d3.select('#second-dynamic-menu').append('p').attr('class', 'options-panel-section').text('Race/Ethnicity')
-		d3.select('#second-dynamic-menu').selectAll('div.race-ethnicity-checkboxes')
+		var div = d3.select('#second-dynamic-menu').append('div').attr('class', 'collapsible')
+		div.selectAll('div.race-ethnicity-checkboxes')
 			.data(RACE_OPTIONS)
 			.enter()
 			.append('div')
@@ -713,7 +704,8 @@ function buildOptionPanel(chartType){
 	} else if (chartType === 'by-sector-chart'){
 		//races as radio buttons, sectors as checkboxes
 		d3.select('#first-dynamic-menu').append('p').attr('class', 'options-panel-section').text('Race/Ethnicity')
-		d3.select('#first-dynamic-menu').selectAll('div.race-ethnicity-radios')
+		var div = d3.select('#first-dynamic-menu').append('div').attr('class', 'collapsible')
+		div.selectAll('div.race-ethnicity-radios')
 			.data(RACE_OPTIONS)
 			.enter()
 			.append('div')
@@ -733,7 +725,8 @@ function buildOptionPanel(chartType){
 		d3.select('#first-dynamic-menu').html(COLLEGE_SECTOR_RADIOS)
 
 		d3.select('#second-dynamic-menu').append('p').attr('class', 'options-panel-section').text('Race/Ethnicity')
-		d3.select('#second-dynamic-menu').selectAll('div.race-ethnicity-checkboxes')
+		var div = d3.select('#second-dynamic-menu').append('div').attr('class', 'collapsible')
+		div.selectAll('div.race-ethnicity-checkboxes')
 			.data(RACE_OPTIONS)
 			.enter()
 			.append('div')
@@ -788,6 +781,14 @@ function buildOptionPanel(chartType){
 
       d3.select('input[value=' + higherEdSelections.singleRace + ']').property('checked', true);
   }
+
+  d3.selectAll('.options-panel-section').append('span').attr('class', 'minimize').text('-').on('click', function(){
+		console.log('hi')
+		var div = this.parentElement.parentElement.getAttribute('id')
+		d3.select('#' + div + '> div.collapsible').classed('collapsed', !d3.select('#' + div + '> div.collapsible').classed('collapsed'))
+		
+	})
+  
 
   if (higherEdSelections.programLength === 'four'){
       d3.selectAll('.two-year').classed('checked', false)
@@ -1336,8 +1337,14 @@ function initializeStaticControls(){
 		buildOptionPanel(higherEdSelections.chartType)
 		showChart(higherEdSelections.chartType)
 	})
-} //end initializeStaticContols
 
+} //end initializeStaticContols
+	// d3.selectAll('.minimize').on('click', function(){
+	// 	console.log('hi')
+	// 	var div = this.parentElement.parentElement.getAttribute('id')
+	// 	d3.select('#' + div + '> div.collapsible').classed('collapsed', !d3.select('#' + div + '> div.collapsible').classed('collapsed'))
+		
+	// })
 function filterDataByYear(year){
 	//this might need to filter for all the things, year, race, and sector
 	return higherEdData.allData[SELECTED_DATASET].filter(function(d){
