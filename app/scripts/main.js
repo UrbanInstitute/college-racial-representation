@@ -94,10 +94,10 @@ var xLine, xBar,
 
 //******The chart selections & their G's
 //bar chart
-var singleYearSVG = d3.select('#first-chart-container').append('svg')
-    .attr('width', width + barMargin.left + barMargin.right)
-var barChartG = singleYearSVG.append('g')
-    .attr('transform', 'translate(' + barMargin.left + ',' + barMargin.top + ')');
+var singleYearContainer = d3.select('#first-chart-container').append('div')
+    .style('width', (width + barMargin.left + barMargin.right) + "px")
+// var barChartG = singleYearSVG.append('g')
+    // .attr('transform', 'translate(' + barMargin.left + ',' + barMargin.top + ')');
 var barLegend = d3.select('#first-chart-container > div.legend').append('ul')
   .attr('class', 'key')
 
@@ -163,9 +163,9 @@ function resize(){
 
     d3.selectAll(".chart-div, #chart-area-container").style("width", width + 'px')
 
-    singleYearSVG
-        .attr("width", width)
-        .attr("height", height);
+    // singleYearContainer
+    //     .style("width", width)
+    //     .attr("height", height);
     byRaceSVG
         .attr("width", width)
         .attr("height", height);
@@ -314,10 +314,21 @@ function showChart(chartType){
 	d3.select('#first-chart-container').transition().style('margin-left', chartScootch[chartType] + 'px')
 }
 
-function drawBarChart(data){
+function drawBarChart(data, animate){
 	var keys = higherEdSelections.arrayRaces.slice() //higherEdData.allData[SELECTED_DATASET].columns.slice(1);
 
 	keys.push(SECTOR_KEY);
+
+
+	//some jankyness right now. Basically want the following behavior when using the year slider:
+		//do not animate the bars
+		//set x domain based on all possible year values for the selected dataset and keys
+	//all other options (where animate == true) have the opposite behavior, namely
+		//bars animate
+		//x domain is set just based on the data that is displayed
+	//so could rename "animate" var to, like, "isNotYearInput" if you like, or keep as is, or discuss
+	var isYearInput = !animate
+
 	//make your data an array of objects
 	data = data.map(function(sector){
 		var obj = {}
@@ -328,24 +339,51 @@ function drawBarChart(data){
 	})
 
 
-  var barChartHeight = height;
-  singleYearSVG.attr('height', barChartHeight + barMargin.top + barMargin.bottom)
-  var numSectors = 7,
-  heightOfOneSector = barChartHeight / numSectors,
-  numCurrentSectors = data.length,
-  barChartHeight = barChartHeight - (heightOfOneSector * (numSectors - numCurrentSectors))
+	// console.log(higherEdData.allData[SELECTED_DATASET], animate)
+	var allBarValues = []
+	//could be more elegant...eh
+	if(isYearInput){
+		for(var i = 0; i < higherEdData.allData[SELECTED_DATASET].length; i++){
+			var datum = Object.entries(higherEdData.allData[SELECTED_DATASET][i])
+			for(var j = 0; j < datum.length; j++){
+				var key = datum[j][0],
+					value = datum[j][1]
+				if(key.search("dif") != -1 && keys.indexOf(key) != -1 ) allBarValues.push(+value)
+			}
+
+		}
+	}else{
+		for(var i = 0; i < data.length; i++){
+			var datum = Object.entries(data[i])
+			for(var j = 0; j < datum.length; j++){
+				var key = datum[j][0],
+					value = datum[j][1]
+				if(key.search("dif") != -1) allBarValues.push(+value)
+			}
+
+		}
+	}
+
+  var 	barChartHeight = 200,
+  		barChartWidth = d3.select("#first-chart-container").node().getBoundingClientRect().width * .5 - 30;
+  // singleYearSVG.attr('height', barChartHeight + barMargin.top + barMargin.bottom)
+  // var numSectors = 7,
+  // heightOfOneSector = barChartHeight / numSectors,
+  // numCurrentSectors = data.length
+  // barChartHeight = barChartHeight - (heightOfOneSector * (numSectors - numCurrentSectors))
+
 
 
 	//scale used to place each sector
 	var y0 = d3.scaleBand()
 	    .domain(data.map(function(d){ return d[SECTOR_KEY] }) ) //returns lists of sectors
-	    .rangeRound([barChartHeight - barMargin.bottom, barMargin.top])
+	    .rangeRound([barChartHeight, 0])
 	    .paddingInner(0.3)
-
+// console.log(y0.bandwidth())
 	//scale used to place each race within sector
     var y1 = d3.scaleBand()
 	    .domain(higherEdSelections.arrayRaces)
-	    .rangeRound([y0.bandwidth(), 0])
+	    .rangeRound([barChartHeight - barMargin.top - barMargin.bottom, 20])
 	    .padding(0.2)
 
   // I am not sure the scale should update, makes it harder to compare
@@ -362,33 +400,61 @@ function drawBarChart(data){
 
 	//regular scale for bar length
   xBar = d3.scaleLinear()
-	    .domain([-30,30])
-	    .rangeRound([barMargin.left, width - barMargin.right])
+	    .domain(d3.extent(allBarValues))
+	    .rangeRound([50, barChartWidth - barMargin.right-50])
 
-	var sectorGroups = barChartG.selectAll('g.sector')
+	var sectorContainers = singleYearContainer.selectAll('div.sector')
 		.data(data, function(d){ return d[SECTOR_KEY] })
-		.join('g')
-		  .attr('transform', function(d){ return 'translate(0,' + y0(d[SECTOR_KEY]) + ')' } )
+		.join('div')
+		  // .attr('transform', function(d){ return 'translate(0,' + y0(d[SECTOR_KEY]) + ')' } )
 		  .attr('class', function(d){ if (d[SECTOR_KEY] === 'Public Nonselective') { return 'Public Nonselective'}
 		  	else if (d[SECTOR_KEY] === 'Private Nonselective'){ return 'Private Nonselective'} else {
 		  		return d[SECTOR_KEY]
 		  	} })
 		  .classed('sector', true)
+	sectorContainers.selectAll("svg").remove()
+	console.log(barChartWidth, barChartHeight)
+	
+	var sectorSvgs = sectorContainers
+		.append("svg").attr("width",barChartWidth).attr("height", barChartHeight)
+		
+var sectorGroups = sectorSvgs.append("g")
+		.attr("transform", "translate(0,12)")
+
+
+//define a pattern fill for negative bars. See below for implementation. I leave to you to add to the legend.
+sectorSvgs
+  .append('defs')
+  .append('pattern')
+    .attr('id', 'verticalHatch')
+    .attr('patternUnits', 'userSpaceOnUse')
+    .attr('width', 5)
+    .attr('height', 5)
+  .append('line')
+    .attr("x1",0)
+    .attr("x2",0)
+    .attr("y1",0)
+    .attr("y2",5)
+    .attr('stroke', '#fff')
+    .attr('stroke-width', 3);
+
+
 
 	d3.selectAll('.sector-label').remove(); //shrug emoji?
 
 	var sectorLabels = sectorGroups.append('text')
 			.classed('sector-label', true)
 			.text(function(d){ return d[SECTOR_KEY] })
-			.attr('x', xBar(0))//barMargin.left)
+			.attr('x', 10)//barMargin.left)
       .attr('y', 0)//-10)
       .style('text-transform', 'uppercase')
 
-	sectorGroups.exit().remove();
+
+	sectorContainers.exit().remove();
 
 //TODO add a g here and add the bar value
 //went back to no g for now so I can see if adding/removing bars is broken
-	var rects = sectorGroups.selectAll('rect')
+	var barG = sectorGroups.selectAll('g')
 		.data(function (d) {
 		    return keys.filter(function(key){
 		    	return key !== SECTOR_KEY })
@@ -399,29 +465,87 @@ function drawBarChart(data){
 			      };
 		    })
 		  }, function(d){ return d.key })
+		.enter()
+		.append("g")
 
-  rects.enter().append('rect')
+  var rects = barG
+  .append('rect')
     .attr('y', function(d){ return y1(d.key) })
-    .attr('x', function(d){ return +d.value > 0 ? xBar(0) : xBar(d.value) })
+    .attr('x', function(d){
+    	return animate ? xBar(0) : +d.value > 0 ? xBar(0) : xBar(d.value)
+    })
     .attr('fill', function(d){ return raceColorObj[d.key] })
   	.attr('height', y1.bandwidth())
-  	.attr('width', function(d){ return +d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
-
+  	.attr("width",function(d){ return animate ? 0 : +d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
+  	if(animate){
+	  rects.transition()
+	  	.attr('width', function(d){ return +d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
+	    .attr('x', function(d){
+	    	return +d.value > 0 ? xBar(0) : xBar(d.value)
+	    })
+	}
 	rects.transition().duration(800)
 		.attr('x', function(d){ return d.value > 0 ? xBar(0) : xBar(d.value) })
 		.attr('width', function(d){ return d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
 
 		.attr('height', y1.bandwidth())
 
+//as in some of my other edits I'm sure a nicer way to do this without repeated code but...moving quickly!
+  var hatchRects = barG
+  .append('rect')
+    .attr('y', function(d){ return y1(d.key) })
+    .attr('x', function(d){
+    	return animate ? xBar(0) : +d.value > 0 ? xBar(0) : xBar(d.value)
+    })
+    .attr('fill', 'url(#verticalHatch)')
+  	.attr('height', y1.bandwidth())
+  	.attr("width",function(d){ return animate ? 0 : +d.value > 0 ? 0 : (xBar(0) - xBar(d.value)) })
+  	if(animate){
+	  hatchRects.transition()
+	  	.attr('width', function(d){ return +d.value > 0 ? 0 : (xBar(0) - xBar(d.value)) })
+	    .attr('x', function(d){
+	    	return +d.value > 0 ? xBar(0) : xBar(d.value)
+	    })
+	}
+	// hatchRects.transition().duration(800)
+	// 	.attr('x', function(d){ return d.value > 0 ? xBar(0) : xBar(d.value) })
+	// 	.attr('width', function(d){ return d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
+
+	// 	.attr('height', y1.bandwidth())
+
+
+
+
+
 	rects.exit().remove()
+	hatchRects.exit().remove()
 
 
-  // d3.selectAll('.bar-labels').remove();
-  // var barLabels = barG.append('text')
-  //   .classed('bar-labels', true)
-  //   .text(function(d){ return formatTwoDecimals(d.value) + '%' })
-  //   .attr('x', function(d){ return  +d.value > 0 ? x(d.value) + 3 : x(d.value - 5 )})
-  //   .attr('y', 10)
+  var yAxis = sectorGroups.append("line")
+  	.attr("x1",xBar(0))
+  	.attr("x2",xBar(0))
+  	.attr("y1", 10)
+  	.attr("y2",barChartHeight - 30)
+  	.attr("class", "bar y axis")
+
+
+  d3.selectAll('.bar-labels').remove();
+  var barLabels = barG.append('text')
+    .classed('bar-labels', true)
+    .text(function(d){ return formatTwoDecimals(d.value) + '%' })
+    .attr('x', function(d){
+    	return animate ? xBar(0) : +d.value > 0 ? xBar(d.value) + 3 : xBar(d.value) - 2 
+    })
+    .attr('text-anchor', function(d){ return  +d.value > 0 ? "start" : "end" })
+    .attr('y', function(d){ return y1(d.key) + y1.bandwidth()*.5 + 3 })
+
+    if(animate){
+    	barLabels.transition()
+		    .attr('x', function(d){
+		    	return +d.value > 0 ? xBar(d.value) + 3 : xBar(d.value) - 2 
+		    })
+    }
+
 
 	var keys = barLegend.selectAll('li')
 		.data(higherEdSelections.arrayRaces)
@@ -826,7 +950,7 @@ function buildOptionPanel(chartType){
 			NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
 			drawLineChart(NESTED_BY_SECTOR, 'race', byRaceSVG, byRaceG, byRaceAxis);
 		}
-		callBarChart(higherEdSelections.year);
+		callBarChart(higherEdSelections.year, true);
 
 	})//end sector boxes
 
@@ -866,7 +990,7 @@ function buildOptionPanel(chartType){
 		checkbox.classed('checked', !checkbox.classed('checked'));
 
 		//bar chart function refers to arrayRaces so don't filter here
-		drawBarChart(FILTERED_BY_YEAR)
+		drawBarChart(FILTERED_BY_YEAR, true)
 
 		if (higherEdSelections.arrayRaces.length < 1){
 			//alert('Please pick one or more races or ethnicities')
@@ -913,11 +1037,11 @@ d3.select('#school-comparison').on('click', function(d){
   buildOptionPanel(higherEdSelections.chartType);
 })
 
-function callBarChart(year){
+function callBarChart(year, animate){
   FILTERED_BY_YEAR = filterDataByYear(year).filter(function(d){
     return higherEdSelections.arraySectors.indexOf(d[SECTOR_KEY]) > -1
   })
-  drawBarChart(FILTERED_BY_YEAR)
+  drawBarChart(FILTERED_BY_YEAR, animate)
 }
 
 function callComparisonChart(){
@@ -965,7 +1089,7 @@ function menuSelected(){
 		return d.fips_ipeds === higherEdSelections.state;
 	})
 
-    callBarChart(higherEdSelections.year);
+  callBarChart(higherEdSelections.year, true);
 
 	//format data and call line chart race
 	NESTED_BY_SECTOR = makeSectorNest();
@@ -1019,7 +1143,7 @@ var sliderTime =
 		.on('onchange', function(val){
 
 			higherEdSelections.year = timeFormat(val);
-			callBarChart(higherEdSelections.year);
+			callBarChart(higherEdSelections.year, false);
 			d3.select('#first-chart-container > h4 > span:nth-child(2)').text(timeFormat(val));
 		});
 
@@ -1135,7 +1259,7 @@ function initializeStaticControls(){
 
     if (userChoice !== 'school'){
         //all these use SELECTED_DATASET inside the filtering/nesting functions
-    	callBarChart(higherEdSelections.year);
+    	callBarChart(higherEdSelections.year, true);
 
     	NESTED_BY_SECTOR = makeSectorNest();
     	NESTED_BY_SECTOR = NESTED_BY_SECTOR.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
@@ -1377,7 +1501,7 @@ function init(){
 
 	//draw your default chart, bars for 2017: all races/sectors
 	FILTERED_BY_YEAR = filterDataByYear(higherEdSelections.year);
-	drawBarChart(FILTERED_BY_YEAR);
+	drawBarChart(FILTERED_BY_YEAR, false);
 }
 
 d3.csv('data/national-2yr.csv').then(function(nationaltwo){
