@@ -123,10 +123,19 @@ function fonts() {
 function extras() {
   return src([
     'app/*',
+    'app/data/*',
     '!app/*.html'
   ], {
     dot: true
   }).pipe(dest('dist'));
+};
+
+function data() {
+  return src([
+    'app/data/*',
+  ], {
+    dot: true
+  }).pipe(dest('dist/data'));
 };
 
 function clean() {
@@ -145,7 +154,8 @@ const build = series(
     series(parallel(styles, scripts, modernizr), html),
     images,
     fonts,
-    extras
+    extras,
+    data
   ),
   measureSize
 );
@@ -197,6 +207,7 @@ function startDistServer() {
   server.init({
     notify: false,
     port,
+    ui: false,
     server: {
       baseDir: 'dist',
       routes: {
