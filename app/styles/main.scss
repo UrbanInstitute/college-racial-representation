@@ -140,7 +140,7 @@ $green-8: #370B0A;
     background-repeat: no-repeat;
     background-position: top;
     margin-top: 54px;
-    margin-bottom: 450px;
+    // margin-bottom: 450px;
 }
 
 #title-and-top {
@@ -179,17 +179,19 @@ h1 {
 .clear {
   clear: both;
 }
+
 .hed{
-  background: white;
-  margin-bottom: 0px;
-  padding-top: 30px;
-  padding-bottom: .5rem;
+  // background: white;
+  // margin-bottom: 0px;
+  // padding-top: 30px;
+  // padding-bottom: .5rem;
 }
+
 .dateline {
-  background: white;
+  // background: white;
   font-size: 18px;
   padding-bottom: $spacing-unit;
-  margin-bottom: 0px;
+  // margin-bottom: 0px;
 }
 
 .title-content {
@@ -205,7 +207,7 @@ h1 {
   margin-bottom: 80px;
   padding-top: 25px;
   text-align: left;
-  background: #fff;
+  // background: #fff;
 }
 
 
@@ -284,6 +286,34 @@ div.tooltip {
   position: absolute;
 }
 
+div.tooltip.panelmouseover {
+  background-color: #FFFFFF;
+  border: 1px solid $gray-5;
+  border-radius: 3px;
+  color: $gray-7;
+  font-style: italic;
+  font-weight: 300;
+  padding: 8px;
+  text-shadow: none;
+  width: 300px;
+}
+
+.more-info {
+  background-color: $gray-5;
+  border-radius: 50%;
+  color: #FFFFFF;
+  display: none;
+  font-size: 12px;
+  padding: 2px 7px;
+  margin-left: 10px;
+  text-align: center;
+
+}
+
+p.inactive > span.more-info {
+  display: inline;
+}
+
 g.tick > text {
   font-size: 14px;
 }
@@ -332,19 +362,16 @@ div.sector{
   overflow-x: hidden;
   overflow-y: visible;
   display: inline-block;
-//  width: 600px;
-  // width: calc(100% - ($options-panel-width + $options-panel-margin));
 }
 
 .chart-div {
-  display: inline-block;
-  // float: left;
+  display: none;
   white-space: normal;
 }
 
 
-#first-chart-container{
-  // float: left
+#first-chart-container.chart-div{
+  display: inline-block;
 }
 #chart-frame {
     white-space: nowrap;
@@ -370,7 +397,6 @@ div.sector{
 
 #school-lookup {
   margin-bottom: 8px;
-  margin-top: 10px;
   width: 100%;
 }
 
@@ -439,12 +465,9 @@ li.key-item {
 
 h4.selection-label {
   font-size: 18px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
-#school-selection > h4.selection-label {
-  margin-bottom: 0px;
-}
 
 p.button-title {
   margin: 0;
@@ -458,7 +481,7 @@ p.program-length-hed {
 }
 
 p.program-length-hed.two-year {
-  margin-top: 25px;
+  margin-top: 45px;
 }
 
 p.program-type {
@@ -488,9 +511,17 @@ label.inactive:before {
   margin-bottom: 10px;
 }
 
-.c-cb, .n-radio, .race-ethnicity-radios {
+.c-cb, .n-radio, {
   margin-left: 10px;
+  margin-top: 8px;
+}
+
+.race-ethnicity-radios {
   margin-top: 6px;
+}
+
+.n-radio-label > span {
+  padding-left: 3px;
 }
 
 #comparison-menu > .race-ethnicity-checkboxes {
@@ -500,7 +531,65 @@ label.inactive:before {
 
 #dropdown {
   display: none;
-  margin-bottom: 25px;
+}
+
+#dropdown-button > span.ui-selectmenu-icon.ui-icon.ui-icon-triangle-1-s {
+  display: none;
+}
+
+#state-menu {
+  display: none;
+}
+
+#dropdown-button {
+      -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;   /* remove default arrow */
+    width: $options-panel-width;
+    height: 37px;
+    box-sizing: border-box;
+    /*background: #ffffff;*/
+    border: 1px solid #d2d2d2;
+    border-radius: 0;
+    font-family: Lato;
+    font-size: 16px;
+    font-weight: bold;
+    color: #1696d2;
+    cursor: pointer;
+    /*padding-left: 10px;*/
+    background: url("../images/arrow.png") 96% / 15% no-repeat #ffffff;
+    background-size: auto;
+    margin: 0 0 25px 0;
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button.ui-state-active:hover {
+    /* border: 1px solid #003eff; */
+    font-family: Lato;
+    background: #1696d2;
+    font-weight: normal;
+    color: #ffffff;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+/* https://stackoverflow.com/questions/17553300/change-ie-background-color-on-unopened-focused-select-box */
+select:focus::-ms-value {
+    color: #1696d2;
+    background: none;
+}
+
+#stateDropdown-menu,
+#schoolDropdown-menu {
+    max-height: 200px;
+}
+
+.ui-selectmenu-text {
+    font-size: 16px;
+    color: $gray-8;
+    
+    font-family: Lato;
 }
 
 #geography-selection {
