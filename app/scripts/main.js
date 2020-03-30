@@ -62,11 +62,11 @@ var SECTOR_KEY = 'fourcat',
 
 
 
-var optionsPanelTotalWidth = parseInt(d3.select("#options-panel").style("width")) + parseInt(d3.select("#options-panel").style("margin-right")),
-	pageContainerWidth = parseInt(d3.select(".page-container").style("width")),
+var optionsPanelTotalWidth = parseInt(d3.select('#options-panel').style('width')) + parseInt(d3.select('#options-panel').style('margin-right')),
+	pageContainerWidth = parseInt(d3.select('.page-container').style('width')),
 	chartHole = pageContainerWidth - optionsPanelTotalWidth
 
-d3.selectAll(".chart-div, #chart-area-container").style("width", chartHole + 'px')
+d3.selectAll('.chart-div, #chart-area-container').style('width', chartHole + 'px')
 d3.select('#chart-frame').style('width', chartHole * 4 + 'px')
 //svg, .chart-div, #chart-area-container all need to be same width
 
@@ -87,7 +87,7 @@ var MIN_YEAR = 2009,
 //******The chart selections & their G's
 //bar chart
 var singleYearContainer = d3.select('#first-chart-container').append('div')
-    .style('width', (width + barMargin.left + barMargin.right) + "px")
+    .style('width', (width + barMargin.left + barMargin.right) + 'px')
 // var barChartG = singleYearSVG.append('g')
     // .attr('transform', 'translate(' + barMargin.left + ',' + barMargin.top + ')');
 var barLegend = d3.select('#first-chart-container > div.legend').append('ul')
@@ -138,12 +138,12 @@ function resize(){
   //can't rely on mobile resize events, they fire too much
   //https://stackoverflow.com/questions/17328742/mobile-chrome-fires-resize-event-on-scroll
   if (storedWidth !== document.body.clientWidth){
-    console.log("diff")
+    console.log('diff')
 
     storedWidth = window.innerWidth;
 
-    optionsPanelTotalWidth = parseInt(d3.select("#options-panel").style("width")) + parseInt(d3.select("#options-panel").style("margin-right"))
-    pageContainerWidth = parseInt(d3.select(".page-container").style("width"))
+    optionsPanelTotalWidth = parseInt(d3.select('#options-panel').style('width')) + parseInt(d3.select('#options-panel').style('margin-right'))
+    pageContainerWidth = parseInt(d3.select('.page-container').style('width'))
     chartHole = pageContainerWidth - optionsPanelTotalWidth - margin.left - margin.right
 
     var width = chartHole,
@@ -153,22 +153,22 @@ function resize(){
     d3.selectAll('#first-chart-container, #third-chart-container, #second-chart-container, #fourth-chart-container')
         .style('width', width + 'px')
 
-    d3.selectAll(".chart-div, #chart-area-container").style("width", width + 'px')
+    d3.selectAll('.chart-div, #chart-area-container').style('width', width + 'px')
 
     // singleYearContainer
     //     .style("width", width)
     //     .attr("height", height);
     byRaceSVG
-        .attr("width", width)
-        .attr("height", height);
+        .attr('width', width)
+        .attr('height', height);
 
     bySectorSVG
-        .attr("width", width)
-        .attr("height", height);
+        .attr('width', width)
+        .attr('height', height);
 
     oneSchoolSVG
-        .attr("width", width)
-        .attr("height", height);
+        .attr('width', width)
+        .attr('height', height);
 
     //update the scales
     xLine.range([margin.left, width - margin.right])
@@ -360,7 +360,7 @@ function drawBarChart(data, animate){
 			for(var j = 0; j < datum.length; j++){
 				var key = datum[j][0],
 					value = datum[j][1]
-				if(key.search("dif") != -1 && keys.indexOf(key) != -1 ) allBarValues.push(+value)
+				if(key.search('dif') != -1 && keys.indexOf(key) != -1 ) allBarValues.push(+value)
 			}
 
 		}
@@ -370,7 +370,7 @@ function drawBarChart(data, animate){
 			for(var j = 0; j < datum.length; j++){
 				var key = datum[j][0],
 					value = datum[j][1]
-				if(key.search("dif") != -1) allBarValues.push(+value)
+				if(key.search('dif') != -1) allBarValues.push(+value)
 			}
 
 		}
@@ -424,14 +424,14 @@ function drawBarChart(data, animate){
 		  		return d[SECTOR_KEY]
 		  	} })
 		  .classed('sector', true)
-	sectorContainers.selectAll("svg").remove()
+	sectorContainers.selectAll('svg').remove()
 	console.log(barChartWidth, barChartHeight)
 	
 	var sectorSvgs = sectorContainers
-		.append("svg").attr("width",barChartWidth).attr("height", barChartHeight)
+		.append('svg').attr('width',barChartWidth).attr('height', barChartHeight)
 		
-var sectorGroups = sectorSvgs.append("g")
-		.attr("transform", "translate(0,12)")
+var sectorGroups = sectorSvgs.append('g')
+		.attr('transform', 'translate(0,12)')
 
 
 //define a pattern fill for negative bars. See below for implementation. I leave to you to add to the legend.
@@ -443,10 +443,10 @@ sectorSvgs
     .attr('width', 5)
     .attr('height', 5)
   .append('line')
-    .attr("x1",0)
-    .attr("x2",0)
-    .attr("y1",0)
-    .attr("y2",5)
+    .attr('x1',0)
+    .attr('x2',0)
+    .attr('y1',0)
+    .attr('y2',5)
     .attr('stroke', '#fff')
     .attr('stroke-width', 3);
 
@@ -478,7 +478,7 @@ sectorSvgs
 		    })
 		  }, function(d){ return d.key })
 		.enter()
-		.append("g")
+		.append('g')
 
   var rects = barG
 	  .append('rect')
@@ -488,7 +488,7 @@ sectorSvgs
 	    })
 	    .attr('fill', function(d){ return raceColorObj[d.key] })
 	  	.attr('height', y1.bandwidth())
-	  	.attr("width",function(d){ return animate ? 0 : +d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
+	  	.attr('width',function(d){ return animate ? 0 : +d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
 	  	if(animate){
 		  rects.transition()
 		  	.attr('width', function(d){ return +d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
@@ -511,7 +511,7 @@ sectorSvgs
 	    })
 	    .attr('fill', 'url(#verticalHatch)')
 	  	.attr('height', y1.bandwidth())
-	  	.attr("width",function(d){ return animate ? 0 : +d.value > 0 ? 0 : (xBar(0) - xBar(d.value)) })
+	  	.attr('width',function(d){ return animate ? 0 : +d.value > 0 ? 0 : (xBar(0) - xBar(d.value)) })
 	  	if(animate){
 		  hatchRects.transition()
 		  	.attr('width', function(d){ return +d.value > 0 ? 0 : (xBar(0) - xBar(d.value)) })
@@ -530,12 +530,12 @@ sectorSvgs
 	hatchRects.exit().remove()
 
 
-  var yAxis = sectorGroups.append("line")
-  	.attr("x1",xBar(0))
-  	.attr("x2",xBar(0))
-  	.attr("y1", 20)
-  	.attr("y2", barChartHeight - 35)
-  	.attr("class", "bar y axis")
+  var yAxis = sectorGroups.append('line')
+  	.attr('x1',xBar(0))
+  	.attr('x2',xBar(0))
+  	.attr('y1', 20)
+  	.attr('y2', barChartHeight - 35)
+  	.attr('class', 'bar y axis')
 
 
   d3.selectAll('.bar-labels').remove();
@@ -545,7 +545,7 @@ sectorSvgs
     .attr('x', function(d){
     	return animate ? xBar(0) : +d.value > 0 ? xBar(d.value) + 3 : xBar(d.value) - 2 
     })
-    .attr('text-anchor', function(d){ return  +d.value > 0 ? "start" : "end" })
+    .attr('text-anchor', function(d){ return  +d.value > 0 ? 'start' : 'end' })
     .attr('y', function(d){ return y1(d.key) + y1.bandwidth()*.5 + 3 })
 
     if(animate){
@@ -582,9 +582,9 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		'comparison': higherEdSelections.singleRace
 	}
 	if (higherEdSelections.chartType === 'multiple-schools'){
-		var div = d3.select("body").append("div")
-		    .attr("class", "tooltip")
-		    .style("opacity", 0);
+		var div = d3.select('body').append('div')
+		    .attr('class', 'tooltip')
+		    .style('opacity', 0);
 	}
 	//scales
 	xLine = d3.scaleTime()
@@ -600,7 +600,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 
 	y.domain([min, max]);
 
-  d3.selectAll(".axis-label").remove();
+  d3.selectAll('.axis-label').remove();
   svg.append('text')
     .text(yAxisText)
     .attr('y', margin.top)
@@ -618,7 +618,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		.y(function(d){ return y(+d[selected[topic]]) })
 		// .defined(function(d){ return !isNaN(d) })
 
-	d3.select(".x-axis").remove();
+	d3.select('.x-axis').remove();
 	svg.append('g')
 		.attr('class','x-axis')
 		.attr('transform', 'translate(' + margin.left + ',' + (height + margin.top - margin.bottom) + ')')
@@ -737,15 +737,15 @@ function drawLineChart(data, topic, svg, g, axisSelection){
       .style('border-left', function(d,i){ return '17px solid ' + schoolComparisonColors[i] })
       .text(function(d){ return d })
 
-    d3.selectAll(".data-line").on("mouseover", function(d){
-    	div.style("opacity", .9);
+    d3.selectAll('.data-line').on('mouseover', function(d){
+    	div.style('opacity', .9);
         div.html(d.key)
-            .style("left", (d3.event.pageX) + "px")
-            .style("top", (d3.event.pageY - 28) + "px");
-        d3.select(this).attr("stroke-width", 4)
-        }).on("mouseout", function(d) {
-        	div.style("opacity", 0);
-        	d3.select(this).attr("stroke-width", 2)
+            .style('left', (d3.event.pageX) + 'px')
+            .style('top', (d3.event.pageY - 28) + 'px');
+        d3.select(this).attr('stroke-width', 4)
+        }).on('mouseout', function(d) {
+        	div.style('opacity', 0);
+        	d3.select(this).attr('stroke-width', 2)
         });
     }
 
@@ -911,7 +911,7 @@ function buildOptionPanel(chartType){
 		higherEdSelections.singleSector = translate[this.value];
 		higherEdSelections.arraySectors = [translate[this.value]]
 		d3.select('#second-chart-container > h4 > span').text(higherEdSelections.singleSector);
-		if (d3.select(this).classed("two-year")){
+		if (d3.select(this).classed('two-year')){
 			convertSelectors('two')
 		} else {
 			convertSelectors('four')
@@ -989,18 +989,18 @@ function buildOptionPanel(chartType){
 		d3.select('#' + div + '> div.collapsible').classed('collapsed', !d3.select('#' + div + '> div.collapsible').classed('collapsed'))	
     })
 
-	var panelMouseover = d3.select("body").append("div")
-	    .attr("class", "tooltip panelmouseover")
-	    .style("opacity", 0);
+	var panelMouseover = d3.select('body').append('div')
+	    .attr('class', 'tooltip panelmouseover')
+	    .style('opacity', 0);
 
 	d3.selectAll('.more-info').on('mouseover', function(){
     	panelMouseover
-    		.style("opacity", 1)
+    		.style('opacity', 1)
         	.html('Comparisons between 4-year and 2-year colleges aren’t available because we use different age groups for our analyses of the two institution levels’ potential pool of students.')
-            .style("left", (d3.event.pageX + 20) + "px")
-            .style("top", (d3.event.pageY - 28) + "px");
-	}).on("mouseout", function(d) {
-        	panelMouseover.style("opacity", 0);
+            .style('left', (d3.event.pageX + 20) + 'px')
+            .style('top', (d3.event.pageY - 28) + 'px');
+	}).on('mouseout', function(d) {
+        	panelMouseover.style('opacity', 0);
     });
 }
 		
@@ -1159,7 +1159,7 @@ var sliderTime =
 		.tickFormat(function(d){ return '\'' + d3.timeFormat('%y')(d)})
 		.tickValues(dataTime)
 		.default(new Date(2017, 10, 3))
-    .handle(["M 1, 0 m -8.5, 0 a 8,8 0 1,0 16,0 a 8,8 0 1,0 -16,0"]) //draw a circle as a path: https://stackoverflow.com/questions/5737975/circle-drawing-with-svgs-arc-path
+    .handle(['M 1, 0 m -8.5, 0 a 8,8 0 1,0 16,0 a 8,8 0 1,0 -16,0']) //draw a circle as a path: https://stackoverflow.com/questions/5737975/circle-drawing-with-svgs-arc-path
 		.on('onchange', function(val){
 
 			higherEdSelections.year = timeFormat(val);
@@ -1205,7 +1205,7 @@ function initializeStaticControls(){
 	      if (higherEdSelections.chartType === 'by-sector-chart' || higherEdSelections.chartType === 'by-race-chart'){
 	        d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
 	        //d3.select(".disable-box").style("display", "none")
-	        d3.select("div.sub-choice[value='" + higherEdSelections.chartType + "']").classed('selected', true)
+	        d3.select('div.sub-choice[value=\'' + higherEdSelections.chartType + '\']').classed('selected', true)
 	      } else {
 	        d3.select('.time-selector.main-choice.bar').classed('selected', true);
 	      }
@@ -1228,7 +1228,7 @@ function initializeStaticControls(){
 		if (higherEdSelections.chartType === 'one-school-all-races-container' || higherEdSelections.chartType === 'multiple-schools'){
 			showChart('single-year-bar')
 			higherEdSelections.chartType = 'single-year-bar'
-			d3.select(".disable-box").style("display", "none")
+			d3.select('.disable-box').style('display', 'none')
 		}
 
 		} else if ( userChoice === 'national' ){
@@ -1246,7 +1246,7 @@ function initializeStaticControls(){
 			  showChart('single-year-bar')
 		      d3.selectAll('.time-selector').classed('selected', false);
 		      d3.select('.time-selector.main-choice.bar').classed('selected', true);
-		      d3.select(".disable-box").style("display", "none")
+		      d3.select('.disable-box').style('display', 'none')
 		  	  higherEdSelections.chartType = 'single-year-bar'
 			}
 
@@ -1302,7 +1302,7 @@ function initializeStaticControls(){
 		if (chart === 'by-sector-chart'){
 			d3.select('.time-selector.bar').classed('selected', false);
 			d3.select('.time-selector.line.main-choice').classed('selected', true);
-			d3.select(".disable-box").style("display", "inline-block")
+			d3.select('.disable-box').style('display', 'inline-block')
 			d3.select('#third-chart-container > h4 > span:nth-child(1)').text(translateRace[higherEdSelections.singleRace]);
 			if (higherEdSelections.geography === 'state'){
 				d3.select('#third-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
@@ -1313,7 +1313,7 @@ function initializeStaticControls(){
 			d3.select('.time-selector.bar').classed('selected', false);
 			d3.select('.time-selector.line.main-choice').classed('selected', true);
 			d3.select('#second-chart-container > h4 > span:nth-child(1)').text(higherEdSelections.singleSector);
-			d3.select(".disable-box").style("display", "inline-block")
+			d3.select('.disable-box').style('display', 'inline-block')
 			if (higherEdSelections.geography === 'state'){
 				d3.select('#second-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
 			}
@@ -1321,7 +1321,7 @@ function initializeStaticControls(){
 		} else if ( chart === 'single-year-bar' ){
 			d3.select('.time-selector.bar').classed('selected', true);
 			d3.select('.time-selector.line.main-choice').classed('selected', false);
-			d3.select(".disable-box").style("display", "none")
+			d3.select('.disable-box').style('display', 'none')
 
 			callBarChart(higherEdSelections.year, false);
 		}
@@ -1334,8 +1334,8 @@ function initializeStaticControls(){
 		var scenarioID = this.getAttribute('id')
 
 		if (scenarioID === 'scenario1'){
-			higherEdSelections.arrayRaces = ["dif_white"]
-			higherEdSelections.singleSector = "Public More Selective"
+			higherEdSelections.arrayRaces = ['dif_white']
+			higherEdSelections.singleSector = 'Public More Selective'
 			higherEdSelections.chartType = 'by-race-chart'
 			higherEdSelections.geography = 'national'
 			higherEdSelections.programLength = 'four'
@@ -1354,7 +1354,7 @@ function initializeStaticControls(){
 
 		    d3.select('.race').classed('selected', true);
 			d3.select('.time-selector.bar').classed('selected', false);
-			d3.select(".disable-box").style("display", "inline-block")
+			d3.select('.disable-box').style('display', 'inline-block')
 			d3.select('.time-selector.line.main-choice').classed('selected', true);
 			d3.select('#second-chart-container > h4 > span:nth-child(1)').text(higherEdSelections.singleSector);
 
@@ -1362,8 +1362,8 @@ function initializeStaticControls(){
 			callRaceLine()
 
 		} else if (scenarioID === 'scenario2') {
-			higherEdSelections.singleRace = "dif_hispa"
-			higherEdSelections.arraySectors = ["For-Profit", "Private More Selective", "Private Nonselective", "Private Selective", "Public More Selective", "Public Nonselective", "Public Selective"]
+			higherEdSelections.singleRace = 'dif_hispa'
+			higherEdSelections.arraySectors = ['For-Profit', 'Private More Selective', 'Private Nonselective', 'Private Selective', 'Public More Selective', 'Public Nonselective', 'Public Selective']
 			higherEdSelections.chartType = 'by-sector-chart'
 			higherEdSelections.geography = 'state'
 			higherEdSelections.programLength = 'four'
@@ -1383,8 +1383,8 @@ function initializeStaticControls(){
 
 		    d3.selectAll('.time-selector').classed('selected', false);
 	        d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
-	        d3.select(".disable-box").style("display", "inline-block")
-	        d3.select("div.sub-choice[value='" + higherEdSelections.chartType + "']").classed('selected', true);
+	        d3.select('.disable-box').style('display', 'inline-block')
+	        d3.select('div.sub-choice[value=\'' + higherEdSelections.chartType + '\']').classed('selected', true);
 	        
 
 			//create state dropdown menu
@@ -1406,7 +1406,7 @@ function initializeStaticControls(){
 
 	    	callSectorLine();
 		} else if (scenarioID === 'scenario3'){
-			higherEdSelections.arrayRaces = ["dif_black"]
+			higherEdSelections.arrayRaces = ['dif_black']
 			higherEdSelections.chartType = 'one-school-all-races-container'
 			higherEdSelections.geography = 'school'
 			higherEdSelections.programLength = 'four'
@@ -1427,7 +1427,7 @@ function initializeStaticControls(){
 			makeSchoolLookup(schoolNames);
 			callSchoolChart();
 
-			d3.select("#school-lookup").attr("value", "Wayne State University")
+			d3.select('#school-lookup').attr('value', 'Wayne State University')
 		}
 		d3.selectAll('div.geography-choices').classed('selected', false)
 		d3.select('div.geography-choices[data-cat="' + higherEdSelections.geography + '"]').classed('selected', true)
@@ -1510,8 +1510,8 @@ function init(){
 	initializeStaticControls();
 
   //janky but move the numbers on the slider, can't find the option in the package: https://github.com/johnwalley/d3-simple-slider
-  d3.selectAll("#year-input > svg > g > g.axis > g > text").attr("y", 12)
-  d3.select("#year-input > svg > g > g.slider > g > text").attr("y", 19).style("font-size", 14)
+  d3.selectAll('#year-input > svg > g > g.axis > g > text').attr('y', 12)
+  d3.select('#year-input > svg > g > g.slider > g > text').attr('y', 19).style('font-size', 14)
 
 	//draw your default chart, bars for 2017: all races/sectors
 	callBarChart('2017', false);
