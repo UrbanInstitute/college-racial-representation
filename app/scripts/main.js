@@ -721,6 +721,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 	}
 
   	if (higherEdSelections.chartType === 'one-school-all-races-container') {
+  		d3.selectAll('li.key-item-comparison').remove()
   	  	makeLegend(oneSchoolLegend, higherEdSelections.arrayRaces, true)
   	}
 
@@ -895,8 +896,7 @@ function buildOptionPanel(chartType){
 		//if the box is being unchecked and the selections array is empty
 		if (selectionIndex > 0 && higherEdSelections.arraySectors.length < 1){
 			//alert('Please pick at least one sector')
-	      var choiceString = higherEdSelections.programLength === 'four' ? translate[userChoice] : twoYearTranslate[userChoice]
-	      higherEdSelections.arraySectors.push(choiceString)
+	      higherEdSelections.arraySectors.push(translate[userChoice])
 	      //TODO - why this not worky
 	      d3.select('.sector-boxes > div > input[value=' + userChoice + ']').property('checked', true)
 		} 
@@ -909,7 +909,7 @@ function buildOptionPanel(chartType){
 	//sector radios - updates singleSector
 	d3.selectAll('.sector-radios').on('click', function(){
 		higherEdSelections.singleSector = translate[this.value];
-		higherEdSelections.arraySectors = [translate[this.value]]
+		// higherEdSelections.arraySectors = [translate[this.value]]
 		d3.select('#second-chart-container > h4 > span').text(higherEdSelections.singleSector);
 		if (d3.select(this).classed('two-year')){
 			convertSelectors('two')
