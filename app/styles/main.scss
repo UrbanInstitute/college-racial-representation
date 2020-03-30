@@ -346,6 +346,7 @@ div.sector{
   display: inline-block;
   float: left;
   margin-bottom: 30px;
+  margin-top: 25px;
 }
 #bar-chart {
   display: inline;
@@ -417,7 +418,7 @@ div.sector{
 
 
 // legend
-li.key-item {
+li.key-item-line, li.key-item-bar, li.key-item-comparison {
   color: $gray-7;
   display: inline-block;
   margin: 0 1em 1em 0;
