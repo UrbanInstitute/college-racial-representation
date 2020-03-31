@@ -252,6 +252,7 @@ p.scenario {
 
     p {
       color: $gray-8;
+      font-size: 16px;
       margin-bottom: 5px;
     }
 
@@ -322,6 +323,12 @@ g.grid > g.tick > line {
   stroke: $gray-5;
 }
 
+g.parameter-value > text {
+  fill: $cyan-6;
+  font-family: Lato;
+  font-weight: 700;
+}
+
 path.domain {
   display: none;
 }
@@ -338,7 +345,7 @@ path.other-school {
 h4.chart-title {
   color: $gray-8;
   font-size: 24px;
-  font-weight: 400;
+  font-weight: 700;
   margin-bottom: 25px;
   // text-align: center;
 }
@@ -466,7 +473,8 @@ li.key-item-line, li.key-item-bar, li.key-item-comparison {
 
 h4.selection-label {
   font-size: 18px;
-  margin-bottom: 10px;
+  font-weight: 700;
+  margin-bottom: 20px;
 }
 
 
@@ -507,7 +515,7 @@ label.inactive:before {
 }
 
 .be-choosy {
-  font-size: 30px;
+  font-size: 26px;
   font-weight: 700;
   margin-bottom: 10px;
 }
@@ -612,7 +620,7 @@ select:focus::-ms-value {
 
 #geography-selection > div > span {
   color: $gray-6;
-  font-size: 30px;
+  font-size: 26px;
   margin-right: 30px;
   margin-left: 5px;
   text-transform: uppercase;
@@ -716,11 +724,13 @@ select:focus::-ms-value {
 }
 
 .time-selector.sub-choice {
-  border: 1px solid $cyan-3;
+  background-color: $gray-2;
+  // border: 1px solid $gray-5;
   border-radius: 1px;
   display: inline-block;
   font-weight: 400;
   font-size: 14px;
+
   line-height: 1.1;
   margin-top: 15px;
   margin-right: 10px;
@@ -735,8 +745,8 @@ select:focus::-ms-value {
 }
 
 .time-selector.sub-choice.selected {
-  background: $cyan-3;
-  border: 1px solid $cyan-3;
+  background: $cyan-6;
+  border: 1px solid $cyan-6;
   color: #FFFFFF;
 }
 

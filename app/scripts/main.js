@@ -909,14 +909,13 @@ function buildOptionPanel(chartType){
 	//sector radios - updates singleSector
 	d3.selectAll('.sector-radios').on('click', function(){
 		higherEdSelections.singleSector = translate[this.value];
-		// higherEdSelections.arraySectors = [translate[this.value]]
 		d3.select('#second-chart-container > h4 > span').text(higherEdSelections.singleSector);
 		if (d3.select(this).classed('two-year')){
 			convertSelectors('two')
 		} else {
 			convertSelectors('four')
 		}
-		callRaceLine()
+		callRaceLine();
 	})
 
 	//race boxes - updates arrayRaces
@@ -926,10 +925,9 @@ function buildOptionPanel(chartType){
 		var checked = d3.select('input[value="' + userChoice + '"]').property('checked')
 
 		if (checked){
-
 			higherEdSelections.arrayRaces.push(userChoice)
 		} else {
-						higherEdSelections.arrayRaces = higherEdSelections.arrayRaces.filter(function(d){
+			higherEdSelections.arrayRaces = higherEdSelections.arrayRaces.filter(function(d){
 				return d !== userChoice
 			})
 		}
@@ -1038,7 +1036,7 @@ function callSectorLine(){
 			convertSelectors('four')
 		}
 	}
-
+// console.log(higherEdSelections)
 	var sectors = makeSectorNest();
 	sectors = sectors.filter(function(d){ return higherEdSelections.arraySectors.indexOf(d.key) > -1 })
 	drawLineChart(sectors, 'race', byRaceSVG, byRaceG, byRaceAxis);
@@ -1057,6 +1055,12 @@ function callRaceLine(){
 		if ( twoYears.indexOf(higherEdSelections.arraySectors[i]) < 0  &&  higherEdSelections.programLength === 'two' ){
 			convertSelectors('four')
 		}
+	}
+	//if the singleSector is a two year school, set everything to 'two', otherwise 'four'
+	if (twoYears.indexOf(higherEdSelections.singleSector) > 0 ){
+		convertSelectors('two')
+	} else {
+		convertSelectors('four')
 	}
 
 	var demos = makeDemogNest(higherEdSelections.singleSector);
@@ -1286,11 +1290,6 @@ function initializeStaticControls(){
 	//if view is 'school' add look up box for school name
 
 	d3.selectAll('.time-selector').on('click', function(){
-		console.log(higherEdSelections.arrayRaces)
-		console.log(higherEdSelections.arraySectors)
-		console.log(SECTOR_KEY)
-		console.log(SELECTED_DATASET)
-		console.log(higherEdSelections.singleSector)
 		d3.event.stopPropagation();
 		var chart = this.getAttribute('value') //single-year-bar, by-sector-chart, by-race-chart
 
