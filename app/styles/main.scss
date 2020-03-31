@@ -280,7 +280,7 @@ div.tooltip {
     -1px 1px 0 #FFFFFF,
      1px 1px 0 #FFFFFF;
   font-family: Lato;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   padding: 1px;
   pointer-events: none;
@@ -340,6 +340,10 @@ path.highlight-school {
 
 path.other-school {
   stroke: $gray-5;
+}
+
+path.data-line.state-avg {
+  stroke: #000000;
 }
 
 h4.chart-title {
@@ -721,6 +725,7 @@ select:focus::-ms-value {
 .time-selector.selected > span {
   color: $cyan-6;
   font-weight: 700;
+  vertical-align: middle;
 }
 
 .time-selector.sub-choice {
@@ -730,13 +735,14 @@ select:focus::-ms-value {
   display: inline-block;
   font-weight: 400;
   font-size: 14px;
-
+  height: 45px;
   line-height: 1.1;
   margin-top: 15px;
   margin-right: 10px;
   padding: 3px 5px;
   text-align: center;
-  text-transform: lowercase;
+  text-transform: uppercase;
+  vertical-align: middle;
   width: 118px;
 }
 
@@ -758,9 +764,10 @@ select:focus::-ms-value {
 //checkswitch: https://codepen.io/mburnette/pen/LxNxNg
 
 p.label {
-  color: $gray-8;
+  color: $gray-7;
   display: inline;
-  padding-right: 30px;
+  font-weight: 700;
+  padding-right: 41px;
   text-transform: uppercase;
 }
 

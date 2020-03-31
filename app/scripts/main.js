@@ -666,7 +666,9 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 			if (topic==='comparison'){
 		        if (d.key === higherEdSelections.selectedSchool){
 			         string += 'highlight-school '
-			        } else {
+			    } else if (d.key === 'State average'){
+			    	string += 'state-avg'
+			    } else {
 	              string += 'other-school '
 	            }
 		     }
@@ -727,9 +729,9 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 
   if (higherEdSelections.chartType === 'multiple-schools'){
     oneSchoolLegend.selectAll('li').remove();
-    var schoolComparisonColors = ['#D2D2D2', '#1696D2']
+    var schoolComparisonColors = ['#1696D2', '#D2D2D2', '#000000']
     var keys = oneSchoolLegend.selectAll('li.key-item-comparison')
-      .data(['Other school', 'Selected school'])
+      .data([higherEdSelections.selectedSchool, 'Other ' + higherEdSelections.state + ' college', higherEdSelections.state + ' average'])
       .enter()
       .append('li')
       .attr('class', function(d){ return d })
@@ -1070,20 +1072,31 @@ function callRaceLine(){
 
 function callComparisonChart(){
 	  	//filter school data to that sector && state
+	  	//dumb naming alert: all teh schools are in 'schoolfour', there is no 'schooltwo'
 	var comparisons = higherEdData.allData.schoolfour.filter(function(d){
 		return d.fourcat === higherEdSelections.singleSector && d.fips_ipeds === higherEdSelections.state
 	})
-	//put race radios on dynamic menu one
+	//now pull out the state level data for the selected sector && state to be the average line on the chart
+	var stateAverage = higherEdData.allData['state' + higherEdSelections.programLength].filter(function(d){
+		return d[higherEdSelections.programLength + 'cat'] === higherEdSelections.singleSector && 
+		d.fips_ipeds === higherEdSelections.state 
+	})
+
+	var nestedState = d3.nest().key(function(d){ return d.fips_ipeds }).entries(stateAverage);
+	nestedState[0].key = "State average"
 	var nestedBySchool = d3.nest().key(function(d){ return d.inst_name }).entries(comparisons);
 
-	d3.select('#fourth-chart-container > h4 > span').text(higherEdSelections.state + ' ' + higherEdSelections.singleSector + 's ');
-	drawLineChart(nestedBySchool, 'comparison', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
+	var chartData = nestedBySchool.concat(nestedState)
+	d3.select('#fourth-chart-container > h4 > span:nth-child(1)').text(translateRace[higherEdSelections.singleRace] + ' ')
+	d3.select('#fourth-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state + ' ' + higherEdSelections.singleSector + ' Colleges');
+	drawLineChart(chartData, 'comparison', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
 }
 
 function callSchoolChart(){
   var schoolDataByRace = makeDemogNest(higherEdSelections.selectedSchool, true);
   d3.select('#fourth-chart-container > h4 > span').text(higherEdSelections.selectedSchool);
   schoolDataByRace = schoolDataByRace.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
+
   drawLineChart(schoolDataByRace, 'sector', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
 }
 
@@ -1333,7 +1346,7 @@ function initializeStaticControls(){
 		var scenarioID = this.getAttribute('id')
 
 		if (scenarioID === 'scenario1'){
-			higherEdSelections.arrayRaces = ['dif_white']
+			higherEdSelections.arrayRaces = RACE_OPTIONS
 			higherEdSelections.singleSector = 'Public More Selective'
 			higherEdSelections.chartType = 'by-race-chart'
 			higherEdSelections.geography = 'national'
@@ -1357,8 +1370,8 @@ function initializeStaticControls(){
 			d3.select('.time-selector.line.main-choice').classed('selected', true);
 			d3.select('#second-chart-container > h4 > span:nth-child(1)').text(higherEdSelections.singleSector);
 
-
 			callRaceLine()
+			d3.select('path.data-line.dif_white').attr('stroke-width', 4)
 
 		} else if (scenarioID === 'scenario2') {
 			higherEdSelections.singleRace = 'dif_hispa'
@@ -1405,7 +1418,7 @@ function initializeStaticControls(){
 
 	    	callSectorLine();
 		} else if (scenarioID === 'scenario3'){
-			higherEdSelections.arrayRaces = ['dif_black']
+			higherEdSelections.arrayRaces = RACE_OPTIONS
 			higherEdSelections.chartType = 'one-school-all-races-container'
 			higherEdSelections.geography = 'school'
 			higherEdSelections.programLength = 'four'
@@ -1425,6 +1438,7 @@ function initializeStaticControls(){
 
 			makeSchoolLookup(schoolNames);
 			callSchoolChart();
+			d3.select('path.data-line.dif_black').attr('stroke-width', 4)
 
 			d3.select('#school-lookup').attr('value', 'Wayne State University')
 		}
