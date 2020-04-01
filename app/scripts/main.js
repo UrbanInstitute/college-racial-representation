@@ -1058,8 +1058,9 @@ function callRaceLine(){
 			convertSelectors('four')
 		}
 	}
+	
 	//if the singleSector is a two year school, set everything to 'two', otherwise 'four'
-	if (twoYears.indexOf(higherEdSelections.singleSector) > 0 ){
+	if (twoYears.indexOf(higherEdSelections.singleSector) > -1 ){
 		convertSelectors('two')
 	} else {
 		convertSelectors('four')
