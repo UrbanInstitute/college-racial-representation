@@ -1139,9 +1139,16 @@ function menuSelected(){
 }
 
 function makeSchoolLookup(schoolNames){
-  $( '#school-lookup' ).autocomplete({
+  $( '#school-lookup' )
+  .focus(function(){
+  	this.value = ""
+  })
+  .autocomplete({
     source: schoolNames,
     select: function(event, ui){
+      d3.select("#school-lookup").classed("active", true)
+      d3.select("#school-lookup-icon").classed("active", true).attr("src", "images/closeIcon.png")
+
       higherEdSelections.selectedSchool = ui.item.value;
 
       var schoolDatum = higherEdData.allData[SELECTED_DATASET].filter(function(d){return d.inst_name === higherEdSelections.selectedSchool })[0]
@@ -1160,6 +1167,16 @@ function makeSchoolLookup(schoolNames){
       }
     }
   });
+  d3.select("#school-lookup-icon").on("click",function(){
+  	if(d3.select(this).classed("active")){
+  		var schoolLookup = d3.select("#school-lookup")
+  		schoolLookup.classed("active", false)
+  		d3.select(this).classed("active", false)
+  			.attr("src", "images/searchIcon.png")
+
+  		schoolLookup.property("value","Start typing...")
+  	}
+  })
 }
 //MIN_YEAR is 2009
 // Time
