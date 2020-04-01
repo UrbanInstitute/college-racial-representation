@@ -200,14 +200,19 @@ h1 {
 }
 
 #intro {
-  font-size: 21px;
-  font-weight: 300;
+  
   margin-right: auto;
   margin-left: auto;
   margin-bottom: 80px;
   padding-top: 25px;
   text-align: left;
   // background: #fff;
+}
+
+#intro {
+  p {
+    font-size: 18px;
+  }
 }
 
 
@@ -550,7 +555,7 @@ label.inactive:before {
 }
 
 .be-choosy {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 700;
   margin-bottom: 10px;
 }
@@ -690,7 +695,7 @@ select:focus::-ms-value {
 .minimize {
   color: $gray-6;
   cursor: pointer;
-  font-size: 30px;
+  font-size: 20px;
   font-weight: 300;
   left: 110px;
   position: relative;
@@ -707,7 +712,7 @@ select:focus::-ms-value {
 .options-panel-section {
   font-size: 18px;
   font-weight: 700;
-  margin-top: 10px;
+  margin-top: 18px;
   // text-transform: uppercase;
 }
 
@@ -776,6 +781,14 @@ select:focus::-ms-value {
   text-transform: uppercase;
   vertical-align: middle;
   width: 118px;
+}
+
+#time-selection > div.time-selector.line.sub-choice.race {
+  padding-top: 7px;
+}
+
+#time-selection > div:nth-child(6) {
+  padding-top: 14px;
 }
 
 .time-selector.sub-choice.selected > span {

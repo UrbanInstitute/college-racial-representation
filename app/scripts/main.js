@@ -569,7 +569,8 @@ sectorSvgs
 		.text(function(d){ return translateRace[d] })
 
 	d3.select('#under-over').remove()
-	var grayBoxSVG = d3.select('#first-chart-container > div.legend').append('svg').attr('height', 20).attr('width', 300).attr('id', 'under-over')
+	var grayBoxSVG = d3.select('#first-chart-container > div.legend').append('svg')
+		.attr('height', 20).attr('width', 300).attr('id', 'under-over').style('margin-bottom', 25)
 	  grayBoxSVG.append('rect')
 	    .attr('y', 0)
 	    .attr('x', 0)
@@ -599,8 +600,6 @@ sectorSvgs
 	  	.attr('height', 14)
 	  	.attr('width', 17)
 	  	.attr('class', 'key-item-bar')
-
-
 
 	  grayBoxSVG.append('text')
 	  	.attr('y', 11)
@@ -1024,9 +1023,11 @@ function buildOptionPanel(chartType){
 
 
 	//mouseovers and shrinky buttons
-	 d3.selectAll('.options-panel-section').append('span').attr('class', 'minimize').text('-').on('click', function(){
+	 d3.selectAll('.options-panel-section').append('span').attr('class', 'minimize').html('&#8212').on('click', function(){
 		var div = this.parentElement.parentElement.getAttribute('id')
 		d3.select('#' + div + '> div.collapsible').classed('collapsed', !d3.select('#' + div + '> div.collapsible').classed('collapsed'))	
+    	
+    	this.innerHTML === '—' ? d3.select(this).html('+') : d3.select(this).html('&#8212') 
     })
 
 	var panelMouseover = d3.select('body').append('div')
@@ -1135,7 +1136,8 @@ function callComparisonChart(){
 
 function callSchoolChart(){
   var schoolDataByRace = makeDemogNest(higherEdSelections.selectedSchool, true);
-  d3.select('#fourth-chart-container > h4 > span').text(higherEdSelections.selectedSchool);
+  d3.select('#fourth-chart-container > h4 > span:nth-child(1)').text('')
+  d3.select('#fourth-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.selectedSchool);
   schoolDataByRace = schoolDataByRace.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
 
   drawLineChart(schoolDataByRace, 'sector', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
@@ -1172,11 +1174,8 @@ function menuSelected(){
 	})
 
   callBarChart(higherEdSelections.year, true);
-
-	//format data and call line chart race
-	callSectorLine()
-
-	callRaceLine()
+  callSectorLine()
+  callRaceLine()
 }
 
 function makeSchoolLookup(schoolNames){
@@ -1276,7 +1275,7 @@ function initializeStaticControls(){
 		    d3.select('#second-dynamic-menu').style('display', 'block');
 
 		    d3.selectAll('.time-selector').classed('selected', false);
-
+		    
 	      if (higherEdSelections.chartType === 'by-sector-chart' || higherEdSelections.chartType === 'by-race-chart'){
 	        d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
 	        //d3.select(".disable-box").style("display", "none")
@@ -1290,6 +1289,7 @@ function initializeStaticControls(){
 		var menuData = states.filter(distinct);
 		makeDropdown(menuData);
 		d3.select('#state-menu').style('display', 'block');
+		//d3.select('#dropdown').selectAll('option').property('selected', function(d){ return d === higherEdSelections.state })
 
 		//global selectors
 		SELECTED_DATASET = 'filteredForState';
@@ -1462,7 +1462,7 @@ function initializeStaticControls(){
 			var menuData = states.filter(distinct);
 			makeDropdown(menuData);
 			d3.select('#state-menu').style('display', 'block');
-			d3.select('#dropdown').selectAll('option').property('selected', function(d){ return d === higherEdSelections.state })
+			//d3.select('#dropdown').selectAll('option').property('selected', function(d){ return d === higherEdSelections.state })
 
 			//filter state data to just selected state
 			higherEdData.allData.filteredForState =  higherEdData.allData[higherEdSelections.geography + higherEdSelections.programLength].filter(function(d){
@@ -1486,7 +1486,7 @@ function initializeStaticControls(){
 			higherEdSelections.selectedSchool = 'Wayne State University'
 
 			d3.select('#school-comparison').property('checked', false);
-			d3.select('#fourth-chart-container > h4 > span').text('Wayne State University')
+			d3.select('#fourth-chart-container > h4 > span:nth-child(2)').text('Wayne State University')
 
 			var schoolNames = higherEdData.allData.schoolfour.filter(function(d){
 				if (d.year ==='2015'){ return d.inst_name }
@@ -1498,7 +1498,7 @@ function initializeStaticControls(){
 			callSchoolChart();
 			d3.select('path.data-line.dif_black').attr('stroke-width', 4)
 
-			d3.select('#school-lookup').attr('value', 'Wayne State University')
+			d3.select('#school-lookup').property('value', 'Wayne State University')
 		}
 		d3.selectAll('div.geography-choices').classed('selected', false)
 		d3.select('div.geography-choices[data-cat="' + higherEdSelections.geography + '"]').classed('selected', true)
