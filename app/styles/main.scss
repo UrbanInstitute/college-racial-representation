@@ -455,7 +455,8 @@ div.sector{
 
 
 // legend
-li.key-item-line, li.key-item-bar, li.key-item-comparison {
+li.key-item-line, li.key-item-bar, li.key-item-comparison, text.key-item-bar {
+  fill: $gray-7;
   color: $gray-7;
   display: inline-block;
   margin: 0 1em 1em 0;
@@ -470,6 +471,10 @@ li.key-item-line, li.key-item-bar, li.key-item-comparison {
   list-style-type: none;
   width: 100%;
 }
+
+#first-chart-container > div.legend > .key {
+  margin-bottom: 0;
+} 
 
 // menu panel styling
 

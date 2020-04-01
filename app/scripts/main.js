@@ -568,6 +568,46 @@ sectorSvgs
 		.style('border-left', function(d){ return '17px solid ' + raceColorObj[d] })
 		.text(function(d){ return translateRace[d] })
 
+	d3.select('#under-over').remove()
+	var grayBoxSVG = d3.select('#first-chart-container > div.legend').append('svg').attr('height', 20).attr('width', 300).attr('id', 'under-over')
+	  grayBoxSVG.append('rect')
+	    .attr('y', 0)
+	    .attr('x', 0)
+	    .attr('fill', '#D2D2D2')
+	  	.attr('height', 14)
+	  	.attr('width', 17)
+	  	.attr('class', 'key-item-bar')
+
+	  grayBoxSVG.append('rect')
+	  	.attr('y', 0)
+	  	.attr('x', 0)
+	  	.attr('fill', 'url(#verticalHatch)')
+	  	.attr('height', 14)
+	  	.attr('width', 17)
+	  	.attr('class', 'key-item-bar')
+
+	  grayBoxSVG.append('text')
+	  	.attr('y', 11)
+	  	.attr('x', 20)
+	  	.text('Underrepresented')
+	  	.attr('class', 'key-item-bar')
+
+	  grayBoxSVG.append('rect')
+	    .attr('y', 0)
+	    .attr('x', 150)
+	    .attr('fill', '#D2D2D2')
+	  	.attr('height', 14)
+	  	.attr('width', 17)
+	  	.attr('class', 'key-item-bar')
+
+
+
+	  grayBoxSVG.append('text')
+	  	.attr('y', 11)
+	  	.attr('x', 170)
+	  	.text('Overrepresented')
+	  	.attr('class', 'key-item-bar')
+
 }
 
 //svg & g: byRaceSVG, byRaceG, bySectorSVG, bySectorSVG; axis: bySectorYAxis, byRaceAxis;
