@@ -837,6 +837,10 @@ select:focus::-ms-value {
 
 
 //mobile pop up menu
+#mobile-filter-options > h4 {
+  display: none;
+}
+
 #options-panel > div.slider > div > div > p.options-panel-section {
   display: inline;
 }
@@ -975,6 +979,10 @@ label.check-switch:active:after {
   h4.selection-label {
     text-align: left;
   }
+
+  #mobile-filter-options > h4 {
+  display: block;
+}
 
   .be-choosy {
     display: none;
