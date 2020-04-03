@@ -125,7 +125,7 @@ var oneSchoolG = oneSchoolSVG.append('g')
     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 //http://eyeseast.github.io/visible-data/2013/08/26/responsive-d3/
-d3.select(window).on("resize", resize);
+d3.select(window).on('resize', resize);
 
 
 
@@ -157,8 +157,8 @@ function resize(){
     d3.selectAll('.chart-div, #chart-area-container').style('width', width + 'px')
 console.log('hole ' + width)
     singleYearContainer
-        .style("width", width )
-        .attr("height", height);
+        .style('width', width )
+        .attr('height', height);
     byRaceSVG
         .attr('width', width)
         .attr('height', height);
@@ -905,9 +905,6 @@ function buildOptionPanel(chartType){
        .html(function(d){ return radioButtonTemplater(d) })
 
   }
-
-
-
 	//sector boxes - updates arraySector
 	d3.selectAll('.sector-boxes').on('click', function(){
 
@@ -995,7 +992,6 @@ function buildOptionPanel(chartType){
 	    }
 	})
 
-
 	//now make all the checked radios & boxes match current selections
 	d3.select('div.race-ethnicity-radios> div > label > input[value=' + higherEdSelections.singleRace + ']').property('checked', true);	
 	d3.select('input.sector-radios[value=' + classify(higherEdSelections.singleSector) + ']').property('checked', true)
@@ -1011,7 +1007,6 @@ function buildOptionPanel(chartType){
 		d3.selectAll('.two-year').classed('inactive', false);
 		d3.selectAll('.four-year, .program-type').classed('inactive', true);
 	}
-
 
 	//mouseovers and shrinky buttons
 	 d3.selectAll('.options-panel-section').append('span').attr('class', 'minimize').html('&#8212').on('click', function(){
@@ -1034,6 +1029,22 @@ function buildOptionPanel(chartType){
 	}).on('mouseout', function(d) {
         	panelMouseover.style('opacity', 0);
     });
+
+    //mobile buttons 
+    if (IS_MOBILE){
+    	if (higherEdSelections.chartType === 'single-year-bar'){
+    		d3.selectAll('.filter-btn').style('display', 'none')
+    		d3.select('#mobile-filter-options > h4').style('visibility', 'hidden')
+    	} else if (higherEdSelections.chartType === 'by-sector-chart'){
+    		d3.select('#race-ethnicity-filter').style('display', 'inline-block')
+    		d3.select('#sector-filter').style('display', 'none')
+    		d3.select('#mobile-filter-options > h4').style('visibility', 'visible')
+    	} else if (higherEdSelections.chartType === 'by-race-chart'){
+    		d3.select('#race-ethnicity-filter').style('display', 'none')
+    		d3.select('#sector-filter').style('display', 'inline-block')
+    		d3.select('#mobile-filter-options > h4').style('visibility', 'visible')
+    	}
+    }
 }
 		
 d3.select('#school-comparison').on('click', function(d){
@@ -1116,7 +1127,7 @@ function callComparisonChart(){
 	})
 
 	var nestedState = d3.nest().key(function(d){ return d.fips_ipeds }).entries(stateAverage);
-	nestedState[0].key = "State average"
+	nestedState[0].key = 'State average'
 	var nestedBySchool = d3.nest().key(function(d){ return d.inst_name }).entries(comparisons);
 
 	var chartData = nestedBySchool.concat(nestedState)
@@ -1172,13 +1183,13 @@ function menuSelected(){
 function makeSchoolLookup(schoolNames){
   $( '#school-lookup' )
   .focus(function(){
-  	this.value = ""
+  	this.value = ''
   })
   .autocomplete({
     source: schoolNames,
     select: function(event, ui){
-      d3.select("#school-lookup").classed("active", true)
-      d3.select("#school-lookup-icon").classed("active", true).attr("src", "images/closeIcon.png")
+      d3.select('#school-lookup').classed('active', true)
+      d3.select('#school-lookup-icon').classed('active', true).attr('src', 'images/closeIcon.png')
 
       higherEdSelections.selectedSchool = ui.item.value;
 
@@ -1198,14 +1209,14 @@ function makeSchoolLookup(schoolNames){
       }
     }
   });
-  d3.select("#school-lookup-icon").on("click",function(){
-  	if(d3.select(this).classed("active")){
-  		var schoolLookup = d3.select("#school-lookup")
-  		schoolLookup.classed("active", false)
-  		d3.select(this).classed("active", false)
-  			.attr("src", "images/searchIcon.png")
+  d3.select('#school-lookup-icon').on('click',function(){
+  	if(d3.select(this).classed('active')){
+  		var schoolLookup = d3.select('#school-lookup')
+  		schoolLookup.classed('active', false)
+  		d3.select(this).classed('active', false)
+  			.attr('src', 'images/searchIcon.png')
 
-  		schoolLookup.property("value","Start typing...")
+  		schoolLookup.property('value','Start typing...')
   	}
   })
 }
@@ -1506,26 +1517,48 @@ d3.selectAll('.filter-btn').on('click', function(){
 	d3.select('.pop-up-menu').remove();
 	
 
-	if (btnID === 'race-ethnicity-filter'){	
+	if (higherEdSelections.chartType === 'by-sector-chart'){	
 		var div = d3.select('div.slider').append('div').attr('class', 'pop-up-menu').style('margin-top', '25px')
 		div.append('p').attr('class', 'options-panel-section').style('display', 'inline').text('Race/Ethnicity')
 		div.append('span').attr('id', 'close-btn').style('left', scootch).html('&times;').on('click', function(){
 			d3.selectAll('.slider').classed('close', true)
 		})
-		div.selectAll('div.race-ethnicity-checkboxes')
+		div.selectAll('div.race-ethnicity-radios')
 			.data(RACE_OPTIONS)
 			.enter()
 			.append('div')
-			.classed('race-ethnicity-checkboxes', true)
-			.classed('checked', true)
-			.html(function(d){ return checkboxTemplater(d) })
-			.on('click', raceCheckboxListener)
-	} else {
+			.classed('race-ethnicity-radios', true)
+			.html(function(d){ return radioButtonTemplater(d) })
+			.on('click', function(){
+				var userChoice = d3.select(this).datum();
+				console.log(userChoice)
+				higherEdSelections.singleRace = userChoice;
+			    if (higherEdSelections.chartType === 'by-sector-chart'){
+			  		d3.select('#third-chart-container > h4 > span').text(translateRace[userChoice]);
+			  		d3.select('div.race-ethnicity-radios> div > label > input[value=' + higherEdSelections.singleRace + ']').property('checked', true);	
+			  		callSectorLine();
+			    } else if (chartType === 'multiple-schools'){
+			      callComparisonChart();
+			    }
+
+			})
+	} else if (higherEdSelections.chartType === 'by-race-chart'){
 		var div = d3.select('div.slider').append('div').attr('class', 'pop-up-menu')
-		div.append('span').attr('id', 'close-btn').style('left', window.innerWidth - 100 + 'px',).style('top', '20px').html('&times;').on('click', function(){
+		div.append('span').attr('id', 'close-btn').style('left', window.innerWidth - 100 + 'px').style('top', '20px').html('&times;').on('click', function(){
 			d3.selectAll('.slider').classed('close', true)
 		})
-		div.append('div').html(COLLEGE_SECTOR_CHECKBOXES)
+		div.append('div').html(COLLEGE_SECTOR_RADIOS)
+		d3.selectAll('.sector-radios').on('click', function(){
+			
+			higherEdSelections.singleSector = translate[this.value];
+			d3.select('#second-chart-container > h4 > span').text(higherEdSelections.singleSector);
+			if (d3.select(this).classed('two-year')){
+				convertSelectors('two')
+			} else {
+				convertSelectors('four')
+			}
+			callRaceLine();
+		})
 	}
 
 
