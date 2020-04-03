@@ -84,27 +84,45 @@
   </div>
 
     <div id="scenarios">
-      <a href="#chart-area-container">
       <div class="scenario clickable" id="scenario1">
-        <img src="images/icon-1.png"><h5>Data highlight</h5>
-        <p>White students are becoming less overrepresented at highly selective US public colleges</p>
-        <p class="scenario-trigger">See the chart</p>
+        <a href="#chart-area-container">
+          <div class="left-float">
+            <img src="images/icon-1.png">
+          </div>
+          <div class="right-float">
+            <h5>Data highlight</h5>
+            <p>White students are becoming less overrepresented at highly selective US public colleges</p>
+            <div class="caret float-right"></div>
+            <p class="scenario-trigger">See the chart</p>
+          </div>
+        </a>
       </div>
-      </a>
-      <a href="#chart-area-container">
       <div class="scenario clickable" id="scenario2">
-        <img src="images/icon-2.png"><h5>Data highlight</h5>
-        <p>Hispanic representation is rising in most college sectors in California</p>
-        <p class="scenario-trigger">See the chart</p>
+        <a href="#chart-area-container">
+          <div class="left-float">
+            <img src="images/icon-2.png">
+          </div>
+          <div class="right-float">
+            <h5>Data highlight</h5>
+            <p>Hispanic representation is rising in most college sectors in California</p>
+            <div class="caret float-right"></div>
+            <p class="scenario-trigger">See the chart</p>
+          </div>
+        </a>
       </div>
-      </a>
-      <a href="#chart-area-container">
       <div class="scenario clickable" id="scenario3">
-        <img src="images/icon-3.png"><h5>Data highlight</h5>
-        <p>Black representation is falling at Wayne State University</p>
-        <p class="scenario-trigger">See the chart</p>
+        <a href="#chart-area-container">
+          <div class="left-float">
+            <img src="images/icon-3.png">
+          </div>
+          <div class="right-float">
+            <h5>Data highlight</h5>
+            <p>Black representation is falling at Wayne State University</p>
+            <div class="caret float-right"></div>
+            <p class="scenario-trigger">See the chart</p>
+          </div>
+        </a>
       </div>
-      </a>
       <div class="clear"></div>
     </div>
 
@@ -152,7 +170,7 @@
       <div id="time-selection">
       <h4 class="selection-label">Choose a view</h4>
         <div class="time-selector bar main-choice selected " value="single-year-bar">
-          <img src="images/barIcon.png">
+          <div class="btn-img-wrapper"><img src="images/barIcon.png"></div>
           <span> Single year</span>
           <div class="disable-box"></div>
           <div id="year-selector">
@@ -160,16 +178,19 @@
           </div>
         </div>
 
+
         <div class="time-selector main-choice line " value="by-race-chart">
-          <img src="images/lineIcon.png">
+          <div class="btn-img-wrapper"><img src="images/lineIcon.png"></div>
           <span>Trends over time</span>
         </div>
-        <br>
+        
         <div class="time-selector line sub-choice race" value="by-race-chart">
+          <span class="mobile-text">historical</span>
           <span>by race/<br>ethnicity</span>
         </div>
 
         <div class="time-selector line sub-choice" value="by-sector-chart">
+          <span class="mobile-text">historical</span>
           <span>by sector</span>
         </div>
       </div>
@@ -177,6 +198,14 @@
       <div id="year-input">
 
       </div>
+
+      <div id="mobile-filter-options">
+        <h4 class="selection-label">Filter by</h4>
+        <div class="filter-btn" id="race-ethnicity-filter">Race/ethnicity</div>
+        <div class="filter-btn" id="sector-filter">College sectors</div>
+      </div>
+
+      <div class="slider close"></div>
       
       <div id="first-dynamic-menu"></div>
       <div id="second-dynamic-menu"></div>
