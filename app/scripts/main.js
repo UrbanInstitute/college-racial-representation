@@ -290,14 +290,20 @@ function getBarW(){
 }
 
 function convertSelectors(numberString){
+
 	SECTOR_KEY = numberString + 'cat'
 	higherEdSelections.programLength = numberString
 
 	if (higherEdSelections.geography === 'state'){
 		SELECTED_DATASET = 'filteredForState'
+		higherEdData.allData.filteredForState =  higherEdData.allData[higherEdSelections.geography + higherEdSelections.programLength].filter(function(d){
+			return d.fips_ipeds === higherEdSelections.state;
+		})
 	} else if (higherEdSelections.geography === 'school' ){
+		//because I combined all the schools into one datasheet and called them all 'schoolfour'
 		SELECTED_DATASET = 'schoolfour'
 		SECTOR_KEY = 'fourcat'
+		higherEdSelections.programLength = 'four'
 	} else {
 		SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength
 	}
@@ -345,6 +351,7 @@ function addArrowsToHighlights(){
 }
 
 function drawBarChart(data, animate){
+
 	var keys = higherEdSelections.arrayRaces.slice() //higherEdData.allData[SELECTED_DATASET].columns.slice(1);
 
 	keys.push(SECTOR_KEY);
@@ -1061,10 +1068,23 @@ d3.select('#school-comparison').on('click', function(d){
 })
 
 function callBarChart(year, animate){
-  FILTERED_BY_YEAR = filterDataByYear(year).filter(function(d){
-    return higherEdSelections.arraySectors.indexOf(d[SECTOR_KEY]) > -1
-  })
-  drawBarChart(FILTERED_BY_YEAR, animate)
+
+	var twoYears = ['Public 2-year', 'For-Profit 2-year']
+
+	for ( var i = 0; i < higherEdSelections.arraySectors.length; i ++ ){
+		//if a sector in the array IS a two year and the program length is four 
+		if ( twoYears.indexOf(higherEdSelections.arraySectors[i]) > -1 && higherEdSelections.programLength === 'four' ){
+			convertSelectors('two')
+		}
+		//if a sector IS NOT a two year and program length is two
+		if ( twoYears.indexOf(higherEdSelections.arraySectors[i]) < 0  &&  higherEdSelections.programLength === 'two' ){
+			convertSelectors('four')
+		}
+	}
+	FILTERED_BY_YEAR = filterDataByYear(year).filter(function(d){
+		return higherEdSelections.arraySectors.indexOf(d[SECTOR_KEY]) > -1
+	})
+	drawBarChart(FILTERED_BY_YEAR, animate)
 }
 
 function callSectorLine(){
@@ -1120,6 +1140,7 @@ function callComparisonChart(){
 	var comparisons = higherEdData.allData.schoolfour.filter(function(d){
 		return d.fourcat === higherEdSelections.singleSector && d.fips_ipeds === higherEdSelections.state
 	})
+
 	//now pull out the state level data for the selected sector && state to be the average line on the chart
 	var stateAverage = higherEdData.allData['state' + higherEdSelections.programLength].filter(function(d){
 		return d[higherEdSelections.programLength + 'cat'] === higherEdSelections.singleSector && 
@@ -1192,11 +1213,14 @@ function makeSchoolLookup(schoolNames){
       d3.select('#school-lookup-icon').classed('active', true).attr('src', 'images/closeIcon.png')
 
       higherEdSelections.selectedSchool = ui.item.value;
-
+      								//this will always be 'schoolfour'
       var schoolDatum = higherEdData.allData[SELECTED_DATASET].filter(function(d){return d.inst_name === higherEdSelections.selectedSchool })[0]
+      
+      higherEdSelections.programLength = schoolDatum.slevel === '4-year' ? 'four' : 'two' ;
+      SECTOR_KEY = higherEdSelections.programLength + 'cat'
       higherEdSelections.state = schoolDatum.fips_ipeds
       higherEdSelections.singleSector = schoolDatum[SECTOR_KEY]
-      // <p id="school-description">Sector: <span>4-year, selective public</span></p>
+      higherEdSelections.arraySectors = [schoolDatum[SECTOR_KEY]]
 
       d3.select('#school-description > span').text(schoolDatum.slevel + ', ' + schoolDatum[SECTOR_KEY])
 

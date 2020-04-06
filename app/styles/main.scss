@@ -804,6 +804,10 @@ select:focus::-ms-value {
   width: 118px;
 }
 
+.time-selector.by-sector {
+  line-height: 40px;
+}
+
 .time-selector.sub-choice > div.btn-img-wrapper {
   display: none;
 }
@@ -1068,6 +1072,10 @@ label.check-switch:active:after {
     padding: 1rem;
     text-align: center;
     vertical-align: middle;
+  }
+
+  .time-selector.by-sector {
+    line-height: 1.1;
   }
 
   #time-selection {
