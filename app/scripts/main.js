@@ -1578,8 +1578,7 @@ function raceCheckboxListener(){
 			return d !== userChoice
 		})
 	}
-	//bar chart function refers to arrayRaces so don't filter here
-	callBarChart(higherEdSelections.year, true)
+
 
 	if (higherEdSelections.arrayRaces.length < 1){
 		//force there to be at least one
@@ -1588,8 +1587,10 @@ function raceCheckboxListener(){
 	} 
 	if (higherEdSelections.chartType === 'one-school-all-races-container'){
       callSchoolChart();
-    } 
-     callRaceLine();
+    } else {
+		callBarChart(higherEdSelections.year, true)
+     	callRaceLine();
+    }
 }
 
 
