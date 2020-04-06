@@ -32,19 +32,28 @@ var higherEdData = {};
 
 // the user selections
 var higherEdSelections = {};
-	higherEdSelections.geography = 'national', //national, state, school
-	higherEdSelections.chartType = 'single-year-bar', //single-year-bar, by-sector-chart, by-race-chart, one-school-all-races-container, multiple-schools
-	higherEdSelections.year = '2017',
-	higherEdSelections.programLength = 'four',  //two, four
-	higherEdSelections.singleRace = 'dif_hispa',
-	higherEdSelections.singleSector = 'Public Nonselective',
-	higherEdSelections.state = 'Alabama',
-  	higherEdSelections.selectedSchool = 'Alabama A & M University',
-	higherEdSelections.arrayRaces = [],
-	higherEdSelections.arraySectors = []
+	higherEdSelections.geography = getQueryParam("geography","national",["national","state","school"]), 
+	higherEdSelections.chartType = getQueryParam("chart_type",'single-year-bar',["single-year-bar", "by-sector-chart", "by-race-chart", "one-school-all-races-container", "multiple-schools"]) ,
+	higherEdSelections.year = getQueryParam("year","2017", Array.apply(null, Array(9)).map(function (o, i) {return String(i + 2009);})) //strings of years 2009 -> 2017
+	higherEdSelections.programLength = getQueryParam("program_length",'four',["two", "four"])
+	higherEdSelections.singleRace = getQueryParam("single-race", 'dif_hispa', Object.keys(translateRace))
+	higherEdSelections.singleSector = translate[getQueryParam("single-sector","public-nonselective",Object.keys(translate))],
+	higherEdSelections.state = decodeURIComponent(getQueryParam("state",'Alabama',["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","District of Columbia"].map(function(s){ return encodeURIComponent(s)}))),
+  	higherEdSelections.selectedSchool = decodeURIComponent(getQueryParam("selected-school",encodeURIComponent('Alabama A & M University'),"all")),
+	higherEdSelections.arrayRaces = getQueryParam("array-race",[],Object.keys(translateRace)),
+	higherEdSelections.arraySectors = getQueryParam("array-sectors",[],Object.keys(translate))
 
-var SECTOR_KEY = 'fourcat',
-	SELECTED_DATASET = 'nationalfour',
+
+	// 'dif_white': 'White',
+	// 'dif_hispa': 'Hispanic',
+	// 'dif_black': 'Black',
+	// 'dif_asian': 'Asian',
+	// 'dif_amind': 'American Indian',
+	// 'dif_pacis': 'Pacific Islander',
+	// 'dif_multi': 'Multiracial'
+
+var SECTOR_KEY = getQueryParam("sector-key","fourcat",["fourcat","twocat"]),
+	SELECTED_DATASET = getQueryParam("selected-dataset",'nationalfour',["nationalfour","nationaltwo","statefour","statetwo","schoolfour"]),
 	NESTED_BY_SECTOR,
 	NESTED_BY_RACE,
 	FILTERED_BY_YEAR,
@@ -207,50 +216,8 @@ var parseTime = d3.timeParse('%Y'),
   timeFormat = d3.timeFormat('%Y'),
   formatTwoDecimals = d3.format('.2f')
 
-var translate = {
-	 'for-profit': 'For-Profit',
-	 'private-highly-selective': 'Private More Selective',
-	 'private-nonselective': 'Private Nonselective',
-	 'private-selective': 'Private Selective',
-	 'public-highly-selective': 'Public More Selective',
-	 'public-nonselective': 'Public Nonselective',
-	 'public-selective': 'Public Selective',
-	 'two-year-public': 'Public 2-year',
-	 'two-year-private': 'For-Profit 2-year'
-}
 
-var translateRace = {
-	'dif_white': 'White',
-	'dif_hispa': 'Hispanic',
-	'dif_black': 'Black',
-	'dif_asian': 'Asian',
-	'dif_amind': 'American Indian',
-	'dif_pacis': 'Pacific Islander',
-	'dif_multi': 'Multiracial'
-}
 
-var raceColorObj = {
-  'dif_white': '#0a4c6a',
-  'dif_hispa': '#9d9d9d',
-  'dif_black': '#1696d2',
-  'dif_asian': '#55b748',
-  'dif_amind': '#ec008b',
-  'dif_pacis': '#000000',
-  'dif_othra': '#fdbf11',
-  'dif_multi': '#fdbf11'
-}
-
-var sectorColorObj = {
-  'for-profit': '#fdbf11',
-  'private-more-selective': '#98cf90',
-  'private-nonselective': '#55b748',
-  'private-selective': '#2c5c2d',
-  'public-more-selective': '#73bfe2',
-  'public-nonselective': '#1696d2',
-  'public-selective': '#0a4c6a',
-  'public-2-year': '#1696d2',
-  'for-profit-2-year': '#fdbf11'
-}
 
 var distinct = function(value, index, self){ return self.indexOf(value) === index; }
 
@@ -1223,7 +1190,7 @@ var sliderTime =
 		.width(220)
 		.tickFormat(function(d){ return '\'' + d3.timeFormat('%y')(d)})
 		.tickValues(dataTime)
-		.default(new Date(2017, 10, 3))
+		.default(new Date(higherEdSelections.year, 10, 3))
     .handle(['M 1, 0 m -8.5, 0 a 8,8 0 1,0 16,0 a 8,8 0 1,0 -16,0']) //draw a circle as a path: https://stackoverflow.com/questions/5737975/circle-drawing-with-svgs-arc-path
 		.on('onchange', function(val){
 
@@ -1575,6 +1542,7 @@ function makeSectorNest(){
 		})
 	}
 	var nest = d3.nest().key(function(d){
+		console.log(d)
 		return d[SECTOR_KEY]
 	}).entries(higherEdData.allData[SELECTED_DATASET]);
 	return nest;
@@ -1630,15 +1598,16 @@ function init(){
 	addArrowsToHighlights();
 	RACE_OPTIONS = higherEdData.allData.nationalfour.columns.slice(2)
 	prepareData();
-	buildOptionPanel('single-year-bar');
+	buildOptionPanel(higherEdSelections.chartType);
 	initializeStaticControls();
 
   //janky but move the numbers on the slider, can't find the option in the package: https://github.com/johnwalley/d3-simple-slider
-  d3.selectAll('#year-input > svg > g > g.axis > g > text').attr('y', 12)
-  d3.select('#year-input > svg > g > g.slider > g > text').attr('y', 19).style('font-size', 14)
+  	d3.selectAll('#year-input > svg > g > g.axis > g > text').attr('y', 12)
+  	d3.select('#year-input > svg > g > g.slider > g > text').attr('y', 19).style('font-size', 14)
 
+  	d3.select('#first-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.year);
 	//draw your default chart, bars for 2017: all races/sectors
-	callBarChart('2017', false);
+	callBarChart(higherEdSelections.year, false);
 
 }
 
