@@ -138,16 +138,13 @@ function getQueryParam(param,fallback, validOpts) {
     var regex = new RegExp('[\\?&]' + param + '=([^&#]*)');
     var results = regex.exec(location.search);
     if (results === null){
-      console.log("a")
       return fallback;
     }else{
       var testResult = decodeURIComponent(results[1].replace(/\+/g, ' '))
       if(Array.isArray(fallback)){
-        console.log("b")
         return testResult.split(",").filter(function(o){ return validOpts.indexOf(o) != -1 })
       }else{
-        console.log("c")
-        return (validOpts.indexOf(testResult) == -1 || validOpts == true) ? fallback : testResult;
+        return (validOpts == "all" || validOpts.indexOf(testResult) == -1) ? fallback : testResult;
       }
     }
 };

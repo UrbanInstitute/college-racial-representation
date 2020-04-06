@@ -52,8 +52,8 @@ var higherEdSelections = {};
 	// 'dif_pacis': 'Pacific Islander',
 	// 'dif_multi': 'Multiracial'
 
-var SECTOR_KEY = getQueryParam("sector-key","fourcat",["fourcat","twocat"]),
-	SELECTED_DATASET = getQueryParam("selected-dataset",'nationalfour',["nationalfour","nationaltwo","statefour","statetwo","schoolfour"]),
+var SECTOR_KEY = higherEdSelections.programLength + "cat",
+	SELECTED_DATASET = (higherEdSelections.geography == "state") ? "filteredForState" : higherEdSelections.geography + higherEdSelections.programLength,
 	NESTED_BY_SECTOR,
 	NESTED_BY_RACE,
 	FILTERED_BY_YEAR,
@@ -1542,7 +1542,6 @@ function makeSectorNest(){
 		})
 	}
 	var nest = d3.nest().key(function(d){
-		console.log(d)
 		return d[SECTOR_KEY]
 	}).entries(higherEdData.allData[SELECTED_DATASET]);
 	return nest;
@@ -1590,7 +1589,9 @@ function prepareData(){
 	NESTED_BY_RACE = makeDemogNest('Public Nonselective');
 
 	higherEdSelections.arraySectors = NESTED_BY_SECTOR.map(function(d){ return d.key })
-	higherEdSelections.arrayRaces = higherEdData.allData[SELECTED_DATASET].columns.slice(2)
+	// console.log(higherEdData)
+	var slicer = (SELECTED_DATASET == "filteredForState") ? higherEdSelections.geography + higherEdSelections.programLength : SELECTED_DATASET;
+	higherEdSelections.arrayRaces = higherEdData.allData[slicer].columns.slice(2)
 }
 
 function init(){
@@ -1604,7 +1605,56 @@ function init(){
   //janky but move the numbers on the slider, can't find the option in the package: https://github.com/johnwalley/d3-simple-slider
   	d3.selectAll('#year-input > svg > g > g.axis > g > text').attr('y', 12)
   	d3.select('#year-input > svg > g > g.slider > g > text').attr('y', 19).style('font-size', 14)
+  	if(higherEdSelections.geography == "national"){
+  		console.log("foo")
+		d3.select('#time-selection').style('display', 'block');
+		d3.select('#state-menu').style('display', 'none')
+		d3.select('#school-selection').style('display', 'none')
+		d3.select('#first-chart-container > h4 > span:nth-child(1)').text('US');
+  		d3.select('#second-chart-container > h4 > span:nth-child(2)').text('US');
+	    d3.select('#third-chart-container > h4 > span:nth-child(2)').text('US');
 
+	    d3.select('#first-dynamic-menu').style('display', 'block')
+	    d3.select('#second-dynamic-menu').style('display', 'block')
+  	}
+  	else if(higherEdSelections.geography == "state"){
+		d3.select('#first-chart-container > h4 > span:nth-child(1)').text(higherEdSelections.state);
+		d3.select('#third-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
+		d3.select('#second-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
+
+		d3.select('#time-selection').style('display', 'block');
+		d3.select('#school-selection').style('display', 'none');
+
+	    d3.select('#first-dynamic-menu').style('display', 'block');
+	    d3.select('#second-dynamic-menu').style('display', 'block');
+
+		var states = higherEdData.allData[SELECTED_DATASET].map(function(d){return d.fips_ipeds});
+		var menuData = states.filter(distinct);
+		makeDropdown(menuData);
+		d3.select('#state-menu').style('display', 'block');
+
+		//filter state data to just selected state
+		higherEdData.allData.filteredForState =  higherEdData.allData[higherEdSelections.geography + higherEdSelections.programLength].filter(function(d){
+			return d.fips_ipeds === higherEdSelections.state;
+		})
+		// if coming from a chart type that isn't shared by 'state' view, show the bar chart as default
+		if (higherEdSelections.chartType === 'one-school-all-races-container' || higherEdSelections.chartType === 'multiple-schools'){
+			showChart('single-year-bar')
+			higherEdSelections.chartType = 'single-year-bar'
+		}
+
+    	callSectorLine();
+
+  	}
+  	else if(higherEdSelections.geography == "school"){
+
+  	}
+
+
+	d3.selectAll('div.geography-choices').classed('selected', false)
+	d3.select('div.geography-choices[data-cat="' + higherEdSelections.geography + '"]').classed('selected', true)
+	buildOptionPanel(higherEdSelections.chartType)
+	showChart(higherEdSelections.chartType)
   	d3.select('#first-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.year);
 	//draw your default chart, bars for 2017: all races/sectors
 	callBarChart(higherEdSelections.year, false);
