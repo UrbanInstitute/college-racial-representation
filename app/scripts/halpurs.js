@@ -147,4 +147,78 @@ function getQueryParam(param,fallback, validOpts) {
         return (validOpts == "all" || validOpts.indexOf(testResult) == -1) ? fallback : testResult;
       }
     }
-};
+}
+function getShareUrl(){
+  //the base url (localhost in dev, staging/prop when live) including protocol (https://) and full path
+  var shareURL = window.location.origin + window.location.pathname
+
+  //not the cleanest, since the default values are also included in the first few lines of main.js
+  //(the calls to getQueryParam) but I don't mind if you don't
+  var queryParams = [
+    ["geography","geography","national"],
+    ["chartType","chart-type","single-year-bar"],
+    ["year","year","2017"],
+    ["programLength","program-length","four"],
+    ["singleRace","single-race","dif_hispa"],
+    ["singleSector","single-sector","public-nonselective"],
+    ["state","state","Alabama"],
+    ["selectedSchool","selected-school",encodeURIComponent('Alabama A & M University')],
+    ["arrayRaces","array-race",Object.keys(translateRace)],
+    ["arraySectors","array-sectors",Object.keys(translate).slice(2)]//default val is for four year, so doesn't include the 2 two-year options
+  ]
+
+  var nonFallback = 0;
+  for(var i = 0; i < queryParams.length; i++){
+    var key = queryParams[i][0],
+      param = queryParams[i][1],
+      fallback = queryParams[i][2]
+
+    //special cases for the race and sector arrays
+    if(Array.isArray(fallback)){
+      //test if array matches default/fallback value. If it does, no need to change URL
+      if(higherEdSelections[key].length != fallback.length){
+        if(key == "arrayRaces"){
+          //if the first param added to querystring, add a "?" before param, otherwise add "&"
+          nonFallback += 1;
+          if(nonFallback == 1) shareURL += "?"
+          else shareURL += "&"
+
+          //add key/value pair to url
+          shareURL += param + "=" + higherEdSelections[key].join(",")
+        }else{
+          //if the first param added to querystring, add a "?" before param, otherwise add "&"
+          nonFallback += 1;
+          if(nonFallback == 1) shareURL += "?"
+          else shareURL += "&"
+
+          //add key/value pair to url. This is basically just a "reverse lookup" in the translate object
+          //(finding key by value instead of value by key), mapped onto the array of selected sectors
+          shareURL += param + "=" + higherEdSelections[key].map(function(val){
+            return Object.keys(translate).filter(function(k) { return translate[k] == val })[0];
+          }).join(",")
+        }
+      }
+    }else{
+      var val;
+      //schools can include spaces and special chars, so encode for URL
+      if(key == "selectedSchool") val = encodeURIComponent(higherEdSelections[key])
+      //same reverse lookup as above, going value -> key for sector
+      else if(key == "singleSector") val = Object.keys(translate).filter(function(k) { return translate[k] == higherEdSelections[key] })[0];
+      else val = higherEdSelections[key]
+      if(val != fallback){
+        //if the first param added to querystring, add a "?" before param, otherwise add "&"
+        nonFallback += 1;
+        if(nonFallback == 1) shareURL += "?"
+        else shareURL += "&"
+
+
+        //add key/value pair to URL
+        shareURL += param + "=" + val
+      }
+    }
+
+  }
+
+  d3.select("#tmpShareUrl").text(shareURL).style("display","block")
+  return shareURL;
+}

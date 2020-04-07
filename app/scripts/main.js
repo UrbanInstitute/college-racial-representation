@@ -33,7 +33,7 @@ var higherEdData = {};
 // the user selections
 var higherEdSelections = {};
 	higherEdSelections.geography = getQueryParam("geography","national",["national","state","school"]), 
-	higherEdSelections.chartType = getQueryParam("chart_type",'single-year-bar',["single-year-bar", "by-sector-chart", "by-race-chart", "one-school-all-races-container", "multiple-schools"]) ,
+	higherEdSelections.chartType = getQueryParam("chart-type",'single-year-bar',["single-year-bar", "by-sector-chart", "by-race-chart", "one-school-all-races-container", "multiple-schools"]) ,
 	higherEdSelections.year = getQueryParam("year","2017", Array.apply(null, Array(9)).map(function (o, i) {return String(i + 2009);})) //strings of years 2009 -> 2017
 	higherEdSelections.programLength = getQueryParam("program_length",'four',["two", "four"])
 	higherEdSelections.singleRace = getQueryParam("single-race", 'dif_hispa', Object.keys(translateRace))
@@ -1637,19 +1637,35 @@ function init(){
 		higherEdData.allData.filteredForState =  higherEdData.allData[higherEdSelections.geography + higherEdSelections.programLength].filter(function(d){
 			return d.fips_ipeds === higherEdSelections.state;
 		})
-		// if coming from a chart type that isn't shared by 'state' view, show the bar chart as default
-		if (higherEdSelections.chartType === 'one-school-all-races-container' || higherEdSelections.chartType === 'multiple-schools'){
-			showChart('single-year-bar')
-			higherEdSelections.chartType = 'single-year-bar'
-		}
-
-    	callSectorLine();
 
   	}
   	else if(higherEdSelections.geography == "school"){
+			d3.select('#school-comparison').property('checked', false);
+			d3.select('#fourth-chart-container > h4 > span:nth-child(2)').text('Wayne State University')
 
+			var schoolNames = higherEdData.allData.schoolfour.filter(function(d){
+				if (d.year ==='2015'){ return d.inst_name }
+			}).map(function(d){
+				return d.inst_name
+			})
+
+			makeSchoolLookup(schoolNames);
+			d3.select('path.data-line.dif_black').attr('stroke-width', 4)
+
+			d3.select('#school-lookup').property('value', 'Wayne State University')
   	}
 
+	switch(higherEdSelections.chartType){
+		case "single-year-bar":
+			callBarChart(higherEdSelections.year, false);
+			break;
+		case "by-sector-chart":
+			callSectorLine();
+			break;
+		case "by-race-chart":
+			callRaceLine();
+			break;
+	}
 
 	d3.selectAll('div.geography-choices').classed('selected', false)
 	d3.select('div.geography-choices[data-cat="' + higherEdSelections.geography + '"]').classed('selected', true)
@@ -1657,7 +1673,9 @@ function init(){
 	showChart(higherEdSelections.chartType)
   	d3.select('#first-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.year);
 	//draw your default chart, bars for 2017: all races/sectors
-	callBarChart(higherEdSelections.year, false);
+	
+
+	d3.select("#tmpClick").on("click", getShareUrl)
 
 }
 
