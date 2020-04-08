@@ -12,7 +12,6 @@
 //TODOs
 //BUGS
 
-
 //FEATURES
 //make chart responsive
 //make the URL update
@@ -848,215 +847,215 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 }
 
 function buildOptionPanel(chartType){
+		//empty these
+		d3.select('#first-dynamic-menu').text('')
+		d3.select('#second-dynamic-menu').text('')
+	  	d3.select('#comparison-menu').text('')
 
-	//empty these
-	d3.select('#first-dynamic-menu').text('')
-	d3.select('#second-dynamic-menu').text('')
-  	d3.select('#comparison-menu').text('')
+	  	//create the right menu for each chart
+		if (chartType === 'single-year-bar'){
+			//checkboxes for everything
+			d3.select('#first-dynamic-menu').html(COLLEGE_SECTOR_CHECKBOXES)//controls initialized further down for this one
 
-  	//create the right menu for each chart
-	if (chartType === 'single-year-bar'){
-		//checkboxes for everything
-		d3.select('#first-dynamic-menu').html(COLLEGE_SECTOR_CHECKBOXES)//controls initialized further down for this one
+			d3.select('#second-dynamic-menu').append('p').attr('class', 'options-panel-section').text('Race/Ethnicity')
+			var div = d3.select('#second-dynamic-menu').append('div').attr('class', 'collapsible')
+			div.selectAll('div.race-ethnicity-checkboxes')
+				.data(RACE_OPTIONS)
+				.enter()
+				.append('div')
+				.classed('race-ethnicity-checkboxes', true)
+				.classed('checked', true)
+				.html(function(d){ return checkboxTemplater(d) })
 
-		d3.select('#second-dynamic-menu').append('p').attr('class', 'options-panel-section').text('Race/Ethnicity')
-		var div = d3.select('#second-dynamic-menu').append('div').attr('class', 'collapsible')
-		div.selectAll('div.race-ethnicity-checkboxes')
-			.data(RACE_OPTIONS)
-			.enter()
-			.append('div')
-			.classed('race-ethnicity-checkboxes', true)
-			.classed('checked', true)
-			.html(function(d){ return checkboxTemplater(d) })
+		} else if (chartType === 'by-sector-chart'){
+			//races as radio buttons, sectors as checkboxes
+			d3.select('#first-dynamic-menu').append('p').attr('class', 'options-panel-section').text('Race/Ethnicity')
+			var div = d3.select('#first-dynamic-menu').append('div').attr('class', 'collapsible')
+			div.selectAll('div.race-ethnicity-radios')
+				.data(RACE_OPTIONS)
+				.enter()
+				.append('div')
+				.classed('race-ethnicity-radios', true)
+				.html(function(d){ return radioButtonTemplater(d) })
 
-	} else if (chartType === 'by-sector-chart'){
-		//races as radio buttons, sectors as checkboxes
-		d3.select('#first-dynamic-menu').append('p').attr('class', 'options-panel-section').text('Race/Ethnicity')
-		var div = d3.select('#first-dynamic-menu').append('div').attr('class', 'collapsible')
-		div.selectAll('div.race-ethnicity-radios')
-			.data(RACE_OPTIONS)
-			.enter()
-			.append('div')
-			.classed('race-ethnicity-radios', true)
-			.html(function(d){ return radioButtonTemplater(d) })
+			d3.select('#second-dynamic-menu').html(COLLEGE_SECTOR_CHECKBOXES)
 
-		d3.select('#second-dynamic-menu').html(COLLEGE_SECTOR_CHECKBOXES)
+		} else if (chartType === 'by-race-chart'){
+			//sectors as radio buttons, races as checkboxes
+			d3.select('#first-dynamic-menu').html(COLLEGE_SECTOR_RADIOS)
 
-	} else if (chartType === 'by-race-chart'){
-		//sectors as radio buttons, races as checkboxes
-		d3.select('#first-dynamic-menu').html(COLLEGE_SECTOR_RADIOS)
+			d3.select('#second-dynamic-menu').append('p').attr('class', 'options-panel-section').text('Race/Ethnicity')
+			var div = d3.select('#second-dynamic-menu').append('div').attr('class', 'collapsible')
+			div.selectAll('div.race-ethnicity-checkboxes')
+				.data(RACE_OPTIONS)
+				.enter()
+				.append('div')
+				.classed('race-ethnicity-checkboxes', true)
+				.html(function(d){ return checkboxTemplater(d) })
 
-		d3.select('#second-dynamic-menu').append('p').attr('class', 'options-panel-section').text('Race/Ethnicity')
-		var div = d3.select('#second-dynamic-menu').append('div').attr('class', 'collapsible')
-		div.selectAll('div.race-ethnicity-checkboxes')
-			.data(RACE_OPTIONS)
-			.enter()
-			.append('div')
-			.classed('race-ethnicity-checkboxes', true)
-			.html(function(d){ return checkboxTemplater(d) })
+		} else if (chartType === 'one-school-all-races-container'){
+	      
+	      d3.select('#school-selection').style('display', 'block');
+	      
+	      d3.select('#time-selection').style('display', 'none');
+	      d3.select('#state-menu').style('display', 'none');
 
-	} else if (chartType === 'one-school-all-races-container'){
-      d3.select('#time-selection').style('display', 'none');
-      d3.select('#state-menu').style('display', 'none');
-      d3.select('#school-selection').style('display', 'block');
+	      d3.select('#first-dynamic-menu').style('display', 'none')
+	      d3.select('#second-dynamic-menu').style('display', 'none')
 
-      d3.select('#first-dynamic-menu').style('display', 'none')
-      d3.select('#second-dynamic-menu').style('display', 'none')
+	      //school chart gets checkboxes for race, comparison chart gets radio for sectors
+	      d3.select('#comparison-menu').html('<p class="options-panel-section">Race/Ethnicity</p>')
+	      d3.select('#comparison-menu').selectAll('div.race-ethnicity-checkboxes')
+	        .data(RACE_OPTIONS)
+	        .enter()
+	        .append('div')
+	        .classed('race-ethnicity-checkboxes', true)
+	        .classed('checked', true)
+	        .html(function(d){ return checkboxTemplater(d) })
 
-      //school chart gets checkboxes for race, comparison chart gets radio for sectors
-      d3.select('#comparison-menu').html('<p class="options-panel-section">Race/Ethnicity</p>')
-      d3.select('#comparison-menu').selectAll('div.race-ethnicity-checkboxes')
-        .data(RACE_OPTIONS)
-        .enter()
-        .append('div')
-        .classed('race-ethnicity-checkboxes', true)
-        .classed('checked', true)
-        .html(function(d){ return checkboxTemplater(d) })
+	  	} else if (chartType === 'multiple-schools'){
 
-  	} else if (chartType === 'multiple-schools'){
+	      d3.select('#comparison-menu').html('<p class="options-panel-section">Race/Ethnicity</p>')
+	      d3.select('#comparison-menu').selectAll('div.race-ethnicity-radios')
+	       .data(RACE_OPTIONS)
+	       .enter()
+	       .append('div')
+	       .classed('race-ethnicity-radios', true)
+	       //.classed("checked", function(d){ return d === higherEdSelections.singleRace })// this becomes a function using singleRace
+	       .html(function(d){ return radioButtonTemplater(d) })
 
-      d3.select('#comparison-menu').html('<p class="options-panel-section">Race/Ethnicity</p>')
-      d3.select('#comparison-menu').selectAll('div.race-ethnicity-radios')
-       .data(RACE_OPTIONS)
-       .enter()
-       .append('div')
-       .classed('race-ethnicity-radios', true)
-       //.classed("checked", function(d){ return d === higherEdSelections.singleRace })// this becomes a function using singleRace
-       .html(function(d){ return radioButtonTemplater(d) })
+	  }
+		//sector boxes - updates arraySector
+		d3.selectAll('.sector-boxes').on('click', function(){
 
-  }
-	//sector boxes - updates arraySector
-	d3.selectAll('.sector-boxes').on('click', function(){
+			var userChoice = this.value;
+			var checkbox = d3.select(this);
+			var selectionIndex = higherEdSelections.arraySectors.indexOf(translate[userChoice]);
 
-		var userChoice = this.value;
-		var checkbox = d3.select(this);
-		var selectionIndex = higherEdSelections.arraySectors.indexOf(translate[userChoice]);
+				//switching from 4 year to 2
+			if (checkbox.classed('two-year') && higherEdSelections.programLength === 'four'){
+				//switch over all the checked's and reset the arraySectors to just be the new userchoice
+				convertSelectors('two')
+				higherEdSelections.arraySectors = [translate[userChoice]] //array starts fresh with current selection
 
-			//switching from 4 year to 2
-		if (checkbox.classed('two-year') && higherEdSelections.programLength === 'four'){
-			//switch over all the checked's and reset the arraySectors to just be the new userchoice
-			convertSelectors('two')
-			higherEdSelections.arraySectors = [translate[userChoice]] //array starts fresh with current selection
+				// d3.selectAll('.four-year').classed('checked', false);
+				d3.selectAll('.four-year.sector-boxes').property('checked', false);
 
-			// d3.selectAll('.four-year').classed('checked', false);
-			d3.selectAll('.four-year.sector-boxes').property('checked', false);
+				d3.selectAll('.two-year').classed('inactive', false);
+				d3.selectAll('.four-year, .program-type').classed('inactive', true);
+	    	//staying within 2 year
+			} else if (checkbox.classed('two-year') && higherEdSelections.programLength === 'two'){
+				//remove or add userchoice from the array
+				if (selectionIndex > -1){
+					higherEdSelections.arraySectors.splice(selectionIndex, 1)
+				} else {
+					higherEdSelections.arraySectors.push(translate[userChoice])
+				}
+	    	// switch from 2 to 4
+			} else if (checkbox.classed('four-year') && higherEdSelections.programLength === 'two'){
+				convertSelectors('four')
+				higherEdSelections.arraySectors = [translate[userChoice]]
 
-			d3.selectAll('.two-year').classed('inactive', false);
-			d3.selectAll('.four-year, .program-type').classed('inactive', true);
-    	//staying within 2 year
-		} else if (checkbox.classed('two-year') && higherEdSelections.programLength === 'two'){
-			//remove or add userchoice from the array
-			if (selectionIndex > -1){
-				higherEdSelections.arraySectors.splice(selectionIndex, 1)
-			} else {
-				higherEdSelections.arraySectors.push(translate[userChoice])
+				// d3.selectAll('.two-year').classed('checked', false)
+				d3.selectAll('.two-year.sector-boxes').property('checked', false)
+
+				d3.selectAll('.two-year').classed('inactive', true);
+				d3.selectAll('.four-year, .program-type').classed('inactive', false);
+	    	// staying within 4
+			} else if (checkbox.classed('four-year') && higherEdSelections.programLength === 'four'){
+				if (selectionIndex > -1){
+					higherEdSelections.arraySectors.splice(selectionIndex, 1)
+				} else {
+					higherEdSelections.arraySectors.push(translate[userChoice])
+				}
 			}
-    	// switch from 2 to 4
-		} else if (checkbox.classed('four-year') && higherEdSelections.programLength === 'two'){
-			convertSelectors('four')
-			higherEdSelections.arraySectors = [translate[userChoice]]
 
-			// d3.selectAll('.two-year').classed('checked', false)
-			d3.selectAll('.two-year.sector-boxes').property('checked', false)
+			//if the box is being unchecked and the selections array is empty
+			if (selectionIndex > 0 && higherEdSelections.arraySectors.length < 1){
+				//alert('Please pick at least one sector')
+		      higherEdSelections.arraySectors.push(translate[userChoice])
+		      //TODO - why this not worky
+		      d3.select('.sector-boxes > div > input[value=' + userChoice + ']').property('checked', true)
+			} 
+			callSectorLine()
+			callBarChart(higherEdSelections.year, true);
 
+		})//end sector boxes
+
+
+		//sector radios - updates singleSector
+		d3.selectAll('.sector-radios').on('click', function(){
+			higherEdSelections.singleSector = translate[this.value];
+			d3.select('#second-chart-container > h4 > span').text(higherEdSelections.singleSector);
+			if (d3.select(this).classed('two-year')){
+				convertSelectors('two')
+			} else {
+				convertSelectors('four')
+			}
+			callRaceLine();
+		})
+
+		//race boxes - updates arrayRaces
+		d3.selectAll('.race-ethnicity-checkboxes').on('click', raceCheckboxListener)
+
+		//race radios - updates singleRace
+		d3.selectAll('.race-ethnicity-radios').on('click', function(){
+			var userChoice = d3.select(this).datum();
+			higherEdSelections.singleRace = userChoice;
+		    if (chartType === 'by-sector-chart'){
+		  		d3.select('#third-chart-container > h4 > span').text(translateRace[userChoice]);
+		  		// d3.select('input[value=' + userChoice + ']').property('checked', true)
+
+		  		callSectorLine();
+		    } else if (chartType === 'multiple-schools'){
+		      callComparisonChart();
+		    }
+		})
+
+		//now make all the checked radios & boxes match current selections
+		d3.select('div.race-ethnicity-radios> div > label > input[value=' + higherEdSelections.singleRace + ']').property('checked', true);	
+
+		d3.select('input.sector-radios[value=' + translateBack[higherEdSelections.singleSector] + ']').property('checked', true)
+		d3.selectAll('.race-ethnicity-checkboxes > div > input')
+			.property('checked', function(d){ return higherEdSelections.arrayRaces.indexOf(this.value) > -1 });
+		d3.selectAll('input.sector-boxes')
+			.property('checked', function(d){ return higherEdSelections.arraySectors.indexOf(translate[this.value]) > -1 });
+
+		if (higherEdSelections.programLength === 'four'){
 			d3.selectAll('.two-year').classed('inactive', true);
 			d3.selectAll('.four-year, .program-type').classed('inactive', false);
-    	// staying within 4
-		} else if (checkbox.classed('four-year') && higherEdSelections.programLength === 'four'){
-			if (selectionIndex > -1){
-				higherEdSelections.arraySectors.splice(selectionIndex, 1)
-			} else {
-				higherEdSelections.arraySectors.push(translate[userChoice])
-			}
-		}
-
-		//if the box is being unchecked and the selections array is empty
-		if (selectionIndex > 0 && higherEdSelections.arraySectors.length < 1){
-			//alert('Please pick at least one sector')
-	      higherEdSelections.arraySectors.push(translate[userChoice])
-	      //TODO - why this not worky
-	      d3.select('.sector-boxes > div > input[value=' + userChoice + ']').property('checked', true)
-		} 
-		callSectorLine()
-		callBarChart(higherEdSelections.year, true);
-
-	})//end sector boxes
-
-
-	//sector radios - updates singleSector
-	d3.selectAll('.sector-radios').on('click', function(){
-		higherEdSelections.singleSector = translate[this.value];
-		d3.select('#second-chart-container > h4 > span').text(higherEdSelections.singleSector);
-		if (d3.select(this).classed('two-year')){
-			convertSelectors('two')
 		} else {
-			convertSelectors('four')
+			d3.selectAll('.two-year').classed('inactive', false);
+			d3.selectAll('.four-year, .program-type').classed('inactive', true);
 		}
-		callRaceLine();
-	})
 
-	//race boxes - updates arrayRaces
-	d3.selectAll('.race-ethnicity-checkboxes').on('click', raceCheckboxListener)
+		//mouseovers and shrinky buttons
+		 d3.selectAll('.options-panel-section').append('span').attr('class', 'minimize').html('&#8212').on('click', function(){
+			var div = this.parentElement.parentElement.getAttribute('id')
+			d3.select('#' + div + '> div.collapsible').classed('collapsed', !d3.select('#' + div + '> div.collapsible').classed('collapsed'))	
+	    	
+	    	this.innerHTML === '—' ? d3.select(this).html('+') : d3.select(this).html('&#8212') 
+	    })
 
-	//race radios - updates singleRace
-	d3.selectAll('.race-ethnicity-radios').on('click', function(){
-		var userChoice = d3.select(this).datum();
-		higherEdSelections.singleRace = userChoice;
-	    if (chartType === 'by-sector-chart'){
-	  		d3.select('#third-chart-container > h4 > span').text(translateRace[userChoice]);
-	  		// d3.select('input[value=' + userChoice + ']').property('checked', true)
+		var panelMouseover = d3.select('body').append('div')
+		    .attr('class', 'tooltip panelmouseover')
+		    .style('opacity', 0);
 
-	  		callSectorLine();
-	    } else if (chartType === 'multiple-schools'){
-	      callComparisonChart();
-	    }
-	})
-
-	//now make all the checked radios & boxes match current selections
-	d3.select('div.race-ethnicity-radios> div > label > input[value=' + higherEdSelections.singleRace + ']').property('checked', true);	
-
-	d3.select('input.sector-radios[value=' + translateBack[higherEdSelections.singleSector] + ']').property('checked', true)
-	d3.selectAll('.race-ethnicity-checkboxes > div > input')
-		.property('checked', function(d){ return higherEdSelections.arrayRaces.indexOf(this.value) > -1 });
-	d3.selectAll('input.sector-boxes')
-		.property('checked', function(d){ return higherEdSelections.arraySectors.indexOf(translate[this.value]) > -1 });
-
-	if (higherEdSelections.programLength === 'four'){
-		d3.selectAll('.two-year').classed('inactive', true);
-		d3.selectAll('.four-year, .program-type').classed('inactive', false);
-	} else {
-		d3.selectAll('.two-year').classed('inactive', false);
-		d3.selectAll('.four-year, .program-type').classed('inactive', true);
-	}
-
-	//mouseovers and shrinky buttons
-	 d3.selectAll('.options-panel-section').append('span').attr('class', 'minimize').html('&#8212').on('click', function(){
-		var div = this.parentElement.parentElement.getAttribute('id')
-		d3.select('#' + div + '> div.collapsible').classed('collapsed', !d3.select('#' + div + '> div.collapsible').classed('collapsed'))	
-    	
-    	this.innerHTML === '—' ? d3.select(this).html('+') : d3.select(this).html('&#8212') 
-    })
-
-	var panelMouseover = d3.select('body').append('div')
-	    .attr('class', 'tooltip panelmouseover')
-	    .style('opacity', 0);
-
-	d3.selectAll('.more-info').on('mouseover', function(){
-    	panelMouseover
-    		.style('opacity', 1)
-        	.html('Comparisons between 4-year and 2-year colleges aren’t available because we use different age groups for our analyses of the two institution levels’ potential pool of students.')
-            .style('left', (d3.event.pageX + 20) + 'px')
-            .style('top', (d3.event.pageY - 28) + 'px');
-	}).on('mouseout', function(d) {
-        	panelMouseover.style('opacity', 0);
-    });
-
-    //mobile buttons 
-    if (IS_MOBILE){
+		d3.selectAll('.more-info').on('mouseover', function(){
+	    	panelMouseover
+	    		.style('opacity', 1)
+	        	.html('Comparisons between 4-year and 2-year colleges aren’t available because we use different age groups for our analyses of the two institution levels’ potential pool of students.')
+	            .style('left', (d3.event.pageX + 20) + 'px')
+	            .style('top', (d3.event.pageY - 28) + 'px');
+		}).on('mouseout', function(d) {
+	        	panelMouseover.style('opacity', 0);
+	    });
+	if (IS_MOBILE){		
     	if (higherEdSelections.chartType === 'single-year-bar'){
-    		d3.selectAll('.filter-btn').style('display', 'none')
-    		d3.select('#mobile-filter-options > h4').style('visibility', 'hidden')
-    		d3.select('#year-input-wrapper').style('display', 'inline-block')
+    		d3.select('#race-ethnicity-filter').style('display', 'none')
+    		d3.select('#sector-filter').style('display', 'inline-block')
+    		d3.select('#mobile-filter-options > h4').style('visibility', 'visible')
+    		d3.select('#year-input-wrapper').style('display', 'block')
     	} else if (higherEdSelections.chartType === 'by-sector-chart'){
     		d3.select('#race-ethnicity-filter').style('display', 'inline-block')
     		d3.select('#sector-filter').style('display', 'none')
@@ -1068,7 +1067,8 @@ function buildOptionPanel(chartType){
     		d3.select('#mobile-filter-options > h4').style('visibility', 'visible')
     		d3.select('#year-input-wrapper').style('display', 'none')
     	}
-    }
+	}
+    
 }
 		
 d3.select('#school-comparison').on('click', function(d){
@@ -1311,16 +1311,16 @@ function initializeStaticControls(){
 		d3.select(this).classed('selected', !d3.select(this).classed('selected'))
 
 		if ( userChoice === 'state'){
-			console.log(higherEdSelections.state)
-			//UI changes
+			
+			if (!IS_MOBILE){
+				d3.select('#first-dynamic-menu').style('display', 'block');
+				d3.select('#second-dynamic-menu').style('display', 'block');
+			} else {
+				d3.select('#mobile-filter-options').style('display', 'inline')
+			}
 			d3.selectAll('#first-chart-container > h4 > span:nth-child(1), #third-chart-container > h4 > span:nth-child(2), #second-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
-
 			d3.select('#time-selection').style('display', 'block');
 			d3.select('#school-selection').style('display', 'none');
-
-			d3.select('#first-dynamic-menu').style('display', 'block');
-			d3.select('#second-dynamic-menu').style('display', 'block');
-
 			d3.selectAll('.time-selector').classed('selected', false);
 
 			if (higherEdSelections.chartType === 'by-sector-chart' || higherEdSelections.chartType === 'by-race-chart'){
@@ -1338,7 +1338,6 @@ function initializeStaticControls(){
 			d3.select('#state-menu').style('display', 'block');
 			$("#dropdown").val(higherEdSelections.state)
 			$("#dropdown").selectmenu("refresh")
-			
 
 			//global selectors
 			SELECTED_DATASET = 'filteredForState';
@@ -1355,12 +1354,17 @@ function initializeStaticControls(){
 				d3.select('.disable-box').style('visibility', 'hidden')
 			}
 		} else if ( userChoice === 'national' ){
+		    if (!IS_MOBILE){	    	
+			    d3.select('#first-dynamic-menu').style('display', 'block')
+			    d3.select('#second-dynamic-menu').style('display', 'block')
+		    } else {
+		    	d3.select('#mobile-filter-options').style('display', 'inline')
+		    }
+
 			d3.select('#time-selection').style('display', 'block');
 			d3.select('#state-menu').style('display', 'none')
 			d3.select('#school-selection').style('display', 'none')
 			d3.selectAll('#first-chart-container > h4 > span:nth-child(1), #second-chart-container > h4 > span:nth-child(2), #third-chart-container > h4 > span:nth-child(2)').text('US');
-		    d3.select('#first-dynamic-menu').style('display', 'block')
-		    d3.select('#second-dynamic-menu').style('display', 'block')
 			//selectors updated
 			SELECTED_DATASET = higherEdSelections.geography + higherEdSelections.programLength
 		      //the chart types aren't shared between school and national/state, so it amkes sense to reset
@@ -1375,6 +1379,10 @@ function initializeStaticControls(){
 
 		} else if ( userChoice === 'school' ){
       		d3.select('#school-comparison').property('checked', false);
+
+      		if (IS_MOBILE){
+      			d3.select('#mobile-filter-options').style('display', 'none')
+      		}
 
       		higherEdSelections.geography = 'school'
 
@@ -1460,21 +1468,24 @@ function initializeStaticControls(){
 			SELECTED_DATASET = 'nationalfour'
 			SECTOR_KEY = 'fourcat'
 
-			d3.select('#time-selection').style('display', 'block');
+			
 			d3.select('#state-menu').style('display', 'none')
 			d3.select('#school-selection').style('display', 'none')
 			d3.select('#first-chart-container > h4 > span:nth-child(1)').text('US');
       		d3.select('#second-chart-container > h4 > span:nth-child(2)').text('US');
 		    d3.select('#third-chart-container > h4 > span:nth-child(2)').text('US');
 
-		    d3.select('#first-dynamic-menu').style('display', 'block')
-		    d3.select('#second-dynamic-menu').style('display', 'block')
-
 		    d3.select('.race').classed('selected', true);
 			d3.select('.time-selector.bar').classed('selected', false);
-			d3.select('.disable-box').style('visibility', 'visible')
 			d3.select('.time-selector.line.main-choice').classed('selected', true);
 			d3.select('#second-chart-container > h4 > span:nth-child(1)').text(higherEdSelections.singleSector);
+
+			if (!IS_MOBILE){
+				d3.select('#time-selection').style('display', 'block');
+			    d3.select('#first-dynamic-menu').style('display', 'block')
+			    d3.select('#second-dynamic-menu').style('display', 'block')
+				d3.select('.disable-box').style('visibility', 'visible')
+			}
 
 			callRaceLine()
 			d3.select('path.data-line.dif_white').attr('stroke-width', 4)
@@ -1493,17 +1504,17 @@ function initializeStaticControls(){
 			d3.select('#third-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
 			d3.select('#second-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
 
-			d3.select('#time-selection').style('display', 'block');
 			d3.select('#school-selection').style('display', 'none');
-
-		    d3.select('#first-dynamic-menu').style('display', 'block');
-		    d3.select('#second-dynamic-menu').style('display', 'block');
-
 		    d3.selectAll('.time-selector').classed('selected', false);
 	        d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
-	        d3.select('.disable-box').style('visibility', 'visible')
 	        d3.select('div.sub-choice[value=\'' + higherEdSelections.chartType + '\']').classed('selected', true);
 	        
+	        if (!IS_MOBILE){
+	        	d3.select('#time-selection').style('display', 'block');
+			    d3.select('#first-dynamic-menu').style('display', 'block');
+			    d3.select('#second-dynamic-menu').style('display', 'block');
+		        d3.select('.disable-box').style('visibility', 'visible')
+	        }
 
 			//create state dropdown menu
 			var states = higherEdData.allData.statefour.map(function(d){return d.fips_ipeds});
@@ -1561,9 +1572,68 @@ d3.selectAll('.filter-btn').on('click', function(){
 	var scootch = window.innerWidth - 200 + 'px',
 		btnID = this.getAttribute('id');
 	d3.select('.pop-up-menu').remove();
-	
+	if (higherEdSelections.chartType === 'single-year-bar'){
+		var div = d3.select('div.slider').append('div').attr('class', 'pop-up-menu')
+		div.append('span').attr('id', 'close-btn').style('left', window.innerWidth - 100 + 'px').style('top', '20px').html('&times;').on('click', function(){
+			d3.selectAll('.slider').classed('close', true)
+		})
+		div.append('div').html(COLLEGE_SECTOR_CHECKBOXES)
+			d3.selectAll('.sector-boxes').on('click', function(){
 
-	if (higherEdSelections.chartType === 'by-sector-chart'){	
+			var userChoice = this.value;
+			var checkbox = d3.select(this);
+			var selectionIndex = higherEdSelections.arraySectors.indexOf(translate[userChoice]);
+
+				//switching from 4 year to 2
+			if (checkbox.classed('two-year') && higherEdSelections.programLength === 'four'){
+				//switch over all the checked's and reset the arraySectors to just be the new userchoice
+				convertSelectors('two')
+				higherEdSelections.arraySectors = [translate[userChoice]] //array starts fresh with current selection
+
+				// d3.selectAll('.four-year').classed('checked', false);
+				d3.selectAll('.four-year.sector-boxes').property('checked', false);
+
+				d3.selectAll('.two-year').classed('inactive', false);
+				d3.selectAll('.four-year, .program-type').classed('inactive', true);
+	    	//staying within 2 year
+			} else if (checkbox.classed('two-year') && higherEdSelections.programLength === 'two'){
+				//remove or add userchoice from the array
+				if (selectionIndex > -1){
+					higherEdSelections.arraySectors.splice(selectionIndex, 1)
+				} else {
+					higherEdSelections.arraySectors.push(translate[userChoice])
+				}
+	    	// switch from 2 to 4
+			} else if (checkbox.classed('four-year') && higherEdSelections.programLength === 'two'){
+				convertSelectors('four')
+				higherEdSelections.arraySectors = [translate[userChoice]]
+
+				// d3.selectAll('.two-year').classed('checked', false)
+				d3.selectAll('.two-year.sector-boxes').property('checked', false)
+
+				d3.selectAll('.two-year').classed('inactive', true);
+				d3.selectAll('.four-year, .program-type').classed('inactive', false);
+	    	// staying within 4
+			} else if (checkbox.classed('four-year') && higherEdSelections.programLength === 'four'){
+				if (selectionIndex > -1){
+					higherEdSelections.arraySectors.splice(selectionIndex, 1)
+				} else {
+					higherEdSelections.arraySectors.push(translate[userChoice])
+				}
+			}
+
+			//if the box is being unchecked and the selections array is empty
+			if (selectionIndex > 0 && higherEdSelections.arraySectors.length < 1){
+				//alert('Please pick at least one sector')
+		      higherEdSelections.arraySectors.push(translate[userChoice])
+		      //TODO - why this not worky
+		      d3.select('.sector-boxes > div > input[value=' + userChoice + ']').property('checked', true)
+			} 
+			callBarChart(higherEdSelections.year, true);
+
+		})//end sector boxes
+
+	} else if (higherEdSelections.chartType === 'by-sector-chart'){	
 		var div = d3.select('div.slider').append('div').attr('class', 'pop-up-menu').style('margin-top', '25px')
 		div.append('p').attr('class', 'options-panel-section').style('display', 'inline').text('Race/Ethnicity')
 		div.append('span').attr('id', 'close-btn').style('left', scootch).html('&times;').on('click', function(){
