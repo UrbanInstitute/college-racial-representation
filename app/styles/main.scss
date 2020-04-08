@@ -109,6 +109,9 @@ $green-8: #370B0A;
 * LAYOUT
 *******************************************/
 
+a {
+  cursor: pointer;
+}
 
 #heroimage {
     background-image: url(../images/header.png);
@@ -248,32 +251,6 @@ p.scenario {
 #scenario2 {
   margin-left: 3%;
   margin-right: 3%;
-}
-
-.caret {
-  position: relative;
-  float: right;
-  padding-right: 21px;
-}
-
-.caret:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  border-left: 20px solid $cyan-7;
-  border-top: 20px solid transparent;
-  border-bottom: 20px solid transparent;
-}
-
-.caret:after {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 4px;
-  border-left: 16px solid $gray-2;
-  border-top: 16px solid transparent;
-  border-bottom: 16px solid transparent;
 }
 
 .left-float {
@@ -817,7 +794,7 @@ select:focus::-ms-value {
 }
 
 #time-selection > div.time-selector.line.sub-choice.race {
-  padding-top: 7px;
+  padding-top: 13px;
 }
 
 #time-selection > div:nth-child(6) {
@@ -834,7 +811,7 @@ select:focus::-ms-value {
   color: #FFFFFF;
 }
 
-#year-selector {
+#year-input-wrapper {
   margin-bottom: 10px;
   margin-top: 10px;
 }
@@ -953,11 +930,29 @@ label.check-switch:active:after {
     width: 100%;
 
       img {
-        width: 100%;
+        margin-bottom: 30px;
       }
 
       p {
-        width: 560px;
+        // width: 560px;
+      }
+
+      .caret {
+        float: right;
+        position: relative;
+        top: 40px;
+        img {
+          width: 30px;
+        }
+      }
+
+      .caret.left {
+        float: left;
+      }
+
+      .card-content {
+        float: left;
+        width: 80%;
       }
   }
 
@@ -1075,7 +1070,7 @@ label.check-switch:active:after {
   }
 
   .time-selector.by-sector {
-    line-height: 1.1;
+    line-height: 1.5;
   }
 
   #time-selection {
@@ -1107,8 +1102,8 @@ label.check-switch:active:after {
     display: none;
   }
 
-  #year-selector {
-    display: none;
+  #year-input-wrapper {
+    margin-top: 60px;
   }
     .left-float {
     width: 20%;
@@ -1130,6 +1125,18 @@ label.check-switch:active:after {
   .right-float {
     width: 70%;
   }
+
+  .time-selector.by-sector {
+    line-height: 1.1;
+  }
+
+  .time-selector.sub-choice {
+    padding: 10px 5px;
+  }
+
+    #time-selection > div.time-selector.line.sub-choice.race {
+    padding: 12px 0 0 0;
+  }
 }
 
 @media (max-width: 400px){
@@ -1139,8 +1146,28 @@ label.check-switch:active:after {
 
   .time-selector.sub-choice > div.btn-img-wrapper {
     display: none;
+    font-size: 14px;
   }
+
+  .time-selector.main-choice {
+    padding: 8px 5px 0 5px;
+    font-size: 14px;
+  }
+
+  .time-selector.sub-choice {
+    padding: 8px 0 0 0;
+    font-size: 14px;
+  }
+
+  #time-selection > div.time-selector.line.sub-choice.race {
+    padding: 5px 0 0 0;
+    font-size: 14px;
+  }
+
+
+
 }
+
 
 
 

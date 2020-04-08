@@ -11,7 +11,7 @@
 
 //TODOs
 //BUGS
-//the sector radios don't show up with one checked the second time through
+
 
 //FEATURES
 //make chart responsive
@@ -19,11 +19,7 @@
 
 //STYLING
 //'cover' not doing what you'd think on cover image
-//dropdown menus
 
-//THINGS TO CHECK
-//I took out 'dif_othra' and kept in (was dif_twora) 'dif_multi' which became 'multiracial'. Correct?
-//should there be alert text when you have zero selected races or sectors? just don't allow deselecting last one?
 
 
 // the datas
@@ -219,6 +215,18 @@ var translate = {
 	 'two-year-private': 'For-Profit 2-year'
 }
 
+var translateBack = {
+	 'For-Profit': 'for-profit',
+	 'Private More Selective': 'private-highly-selective',
+	 'Private Nonselective': 'private-nonselective',
+	 'Private Selective': 'private-selective',
+	 'Public More Selective': 'public-highly-selective',
+	 'Public Nonselective': 'public-nonselective',
+	 'Public Selective': 'public-selective',
+	 'Public 2-year': 'two-year-public',
+	 'For-Profit 2-year': 'two-year-private'
+}
+
 var translateRace = {
 	'dif_white': 'White',
 	'dif_hispa': 'Hispanic',
@@ -337,14 +345,19 @@ function addArrowsToHighlights(){
 	if (window.innerWidth < 950){
 		d3.selectAll('.caret').style('display', 'inline')
 		d3.selectAll('.caret').on('click', function(){
-			var id = this.parentElement.getAttribute('id'),
+			var isLeft = d3.select(this).classed("left")
+			//get the ID of wrapping div to know whether scenario1, 2 or 3
+			var wrappingDiv = this.parentElement
+			var id = wrappingDiv.getAttribute('id'),
 			multiplier = id.substring(id.length - 1)
-			var chartScootch = (parseInt(d3.select(this.parentElement).style('width')) * -1) * multiplier
+			
+			var chartScootch = isLeft ? (parseInt(d3.select(wrappingDiv).style('width')) * -1) * (multiplier -2) :
+			(parseInt(d3.select(wrappingDiv).style('width')) * -1) * multiplier
 			d3.select('#scenario1').style('margin-left', chartScootch + 'px')
 		})
 		
-		var scootch = ( parseInt(d3.select('div.scenario').style('height')) / 2 ) - 30 + 'px'		
-		d3.selectAll('.caret').style('bottom', scootch)
+		// var scootch = ( parseInt(d3.select('div.scenario').style('height')) / 2 ) - 30 + 'px'		
+		// d3.selectAll('.caret').style('bottom', scootch)
 	} else {
 		d3.selectAll('.caret').remove();
 	}
@@ -402,7 +415,7 @@ function drawBarChart(data, animate){
 	}
 
   var 	barChartHeight = 200,
-  		barChartWidth = chartHole * .5 - 30;
+  		barChartWidth = IS_MOBILE ? chartHole : chartHole * .5 - 30;
   // singleYearSVG.attr('height', barChartHeight + barMargin.top + barMargin.bottom)
   // var numSectors = 7,
   // heightOfOneSector = barChartHeight / numSectors,
@@ -474,8 +487,6 @@ sectorSvgs
     .attr('y2',5)
     .attr('stroke', '#fff')
     .attr('stroke-width', 3);
-
-
 
 	d3.selectAll('.sector-label').remove(); //shrug emoji?
 
@@ -686,7 +697,9 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 	svg.append('g')
 		.attr('class','x-axis')
 		.attr('transform', 'translate(' + margin.left + ',' + (height + margin.top - margin.bottom) + ')')
-		.call(d3.axisBottom(xLine).tickFormat(d3.timeFormat('%Y')));
+		.call(d3.axisBottom(xLine).tickFormat( function(d){ return IS_MOBILE ? '\'' + d3.timeFormat('%y')(d) : 
+			d3.timeFormat('%Y')(d) 
+		}) );
 
 	var yAxis = d3.axisLeft(y)
 		.tickSize(-width)
@@ -1001,7 +1014,8 @@ function buildOptionPanel(chartType){
 
 	//now make all the checked radios & boxes match current selections
 	d3.select('div.race-ethnicity-radios> div > label > input[value=' + higherEdSelections.singleRace + ']').property('checked', true);	
-	d3.select('input.sector-radios[value=' + classify(higherEdSelections.singleSector) + ']').property('checked', true)
+
+	d3.select('input.sector-radios[value=' + translateBack[higherEdSelections.singleSector] + ']').property('checked', true)
 	d3.selectAll('.race-ethnicity-checkboxes > div > input')
 		.property('checked', function(d){ return higherEdSelections.arrayRaces.indexOf(this.value) > -1 });
 	d3.selectAll('input.sector-boxes')
@@ -1042,14 +1056,17 @@ function buildOptionPanel(chartType){
     	if (higherEdSelections.chartType === 'single-year-bar'){
     		d3.selectAll('.filter-btn').style('display', 'none')
     		d3.select('#mobile-filter-options > h4').style('visibility', 'hidden')
+    		d3.select('#year-input-wrapper').style('display', 'inline-block')
     	} else if (higherEdSelections.chartType === 'by-sector-chart'){
     		d3.select('#race-ethnicity-filter').style('display', 'inline-block')
     		d3.select('#sector-filter').style('display', 'none')
     		d3.select('#mobile-filter-options > h4').style('visibility', 'visible')
+    		d3.select('#year-input-wrapper').style('display', 'none')
     	} else if (higherEdSelections.chartType === 'by-race-chart'){
     		d3.select('#race-ethnicity-filter').style('display', 'none')
     		d3.select('#sector-filter').style('display', 'inline-block')
     		d3.select('#mobile-filter-options > h4').style('visibility', 'visible')
+    		d3.select('#year-input-wrapper').style('display', 'none')
     	}
     }
 }
@@ -1218,7 +1235,8 @@ function makeSchoolLookup(schoolNames){
       var schoolDatum = higherEdData.allData[SELECTED_DATASET].filter(function(d){return d.inst_name === higherEdSelections.selectedSchool })[0]
       
       higherEdSelections.programLength = schoolDatum.slevel === '4-year' ? 'four' : 'two' ;
-      SECTOR_KEY = higherEdSelections.programLength + 'cat'
+      //all school stuff is schoolfour/fourcat
+      SECTOR_KEY = 'fourcat'
       higherEdSelections.state = schoolDatum.fips_ipeds
       higherEdSelections.singleSector = schoolDatum[SECTOR_KEY]
       higherEdSelections.arraySectors = [schoolDatum[SECTOR_KEY]]
@@ -1256,7 +1274,7 @@ var sliderTime =
 		.min(d3.min(dataTime))
 		.max(d3.max(dataTime))
 		.step(1000 * 60 * 60 * 24 * 365)
-		.width(220)
+		.width(IS_MOBILE ? chartHole - 90 : 220)
 		.tickFormat(function(d){ return '\'' + d3.timeFormat('%y')(d)})
 		.tickValues(dataTime)
 		.default(new Date(2017, 10, 3))
@@ -1272,7 +1290,7 @@ var sliderTime =
 var gTime =
 	d3.select('div#year-input')
 		.append('svg')
-		.attr('width', 250)
+		.attr('width', IS_MOBILE ? chartHole - 60 : 250)
 		.attr('height', 60)
 		.append('g')
 		.attr('transform', 'translate(15,15)');

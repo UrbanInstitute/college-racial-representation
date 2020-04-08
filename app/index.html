@@ -26,13 +26,6 @@
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
     <!-- START HEADER -->
-  <div class="widthTester w1200"></div>
-  <div class="widthTester w1085"></div>
-  <div class="widthTester w900"></div>
-  <div class="widthTester w768"></div>
-  <div class="widthTester w600"></div>
-  <div class="widthTester w500"></div>
-  <div class="widthTester w400"></div>
   <div id="header-pinned" class="no-touch">
     <a target="_blank" href="https://www.urban.org/" title="Home" rel="home" class="site-logo"></a>
     <div class="title">
@@ -84,44 +77,40 @@
   </div>
 
     <div id="scenarios">
-      <div class="scenario clickable" id="scenario1">
-        <a href="#chart-area-container">
-          <div class="left-float">
-            <img src="images/icon-1.png">
-          </div>
-          <div class="right-float">
-            <h5>Data highlight</h5>
-            <p>White students are becoming less overrepresented at highly selective US public colleges</p>
-            <div class="caret float-right"></div>
+      <div class="scenario clickable" id="scenario1">        
+        <div class="card-content">
+          <img src="images/icon-1.png">
+          <h5>Data highlight</h5>
+          <p>White students are becoming less overrepresented at highly selective US public colleges</p>
+          <a href="#chart-area-container">
             <p class="scenario-trigger">See the chart</p>
-          </div>
-        </a>
+          </a>
+        </div> 
+        <div class="caret"><img src="images/right-caret.png"></div>
       </div>
-      <div class="scenario clickable" id="scenario2">
-        <a href="#chart-area-container">
-          <div class="left-float">
+      <div class="scenario clickable" id="scenario2">        
+        <div class="caret left"><img class="left" src="images/left-caret.png"></div>
+        <div class="card-content">
             <img src="images/icon-2.png">
-          </div>
-          <div class="right-float">
             <h5>Data highlight</h5>
             <p>Hispanic representation is rising in most college sectors in California</p>
-            <div class="caret float-right"></div>
-            <p class="scenario-trigger">See the chart</p>
-          </div>
-        </a>
+            <a href="#chart-area-container">
+              <p class="scenario-trigger">See the chart</p>
+            </a>
+        </div>
+        <div class="caret"><img src="images/right-caret.png"></div>
       </div>
-      <div class="scenario clickable" id="scenario3">
-        <a href="#chart-area-container">
-          <div class="left-float">
+      <div class="scenario clickable" id="scenario3">       
+          <div class="caret left"><img src="images/left-caret.png"></div>
+          <div class="card-content">
             <img src="images/icon-3.png">
-          </div>
-          <div class="right-float">
             <h5>Data highlight</h5>
             <p>Black representation is falling at Wayne State University</p>
-            <div class="caret float-right"></div>
-            <p class="scenario-trigger">See the chart</p>
+            <a href="#chart-area-container">
+              <p class="scenario-trigger">See the chart</p>
+           </a>
           </div>
-        </a>
+        <div class="caret"><img src="images/right-caret.png"></div>
       </div>
       <div class="clear"></div>
     </div>
@@ -173,7 +162,7 @@
           <div class="btn-img-wrapper"><img src="images/barIcon.png"></div>
           <span> Single year</span>
           <div class="disable-box"></div>
-          <div id="year-selector">
+          <div id="year-input-wrapper">
             <div id="year-input"></div>
           </div>
         </div>
