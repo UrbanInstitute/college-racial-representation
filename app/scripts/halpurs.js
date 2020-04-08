@@ -74,16 +74,151 @@ var COLORS = {
       [  ],
       [  ],
       [ '#F8D5D4','#F1AAA9','#E9807D','#E25552','#DB2B27','#A4201D','#6E1614','#370B0A' ] ],
-  }
+}
 
-  function classify(string){
+var translate = {
+   'for-profit': 'For-Profit',
+   'private-highly-selective': 'Private More Selective',
+   'private-nonselective': 'Private Nonselective',
+   'private-selective': 'Private Selective',
+   'public-highly-selective': 'Public More Selective',
+   'public-nonselective': 'Public Nonselective',
+   'public-selective': 'Public Selective',
+   'two-year-public': 'Public 2-year',
+   'two-year-private': 'For-Profit 2-year'
+}
+
+var translateRace = {
+  'dif_white': 'White',
+  'dif_hispa': 'Hispanic',
+  'dif_black': 'Black',
+  'dif_asian': 'Asian',
+  'dif_amind': 'American Indian',
+  'dif_pacis': 'Pacific Islander',
+  'dif_multi': 'Multiracial'
+}
+
+var raceColorObj = {
+  'dif_white': '#0a4c6a',
+  'dif_hispa': '#9d9d9d',
+  'dif_black': '#1696d2',
+  'dif_asian': '#55b748',
+  'dif_amind': '#ec008b',
+  'dif_pacis': '#000000',
+  'dif_othra': '#fdbf11',
+  'dif_multi': '#fdbf11'
+}
+
+var sectorColorObj = {
+  'for-profit': '#fdbf11',
+  'private-more-selective': '#98cf90',
+  'private-nonselective': '#55b748',
+  'private-selective': '#2c5c2d',
+  'public-more-selective': '#73bfe2',
+  'public-nonselective': '#1696d2',
+  'public-selective': '#0a4c6a',
+  'public-2-year': '#1696d2',
+  'for-profit-2-year': '#fdbf11'
+}
+
+
+
+function classify(string){
   return string.replace(/\W+/g, '-').toLowerCase();
 }
 
-  var COLLEGE_SECTOR_CHECKBOXES =
+var COLLEGE_SECTOR_CHECKBOXES =
   '<p class="options-panel-section">College Sectors</p><div class="collapsible"><p class="program-length-hed four-year">4-year<span class="more-info">?</span></p><p class="program-type">Public</p><div class="c-cb"><input type="checkbox" class="sector-boxes four-year checked" name="public-nonselective" value="public-nonselective" ><label for="public-nonselective" class="four-year ">Nonselective</label></div><div class="c-cb"><input type="checkbox" class="sector-boxes four-year checked " name="public-selective" value="public-selective" /><label for="public-selective" class="four-year ">Selective</label></div><div class="c-cb"><input type="checkbox" class="sector-boxes four-year checked " name="public-highly-selective" value="public-highly-selective" /><label for="public-highly-selective" class="four-year ">More selective</label></div><p class="program-type">Private</p><div class="c-cb"><input type="checkbox" class="sector-boxes four-year checked " name="private-nonselective" value="private-nonselective" /><label for="private-nonselective" class="four-year ">Nonselective</label></div><div class="c-cb"><input type="checkbox" class="sector-boxes four-year checked " name="private-selective" value="private-selective" /><label for="private-selective" class="four-year ">Selective</label></div><div class="c-cb"><input type="checkbox" class="sector-boxes four-year checked " name="private-highly-selective" value="private-highly-selective" /><label for="private-highly-selective" class="four-year ">More selective</label></div><p class="program-type">For-profit</p><div class="c-cb"><input type="checkbox" class="sector-boxes four-year checked " name="for-profit" value="for-profit" /><label for="for-profit" class="four-year ">All</label></div><p class="program-length-hed two-year inactive">2-year<span class="more-info">?</span></p><div class="c-cb"><input type="checkbox" class="sector-boxes two-year inactive " name="two-year-public" value="two-year-public" /><label for="two-year-public" class="two-year inactive ">Public</label></div><div class="c-cb"><input type="checkbox" class="sector-boxes two-year inactive " name="two-year-private" value="two-year-private" /><label for="two-year-private" class="two-year inactive ">For-profit</label></div></div>'
 
-  var COLLEGE_SECTOR_RADIOS =
+var COLLEGE_SECTOR_RADIOS =
   '<p class="options-panel-section">College Sectors</p><div class="collapsible"><p class="program-length-hed">4-year<span class="more-info">?</span></p><p class="program-type">Public</p><div><label class="n-radio-label"><input type="radio" class="sector-radios n-radio " id="public-nonselective" name="sector-radios" value="public-nonselective" ><span>Nonselective</span></label></div><div><label class="n-radio-label"><input type="radio" class="sector-radios n-radio " name="sector-radios" value="public-selective"/><span>Selective</span></label></div><div><label class="n-radio-label"><input type="radio" class="sector-radios n-radio " name="sector-radios" value="public-highly-selective"/><span>More selective</span></label></div><p class="program-type">Private</p><div><label class="n-radio-label"><input type="radio" class="sector-radios n-radio " name="sector-radios" value="private-nonselective"/><span>Nonselective</span></label></div><div><label class="n-radio-label"><input type="radio" class="sector-radios n-radio " name="sector-radios" value="private-selective"/><span>Selective</span></label></div><div><label class="n-radio-label"><input type="radio" class="sector-radios n-radio " name="sector-radios" value="private-highly-selective"/><span>More selective</span></label></div><p class="program-type">For-profit</p><div><label class="n-radio-label"><input type="radio" class="sector-radios n-radio " name="sector-radios" value="for-profit"/><span>All</span></label></div><p class="program-length-hed">2-year<span class="more-info">?</span></p><div><label class="n-radio-label"><input type="radio" class="sector-radios two-year n-radio" name="sector-radios" value="two-year-public"/><span>Public</span></label></div><div><label class="n-radio-label"><input type="radio" class="sector-radios two-year n-radio" name="sector-radios" value="two-year-private"/><span>For-profit</span></label></div></div>'
 
+function getQueryParam(param,fallback, validOpts) {
+    param = param.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + param + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    if (results === null){
+      return fallback;
+    }else{
+      var testResult = decodeURIComponent(results[1].replace(/\+/g, ' '))
+      if(Array.isArray(fallback)){
+        return testResult.split(",").filter(function(o){ return validOpts.indexOf(o) != -1 })
+      }else{
+        return (validOpts == "all" || validOpts.indexOf(testResult) == -1) ? fallback : testResult;
+      }
+    }
+}
+function getShareUrl(){
+  //the base url (localhost in dev, staging/prop when live) including protocol (https://) and full path
+  var shareURL = window.location.origin + window.location.pathname
 
+  //not the cleanest, since the default values are also included in the first few lines of main.js
+  //(the calls to getQueryParam) but I don't mind if you don't
+  var queryParams = [
+    ["geography","geography","national"],
+    ["chartType","chart-type","single-year-bar"],
+    ["year","year","2017"],
+    ["programLength","program-length","four"],
+    ["singleRace","single-race","dif_hispa"],
+    ["singleSector","single-sector","public-nonselective"],
+    ["state","state","Alabama"],
+    ["selectedSchool","selected-school",encodeURIComponent('Alabama A & M University')],
+    ["arrayRaces","array-race",Object.keys(translateRace)],
+    ["arraySectors","array-sectors",Object.keys(translate).slice(2)]//default val is for four year, so doesn't include the 2 two-year options
+  ]
+
+  var nonFallback = 0;
+  for(var i = 0; i < queryParams.length; i++){
+    var key = queryParams[i][0],
+      param = queryParams[i][1],
+      fallback = queryParams[i][2]
+
+    //special cases for the race and sector arrays
+    if(Array.isArray(fallback)){
+      //test if array matches default/fallback value. If it does, no need to change URL
+      if(higherEdSelections[key].length != fallback.length){
+        if(key == "arrayRaces"){
+          //if the first param added to querystring, add a "?" before param, otherwise add "&"
+          nonFallback += 1;
+          if(nonFallback == 1) shareURL += "?"
+          else shareURL += "&"
+
+          //add key/value pair to url
+          shareURL += param + "=" + higherEdSelections[key].join(",")
+        }else{
+          //if the first param added to querystring, add a "?" before param, otherwise add "&"
+          nonFallback += 1;
+          if(nonFallback == 1) shareURL += "?"
+          else shareURL += "&"
+
+          //add key/value pair to url. This is basically just a "reverse lookup" in the translate object
+          //(finding key by value instead of value by key), mapped onto the array of selected sectors
+          shareURL += param + "=" + higherEdSelections[key].map(function(val){
+            return Object.keys(translate).filter(function(k) { return translate[k] == val })[0];
+          }).join(",")
+        }
+      }
+    }else{
+      var val;
+      //schools can include spaces and special chars, so encode for URL
+      if(key == "selectedSchool") val = encodeURIComponent(higherEdSelections[key])
+      //same reverse lookup as above, going value -> key for sector
+      else if(key == "singleSector") val = Object.keys(translate).filter(function(k) { return translate[k] == higherEdSelections[key] })[0];
+      else val = higherEdSelections[key]
+      if(val != fallback){
+        //if the first param added to querystring, add a "?" before param, otherwise add "&"
+        nonFallback += 1;
+        if(nonFallback == 1) shareURL += "?"
+        else shareURL += "&"
+
+
+        //add key/value pair to URL
+        shareURL += param + "=" + val
+      }
+    }
+
+  }
+
+  d3.select("#tmpShareUrl").text(shareURL).style("display","block")
+  return shareURL;
+}
