@@ -157,9 +157,9 @@ function getQueryParam(param,fallback, validOpts) {
     }else{
       var testResult = decodeURIComponent(results[1].replace(/\+/g, ' '))
       if(Array.isArray(fallback)){
-        return testResult.split(",").filter(function(o){ return validOpts.indexOf(o) != -1 })
+        return testResult.split(',').filter(function(o){ return validOpts.indexOf(o) != -1 })
       }else{
-        return (validOpts == "all" || validOpts.indexOf(testResult) == -1) ? fallback : testResult;
+        return (validOpts == 'all' || validOpts.indexOf(testResult) == -1) ? fallback : testResult;
       }
     }
 }
@@ -170,16 +170,16 @@ function getShareUrl(){
   //not the cleanest, since the default values are also included in the first few lines of main.js
   //(the calls to getQueryParam) but I don't mind if you don't
   var queryParams = [
-    ["geography","geography","national"],
-    ["chartType","chart-type","single-year-bar"],
-    ["year","year","2017"],
-    ["programLength","program-length","four"],
-    ["singleRace","single-race","dif_hispa"],
-    ["singleSector","single-sector","public-nonselective"],
-    ["state","state","Alabama"],
-    ["selectedSchool","selected-school",encodeURIComponent('Alabama A & M University')],
-    ["arrayRaces","array-race",Object.keys(translateRace)],
-    ["arraySectors","array-sectors",Object.keys(translate).slice(2)]//default val is for four year, so doesn't include the 2 two-year options
+    ['geography','geography','national'],
+    ['chartType','chart-type','single-year-bar'],
+    ['year','year','2017'],
+    ['programLength','program-length','four'],
+    ['singleRace','single-race','dif_hispa'],
+    ['singleSector','single-sector','public-nonselective'],
+    ['state','state','Alabama'],
+    ['selectedSchool','selected-school',encodeURIComponent('Alabama A & M University')],
+    ['arrayRaces','array-race',Object.keys(translateRace)],
+    ['arraySectors','array-sectors',Object.keys(translate).slice(2)]//default val is for four year, so doesn't include the 2 two-year options
   ]
 
   var nonFallback = 0;
@@ -192,73 +192,73 @@ function getShareUrl(){
     if(Array.isArray(fallback)){
       //test if array matches default/fallback value. If it does, no need to change URL
       if(higherEdSelections[key].length != fallback.length){
-        if(key == "arrayRaces"){
+        if(key == 'arrayRaces'){
           //if the first param added to querystring, add a "?" before param, otherwise add "&"
           nonFallback += 1;
-          if(nonFallback == 1) shareURL += "?"
-          else shareURL += "&"
+          if(nonFallback == 1) shareURL += '?'
+          else shareURL += '&'
 
           //add key/value pair to url
-          shareURL += param + "=" + higherEdSelections[key].join(",")
+          shareURL += param + '=' + higherEdSelections[key].join(',')
         }else{
           //if the first param added to querystring, add a "?" before param, otherwise add "&"
           nonFallback += 1;
-          if(nonFallback == 1) shareURL += "?"
-          else shareURL += "&"
+          if(nonFallback == 1) shareURL += '?'
+          else shareURL += '&'
 
           //add key/value pair to url. This is basically just a "reverse lookup" in the translate object
           //(finding key by value instead of value by key), mapped onto the array of selected sectors
-          shareURL += param + "=" + higherEdSelections[key].map(function(val){
+          shareURL += param + '=' + higherEdSelections[key].map(function(val){
             return Object.keys(translate).filter(function(k) { return translate[k] == val })[0];
-          }).join(",")
+          }).join(',')
         }
       }
     }else{
       var val;
       //schools can include spaces and special chars, so encode for URL
-      if(key == "selectedSchool") val = encodeURIComponent(higherEdSelections[key])
+      if(key == 'selectedSchool') val = encodeURIComponent(higherEdSelections[key])
       //same reverse lookup as above, going value -> key for sector
-      else if(key == "singleSector") val = Object.keys(translate).filter(function(k) { return translate[k] == higherEdSelections[key] })[0];
+      else if(key == 'singleSector') val = Object.keys(translate).filter(function(k) { return translate[k] == higherEdSelections[key] })[0];
       else val = higherEdSelections[key]
       if(val != fallback){
         //if the first param added to querystring, add a "?" before param, otherwise add "&"
         nonFallback += 1;
-        if(nonFallback == 1) shareURL += "?"
-        else shareURL += "&"
+        if(nonFallback == 1) shareURL += '?'
+        else shareURL += '&'
 
 
         //add key/value pair to URL
-        shareURL += param + "=" + val
+        shareURL += param + '=' + val
       }
     }
 
   }
 
-  d3.select("#share-tooltip > input").attr('value', shareURL)
-  d3.select("#share-tooltip").style("display","block")
+  d3.select('#share-tooltip > input').attr('value', shareURL)
+  d3.select('#share-tooltip').style('display','block')
   
-  d3.selectAll(".copy-button").on("click", function(){
+  d3.selectAll('.copy-button').on('click', function(){
     d3.event.stopPropagation();
     copyTextToClipboard(shareURL)
-    d3.select(this.parentNode).select(".copied-text")
-      .style("opacity",1)
+    d3.select(this.parentNode).select('.copied-text')
+      .style('opacity',1)
       .transition()
       .delay(1500)
       .duration(1000)
-      .style("opacity", 0)
+      .style('opacity', 0)
   })
 
-  d3.select("#share-tooltip")
+  d3.select('#share-tooltip')
     .transition()
     .delay(3000)
-    .style("display", "none")
+    .style('display', 'none')
 
   return shareURL;
 }
 
 //clipboard functions from https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
 function fallbackCopyTextToClipboard(text) {
-  var textArea = document.createElement("textarea");
+  var textArea = document.createElement('textarea');
   textArea.value = text;
   document.body.appendChild(textArea);
   textArea.focus();

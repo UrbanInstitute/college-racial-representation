@@ -27,16 +27,16 @@ var higherEdData = {};
 
 // the user selections
 var higherEdSelections = {};
-	higherEdSelections.geography = getQueryParam("geography","national",["national","state","school"]), 
-	higherEdSelections.chartType = getQueryParam("chart-type",'single-year-bar',["single-year-bar", "by-sector-chart", "by-race-chart", "one-school-all-races-container", "multiple-schools"]) ,
-	higherEdSelections.year = getQueryParam("year","2017", Array.apply(null, Array(9)).map(function (o, i) {return String(i + 2009);})) //strings of years 2009 -> 2017
-	higherEdSelections.programLength = getQueryParam("program_length",'four',["two", "four"])
-	higherEdSelections.singleRace = getQueryParam("single-race", 'dif_hispa', Object.keys(translateRace))
-	higherEdSelections.singleSector = translate[getQueryParam("single-sector","public-nonselective",Object.keys(translate))],
-	higherEdSelections.state = decodeURIComponent(getQueryParam("state",'Alabama',["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","District of Columbia"].map(function(s){ return encodeURIComponent(s)}))),
-  	higherEdSelections.selectedSchool = decodeURIComponent(getQueryParam("selected-school",encodeURIComponent('Alabama A & M University'),"all")),
-	higherEdSelections.arrayRaces = getQueryParam("array-race",[],Object.keys(translateRace)),
-	higherEdSelections.arraySectors = getQueryParam("array-sectors",[],Object.keys(translate))
+	higherEdSelections.geography = getQueryParam('geography','national',['national','state','school']), 
+	higherEdSelections.chartType = getQueryParam('chart-type','single-year-bar',['single-year-bar', 'by-sector-chart', 'by-race-chart', 'one-school-all-races-container', 'multiple-schools']) ,
+	higherEdSelections.year = getQueryParam('year','2017', Array.apply(null, Array(9)).map(function (o, i) {return String(i + 2009);})) //strings of years 2009 -> 2017
+	higherEdSelections.programLength = getQueryParam('program_length','four',['two', 'four'])
+	higherEdSelections.singleRace = getQueryParam('single-race', 'dif_hispa', Object.keys(translateRace))
+	higherEdSelections.singleSector = translate[getQueryParam('single-sector','public-nonselective',Object.keys(translate))],
+	higherEdSelections.state = decodeURIComponent(getQueryParam('state','Alabama',['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming','District of Columbia'].map(function(s){ return encodeURIComponent(s)}))),
+  	higherEdSelections.selectedSchool = decodeURIComponent(getQueryParam('selected-school',encodeURIComponent('Alabama A & M University'),'all')),
+	higherEdSelections.arrayRaces = getQueryParam('array-race',[],Object.keys(translateRace)),
+	higherEdSelections.arraySectors = getQueryParam('array-sectors',[],Object.keys(translate))
 
 
 	// 'dif_white': 'White',
@@ -47,8 +47,8 @@ var higherEdSelections = {};
 	// 'dif_pacis': 'Pacific Islander',
 	// 'dif_multi': 'Multiracial'
 
-var SECTOR_KEY = higherEdSelections.programLength + "cat",
-	SELECTED_DATASET = (higherEdSelections.geography == "state") ? "filteredForState" : higherEdSelections.geography + higherEdSelections.programLength,
+var SECTOR_KEY = higherEdSelections.programLength + 'cat',
+	SELECTED_DATASET = (higherEdSelections.geography == 'state') ? 'filteredForState' : higherEdSelections.geography + higherEdSelections.programLength,
 	NESTED_BY_SECTOR,
 	NESTED_BY_RACE,
 	FILTERED_BY_YEAR,
@@ -275,7 +275,7 @@ function addArrowsToHighlights(){
 	if (window.innerWidth < 950){
 		d3.selectAll('.caret').style('display', 'inline')
 		d3.selectAll('.caret').on('click', function(){
-			var isLeft = d3.select(this).classed("left")
+			var isLeft = d3.select(this).classed('left')
 			//get the ID of wrapping div to know whether scenario1, 2 or 3
 			var wrappingDiv = this.parentElement
 			var id = wrappingDiv.getAttribute('id'),
@@ -1279,8 +1279,8 @@ function initializeStaticControls(){
 			var menuData = states.filter(distinct);
 			makeDropdown(menuData);
 			d3.select('#state-menu').style('display', 'block');
-			$("#dropdown").val(higherEdSelections.state)
-			$("#dropdown").selectmenu("refresh")
+			$('#dropdown').val(higherEdSelections.state)
+			$('#dropdown').selectmenu('refresh')
 
 			//global selectors
 			SELECTED_DATASET = 'filteredForState';
@@ -1468,8 +1468,8 @@ function initializeStaticControls(){
 			var menuData = states.filter(distinct);
 			makeDropdown(menuData);
 			d3.select('#state-menu').style('display', 'block');
-			$("#dropdown").val(higherEdSelections.state)
-			$("#dropdown").selectmenu("refresh")
+			$('#dropdown').val(higherEdSelections.state)
+			$('#dropdown').selectmenu('refresh')
 
 			//filter state data to just selected state
 			higherEdData.allData.filteredForState =  higherEdData.allData[higherEdSelections.geography + higherEdSelections.programLength].filter(function(d){
@@ -1720,7 +1720,7 @@ function prepareData(){
 
 	higherEdSelections.arraySectors = NESTED_BY_SECTOR.map(function(d){ return d.key })
 	// console.log(higherEdData)
-	var slicer = (SELECTED_DATASET == "filteredForState") ? higherEdSelections.geography + higherEdSelections.programLength : SELECTED_DATASET;
+	var slicer = (SELECTED_DATASET == 'filteredForState') ? higherEdSelections.geography + higherEdSelections.programLength : SELECTED_DATASET;
 	higherEdSelections.arrayRaces = higherEdData.allData[slicer].columns.slice(2)
 }
 
@@ -1735,8 +1735,8 @@ function init(){
   //can't find the option to move text on slider in the package: https://github.com/johnwalley/d3-simple-slider
   	d3.selectAll('#year-input > svg > g > g.axis > g > text').attr('y', 12)
   	d3.select('#year-input > svg > g > g.slider > g > text').attr('y', 19).style('font-size', 14)
-  	if(higherEdSelections.geography == "national"){
-  		console.log("foo")
+  	if(higherEdSelections.geography == 'national'){
+  		console.log('foo')
 		d3.select('#time-selection').style('display', 'block');
 		d3.select('#state-menu').style('display', 'none')
 		d3.select('#school-selection').style('display', 'none')
@@ -1747,7 +1747,7 @@ function init(){
 	    d3.select('#first-dynamic-menu').style('display', 'block')
 	    d3.select('#second-dynamic-menu').style('display', 'block')
   	}
-  	else if(higherEdSelections.geography == "state"){
+  	else if(higherEdSelections.geography == 'state'){
 		d3.select('#first-chart-container > h4 > span:nth-child(1)').text(higherEdSelections.state);
 		d3.select('#third-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
 		d3.select('#second-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
@@ -1769,7 +1769,7 @@ function init(){
 		})
 
   	}
-  	else if(higherEdSelections.geography == "school"){
+  	else if(higherEdSelections.geography == 'school'){
 			d3.select('#school-comparison').property('checked', false);
 			d3.select('#fourth-chart-container > h4 > span:nth-child(2)').text('Wayne State University')
 
@@ -1786,31 +1786,31 @@ function init(){
   	}
 
 	switch(higherEdSelections.chartType){
-		case "single-year-bar":
+		case 'single-year-bar':
 			callBarChart(higherEdSelections.year, false);
 			d3.selectAll('.time-selector').classed('selected', false);
 			d3.select('.time-selector.main-choice.bar').classed('selected', true);
 			d3.selectAll('div.sub-choice').classed('active-unselected', false)
 			break;
-		case "by-sector-chart":
+		case 'by-sector-chart':
 			callSectorLine();
 			d3.selectAll('.time-selector').classed('selected', false);
 			d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
 			d3.selectAll('div.sub-choice').classed('active-unselected', true);
 			d3.select('div.sub-choice[value=\'' + higherEdSelections.chartType + '\']').classed('selected', true)
 			break;
-		case "by-race-chart":
+		case 'by-race-chart':
 			callRaceLine();
 			d3.selectAll('.time-selector').classed('selected', false);
 			d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
 			d3.selectAll('div.sub-choice').classed('active-unselected', true);
 			d3.select('div.sub-choice[value=\'' + higherEdSelections.chartType + '\']').classed('selected', true)
 			break;
-		case "one-school-all-races-container":
+		case 'one-school-all-races-container':
 			callSchoolChart();
 			break;
 
-		case "school-comparison":
+		case 'school-comparison':
 			callComparisonChart();
 			break;
 	}
@@ -1823,7 +1823,7 @@ function init(){
 	//draw your default chart, bars for 2017: all races/sectors
 	
 
-	d3.select("#tmpClick").on("click", getShareUrl)
+	d3.select('#tmpClick').on('click', getShareUrl)
 
 }
 
