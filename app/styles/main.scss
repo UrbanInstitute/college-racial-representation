@@ -1079,6 +1079,10 @@ label.check-switch:active:after {
     display: block;
   }
 
+  #first-dynamic-menu, #second-dynamic-menu {
+    display: none;
+  }
+
   .be-choosy {
     display: none;
   }
