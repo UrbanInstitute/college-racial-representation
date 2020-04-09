@@ -146,14 +146,22 @@ function resize(){
     IS_MOBILE = storedWidth < 768 ? true : false ;
 
     optionsPanelTotalWidth = parseInt(d3.select('#options-panel').style('width')) + parseInt(d3.select('#options-panel').style('margin-right'))
-    if (IS_MOBILE){ optionsPanelTotalWidth = 0 }
+    if (IS_MOBILE){ 
+    	optionsPanelTotalWidth = 0 
+    	d3.selectAll('#first-dynamic-menu, #second-dynamic-menu').style('display', 'none')
+    	d3.select('#mobile-filter-options').style('display', 'inline')
+    } else {
+    	d3.select('#first-dynamic-menu, #second-dynamic-menu').style('display', 'block')
+    	d3.select('#mobile-filter-options').style('display', 'none')
+    }
+
     pageContainerWidth = parseInt(d3.select('.page-container').style('width'))
     chartHole = pageContainerWidth - optionsPanelTotalWidth - margin.left - margin.right
 
     var width = chartHole,
       height = (chartHole * aspectRatio) - margin.top - margin.bottom
 
-      addArrowsToHighlights();
+     addArrowsToHighlights();
     //resize the containers
     d3.selectAll('#first-chart-container, #third-chart-container, #second-chart-container, #fourth-chart-container')
         .style('width', width + 'px')
@@ -738,7 +746,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
     oneSchoolLegend.selectAll('li').remove();
     var schoolComparisonColors = ['#1696D2', '#D2D2D2', '#000000']
     var keys = oneSchoolLegend.selectAll('li.key-item-comparison')
-      .data([higherEdSelections.selectedSchool, 'Other ' + higherEdSelections.state + ' college', higherEdSelections.state + ' average'])
+      .data([higherEdSelections.selectedSchool, higherEdSelections.state + ' ' + higherEdSelections.singleSector.toLowerCase() + ' college', 'State average'])
       .enter()
       .append('li')
       .attr('class', function(d){ return d })
@@ -1016,7 +1024,7 @@ d3.select('#school-comparison').on('click', function(d){
 })
 
 function callBarChart(year, animate){
-
+	d3.selectAll('div.sub-choice').classed('active-unselected', false)
 	if (higherEdSelections.geography === 'national'){
 		d3.select('#first-chart-container > h4 > span:nth-child(1)').text('US');
 	} else {
@@ -1250,6 +1258,7 @@ function initializeStaticControls(){
 		d3.selectAll('.geography-choices').classed('selected', false)
 		d3.select(this).classed('selected', !d3.select(this).classed('selected'))
 
+
 		if ( userChoice === 'state'){
 			
 			if (!IS_MOBILE){
@@ -1262,7 +1271,6 @@ function initializeStaticControls(){
 			d3.select('#time-selection').style('display', 'block');
 			d3.select('#school-selection').style('display', 'none');
 			d3.selectAll('.time-selector').classed('selected', false);
-			d3.selectAll('div.sub-choice').classed('active-unselected', false)
 
 			if (higherEdSelections.chartType === 'by-sector-chart' || higherEdSelections.chartType === 'by-race-chart'){
 				d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
@@ -1787,8 +1795,7 @@ function init(){
 			})
 
 			makeSchoolLookup(schoolNames);
-			// d3.select('path.data-line.dif_black').attr('stroke-width', 4)
-			// d3.select('#school-lookup').property('value', 'Wayne State University')
+
   	}
 
 	switch(higherEdSelections.chartType){
