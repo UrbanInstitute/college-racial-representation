@@ -1743,9 +1743,12 @@ function init(){
 		d3.select('#first-chart-container > h4 > span:nth-child(1)').text('US');
   		d3.select('#second-chart-container > h4 > span:nth-child(2)').text('US');
 	    d3.select('#third-chart-container > h4 > span:nth-child(2)').text('US');
-
-	    d3.select('#first-dynamic-menu').style('display', 'block')
-	    d3.select('#second-dynamic-menu').style('display', 'block')
+		if (!IS_MOBILE){
+			d3.select('#first-dynamic-menu').style('display', 'block');
+			d3.select('#second-dynamic-menu').style('display', 'block');
+		} else {
+			d3.select('#mobile-filter-options').style('display', 'inline')
+		}
   	}
   	else if(higherEdSelections.geography == 'state'){
 		d3.select('#first-chart-container > h4 > span:nth-child(1)').text(higherEdSelections.state);
@@ -1755,8 +1758,12 @@ function init(){
 		d3.select('#time-selection').style('display', 'block');
 		d3.select('#school-selection').style('display', 'none');
 
-	    d3.select('#first-dynamic-menu').style('display', 'block');
-	    d3.select('#second-dynamic-menu').style('display', 'block');
+		if (!IS_MOBILE){
+			d3.select('#first-dynamic-menu').style('display', 'block');
+			d3.select('#second-dynamic-menu').style('display', 'block');
+		} else {
+			d3.select('#mobile-filter-options').style('display', 'inline')
+		}
 
 		var states = higherEdData.allData[SELECTED_DATASET].map(function(d){return d.fips_ipeds});
 		var menuData = states.filter(distinct);
@@ -1780,9 +1787,8 @@ function init(){
 			})
 
 			makeSchoolLookup(schoolNames);
-			d3.select('path.data-line.dif_black').attr('stroke-width', 4)
-
-			d3.select('#school-lookup').property('value', 'Wayne State University')
+			// d3.select('path.data-line.dif_black').attr('stroke-width', 4)
+			// d3.select('#school-lookup').property('value', 'Wayne State University')
   	}
 
 	switch(higherEdSelections.chartType){
