@@ -369,6 +369,7 @@ div.sector{
   overflow-x: hidden;
   overflow-y: visible;
   display: inline-block;
+  position: relative;
 }
 
 .chart-div {
@@ -734,6 +735,95 @@ select:focus::-ms-value {
   padding-left: 5px;
 }
 
+.share-btn {
+  border: 1px solid $cyan-6;
+  color: $cyan-6;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 400;
+  margin-top: $spacing-unit;
+  padding: 10px;
+  text-transform: uppercase;
+  width: 130px  ;
+}
+
+.share-btn:hover {
+  background-color: $cyan-6;
+  color: #FFFFFF;
+}
+
+#share-tooltip {
+  bottom: 80px;
+  display: none;
+  position: absolute;
+  background: #ffffff;
+  border: 1px solid #d2d2d2;
+  width: 320px;
+  height: 90px;
+
+  .copy-button {
+    position: relative;
+    left: 37px;
+    top: 20px;
+    display: inline-block;
+    text-transform: uppercase;
+    background: #000;
+    color: #fff;
+    padding: 11px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .share-text {
+    display: inline-block;
+    width: 200px;
+    height: 40px;
+    top: 20px;
+    left: 20px;
+    position: relative;
+    padding-left: 10px;
+    font-size: 14px;
+    font-family: Lato;
+    text-overflow: ellipsis;
+  }
+
+  .copied-text {
+    top: 64px;
+    left: 20px;
+    font-size: 14px;
+    font-style: italic;
+    color: #1696d2;
+    position: absolute;
+    display: inline-block;
+    opacity: 0;
+  }
+}
+
+#share-tooltip:after, #share-tooltip:before {
+  top: 100%;
+  left: 20%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+#share-tooltip:after {
+  border-color: rgba(255, 255, 255, 0);
+  border-top-color: #ffffff;
+  border-width: 20px;
+  margin-left: -20px;
+}
+#share-tooltip:before {
+  border-color: rgba(210, 210, 210, 0);
+  border-top-color: #d2d2d2;
+  border-width: 21px;
+  margin-left: -21px;
+}
+
+
 .sub-choices {
   margin-left: 30px;
 }
@@ -781,6 +871,12 @@ select:focus::-ms-value {
   width: 118px;
 }
 
+.time-selector.sub-choice.active-unselected {
+  background-color: #FFFFFF;
+  border: 1px solid $cyan-6;
+  color: $cyan-6;
+}
+
 .time-selector.by-sector {
   line-height: 40px;
 }
@@ -791,10 +887,6 @@ select:focus::-ms-value {
 
 .time-selector.main-choice > div.btn-img-wrapper {
   float: left;
-}
-
-#time-selection > div.time-selector.line.sub-choice.race {
-  padding-top: 13px;
 }
 
 #time-selection > div:nth-child(6) {

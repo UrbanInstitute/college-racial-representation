@@ -212,49 +212,9 @@ var parseTime = d3.timeParse('%Y'),
   formatTwoDecimals = d3.format('.2f')
 
 
-var translate = {
-	 'for-profit': 'For-Profit',
-	 'private-highly-selective': 'Private More Selective',
-	 'private-nonselective': 'Private Nonselective',
-	 'private-selective': 'Private Selective',
-	 'public-highly-selective': 'Public More Selective',
-	 'public-nonselective': 'Public Nonselective',
-	 'public-selective': 'Public Selective',
-	 'two-year-public': 'Public 2-year',
-	 'two-year-private': 'For-Profit 2-year'
-}
-
-var translateBack = {
-	 'For-Profit': 'for-profit',
-	 'Private More Selective': 'private-highly-selective',
-	 'Private Nonselective': 'private-nonselective',
-	 'Private Selective': 'private-selective',
-	 'Public More Selective': 'public-highly-selective',
-	 'Public Nonselective': 'public-nonselective',
-	 'Public Selective': 'public-selective',
-	 'Public 2-year': 'two-year-public',
-	 'For-Profit 2-year': 'two-year-private'
-}
-
-var translateRace = {
-	'dif_white': 'White',
-	'dif_hispa': 'Hispanic',
-	'dif_black': 'Black',
-	'dif_asian': 'Asian',
-	'dif_amind': 'American Indian',
-	'dif_pacis': 'Pacific Islander',
-	'dif_multi': 'Multiracial'
-}
 
 var distinct = function(value, index, self){ return self.indexOf(value) === index; }
 
-// radio button template:
-// <div>
-//   <label class="n-radio-label">
-//     <input type="radio" class="sector-radios n-radio " id="public-nonselective" name="sector-radios" value="public-nonselective" >
-//     <span>>Nonselective</span>
-//   </label>
-// </div>
 function radioButtonTemplater(option){
 var html =
 '<div><label class="n-radio-label"><input type="radio" class="n-radio " name="' + higherEdSelections.chartType + '" value="' + option + '" /><span>' + translateRace[option] + '</span></label></div>'
@@ -265,22 +225,6 @@ function checkboxTemplater(option){
 var html =
 '<div class="c-cb"><input type="checkbox" class=" " name="' + higherEdSelections.chartType + '" value="' + option + '" checked/><label for="' + option + '">' + translateRace[option] + '</label></div>'
     return html
-}
-
-function widthUnder(w){
-  return d3.select('.widthTester.w' + w).style('display') == 'block'
-}
-
-function getBarW(){
-	if(widthUnder(768)){
-		return window.innerWidth - 40;;
-	}
-	else if(widthUnder(1085)){
-		return window.innerWidth - 40;
-	}
-	else {
-		return 1085;
-	}
 }
 
 function convertSelectors(numberString){
@@ -1073,6 +1017,12 @@ d3.select('#school-comparison').on('click', function(d){
 
 function callBarChart(year, animate){
 
+	if (higherEdSelections.geography === 'national'){
+		d3.select('#first-chart-container > h4 > span:nth-child(1)').text('US');
+	} else {
+		d3.select('#first-chart-container > h4 > span:nth-child(1)').text(higherEdSelections.state);
+	}
+
 	var twoYears = ['Public 2-year', 'For-Profit 2-year']
 
 	for ( var i = 0; i < higherEdSelections.arraySectors.length; i ++ ){
@@ -1092,7 +1042,10 @@ function callBarChart(year, animate){
 }
 
 function callSectorLine(){
-
+	d3.select('#third-chart-container > h4 > span:nth-child(1)').text(translateRace[higherEdSelections.singleRace]);
+	if (higherEdSelections.geography === 'state'){
+		d3.select('#third-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
+	}
 	var twoYears = ['Public 2-year', 'For-Profit 2-year']
 
 	for ( var i = 0; i < higherEdSelections.arraySectors.length; i ++ ){
@@ -1192,7 +1145,7 @@ function makeDropdown(data){
 
 function menuSelected(){
 	higherEdSelections.state = this.value;
-	d3.select('#first-chart-container > h4 > span:nth-child(1)').text(higherEdSelections.state);
+	
 	d3.select('#third-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
 	d3.select('#second-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
 
@@ -1270,7 +1223,7 @@ var sliderTime =
 
 			higherEdSelections.year = timeFormat(val);
 			callBarChart(higherEdSelections.year, false);
-			d3.select('#first-chart-container > h4 > span:nth-child(2)').text(timeFormat(val));
+			// d3.select('#first-chart-container > h4 > span:nth-child(2)').text(timeFormat(val));
 		});
 
 
@@ -1309,14 +1262,17 @@ function initializeStaticControls(){
 			d3.select('#time-selection').style('display', 'block');
 			d3.select('#school-selection').style('display', 'none');
 			d3.selectAll('.time-selector').classed('selected', false);
+			d3.selectAll('div.sub-choice').classed('active-unselected', false)
 
 			if (higherEdSelections.chartType === 'by-sector-chart' || higherEdSelections.chartType === 'by-race-chart'){
 				d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
 				//d3.select(".disable-box").style("display", "none")
+				d3.selectAll('div.sub-choice').classed('active-unselected', true)
 				d3.select('div.sub-choice[value=\'' + higherEdSelections.chartType + '\']').classed('selected', true)
 			} else {
 				d3.select('.time-selector.main-choice.bar').classed('selected', true);
 			}
+
 
 				//create state dropdown menu
 			var states = higherEdData.allData.statefour.map(function(d){return d.fips_ipeds});
@@ -1411,20 +1367,23 @@ function initializeStaticControls(){
 
 		d3.selectAll('.time-selector').classed('selected', false);
 		d3.select(this).classed('selected', true);
+		d3.selectAll('div.sub-choice').classed('active-unselected', false)
 
 		if (chart === 'by-sector-chart'){
 			d3.select('.time-selector.bar').classed('selected', false);
 			d3.select('.time-selector.line.main-choice').classed('selected', true);
+			d3.selectAll('div.sub-choice').classed('active-unselected', true)
 			d3.select('.disable-box').style('visibility', 'visible')
-			d3.select('#third-chart-container > h4 > span:nth-child(1)').text(translateRace[higherEdSelections.singleRace]);
-			if (higherEdSelections.geography === 'state'){
-				d3.select('#third-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
-			}
+			// d3.select('#third-chart-container > h4 > span:nth-child(1)').text(translateRace[higherEdSelections.singleRace]);
+			// if (higherEdSelections.geography === 'state'){
+			// 	d3.select('#third-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
+			// }
 			callSectorLine();
 		} else if (chart === 'by-race-chart'){
 			d3.select('.race').classed('selected', true);
 			d3.select('.time-selector.bar').classed('selected', false);
 			d3.select('.time-selector.line.main-choice').classed('selected', true);
+			d3.selectAll('div.sub-choice').classed('active-unselected', true)
 			d3.select('#second-chart-container > h4 > span:nth-child(1)').text(higherEdSelections.singleSector);
 			d3.select('.disable-box').style('visibility', 'visible')
 			if (higherEdSelections.geography === 'state'){
@@ -1494,6 +1453,7 @@ function initializeStaticControls(){
 			d3.select('#school-selection').style('display', 'none');
 		    d3.selectAll('.time-selector').classed('selected', false);
 	        d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
+	        d3.selectAll('div.sub-choice').classed('active-unselected', true);
 	        d3.select('div.sub-choice[value=\'' + higherEdSelections.chartType + '\']').classed('selected', true);
 	        
 	        if (!IS_MOBILE){
@@ -1772,7 +1732,7 @@ function init(){
 	buildOptionPanel(higherEdSelections.chartType);
 	initializeStaticControls();
 
-  //janky but move the numbers on the slider, can't find the option in the package: https://github.com/johnwalley/d3-simple-slider
+  //can't find the option to move text on slider in the package: https://github.com/johnwalley/d3-simple-slider
   	d3.selectAll('#year-input > svg > g > g.axis > g > text').attr('y', 12)
   	d3.select('#year-input > svg > g > g.slider > g > text').attr('y', 19).style('font-size', 14)
   	if(higherEdSelections.geography == "national"){
@@ -1828,12 +1788,30 @@ function init(){
 	switch(higherEdSelections.chartType){
 		case "single-year-bar":
 			callBarChart(higherEdSelections.year, false);
+			d3.selectAll('.time-selector').classed('selected', false);
+			d3.select('.time-selector.main-choice.bar').classed('selected', true);
+			d3.selectAll('div.sub-choice').classed('active-unselected', false)
 			break;
 		case "by-sector-chart":
 			callSectorLine();
+			d3.selectAll('.time-selector').classed('selected', false);
+			d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
+			d3.selectAll('div.sub-choice').classed('active-unselected', true);
+			d3.select('div.sub-choice[value=\'' + higherEdSelections.chartType + '\']').classed('selected', true)
 			break;
 		case "by-race-chart":
 			callRaceLine();
+			d3.selectAll('.time-selector').classed('selected', false);
+			d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
+			d3.selectAll('div.sub-choice').classed('active-unselected', true);
+			d3.select('div.sub-choice[value=\'' + higherEdSelections.chartType + '\']').classed('selected', true)
+			break;
+		case "one-school-all-races-container":
+			callSchoolChart();
+			break;
+
+		case "school-comparison":
+			callComparisonChart();
 			break;
 	}
 

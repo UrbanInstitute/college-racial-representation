@@ -21,28 +21,9 @@
     <script src="scripts/modernizr.js"></script>
     <!-- endbuild -->
   </head>
-  <body>
+  <body>  
 
-<img id="tmpClick" src="images/clickclickclick.png" style="
-    width: 110px;
-    z-index: 2020;
-    position: fixed;
-    top: 50px;
-    left: 10px;
-    transform: rotate(-45deg);
-    cursor: pointer;
-">
-<div id="tmpShareUrl" style="
-    position: fixed;
-    z-index: 2020;
-    font-weight: bold;
-    font-size: 20px;
-    background: #d2d2d2;
-    top: 120px;
-    left: 110px;
-    padding: 10px 20px;
-    display: none;
-"></div>    <!--[if IE]>
+<!--[if IE]>
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
     <!-- START HEADER -->
@@ -238,6 +219,18 @@
           <div class="legend"></div>
         </div>
       </div>
+
+
+
+
+
+
+      <div id="share-tooltip">
+        <input class="share-text" name="">
+        <div class="copy-button">Copy</div>
+        <div class="copied-text" style="opacity: 0;">Copied to clipboard!</div>
+      </div>
+      <div id="tmpClick" class="share-btn">Share chart</div>
     </div>
 
     <div class="clear"></div>

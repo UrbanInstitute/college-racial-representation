@@ -88,6 +88,18 @@ var translate = {
    'two-year-private': 'For-Profit 2-year'
 }
 
+var translateBack = {
+   'For-Profit': 'for-profit',
+   'Private More Selective': 'private-highly-selective',
+   'Private Nonselective': 'private-nonselective',
+   'Private Selective': 'private-selective',
+   'Public More Selective': 'public-highly-selective',
+   'Public Nonselective': 'public-nonselective',
+   'Public Selective': 'public-selective',
+   'Public 2-year': 'two-year-public',
+   'For-Profit 2-year': 'two-year-private'
+}
+
 var translateRace = {
   'dif_white': 'White',
   'dif_hispa': 'Hispanic',
@@ -97,6 +109,7 @@ var translateRace = {
   'dif_pacis': 'Pacific Islander',
   'dif_multi': 'Multiracial'
 }
+
 
 var raceColorObj = {
   'dif_white': '#0a4c6a',
@@ -132,6 +145,8 @@ var COLLEGE_SECTOR_CHECKBOXES =
 
 var COLLEGE_SECTOR_RADIOS =
   '<p class="options-panel-section">College Sectors</p><div class="collapsible"><p class="program-length-hed">4-year<span class="more-info">?</span></p><p class="program-type">Public</p><div><label class="n-radio-label"><input type="radio" class="sector-radios n-radio " id="public-nonselective" name="sector-radios" value="public-nonselective" ><span>Nonselective</span></label></div><div><label class="n-radio-label"><input type="radio" class="sector-radios n-radio " name="sector-radios" value="public-selective"/><span>Selective</span></label></div><div><label class="n-radio-label"><input type="radio" class="sector-radios n-radio " name="sector-radios" value="public-highly-selective"/><span>More selective</span></label></div><p class="program-type">Private</p><div><label class="n-radio-label"><input type="radio" class="sector-radios n-radio " name="sector-radios" value="private-nonselective"/><span>Nonselective</span></label></div><div><label class="n-radio-label"><input type="radio" class="sector-radios n-radio " name="sector-radios" value="private-selective"/><span>Selective</span></label></div><div><label class="n-radio-label"><input type="radio" class="sector-radios n-radio " name="sector-radios" value="private-highly-selective"/><span>More selective</span></label></div><p class="program-type">For-profit</p><div><label class="n-radio-label"><input type="radio" class="sector-radios n-radio " name="sector-radios" value="for-profit"/><span>All</span></label></div><p class="program-length-hed">2-year<span class="more-info">?</span></p><div><label class="n-radio-label"><input type="radio" class="sector-radios two-year n-radio" name="sector-radios" value="two-year-public"/><span>Public</span></label></div><div><label class="n-radio-label"><input type="radio" class="sector-radios two-year n-radio" name="sector-radios" value="two-year-private"/><span>For-profit</span></label></div></div>'
+
+
 
 function getQueryParam(param,fallback, validOpts) {
     param = param.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -219,6 +234,56 @@ function getShareUrl(){
 
   }
 
-  d3.select("#tmpShareUrl").text(shareURL).style("display","block")
+  d3.select("#share-tooltip > input").attr('value', shareURL)
+  d3.select("#share-tooltip").style("display","block")
+  
+  d3.selectAll(".copy-button").on("click", function(){
+    d3.event.stopPropagation();
+    copyTextToClipboard(shareURL)
+    d3.select(this.parentNode).select(".copied-text")
+      .style("opacity",1)
+      .transition()
+      .delay(1500)
+      .duration(1000)
+      .style("opacity", 0)
+  })
+
+  d3.select("#share-tooltip")
+    .transition()
+    .delay(3000)
+    .style("display", "none")
+
   return shareURL;
 }
+
+//clipboard functions from https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
+function fallbackCopyTextToClipboard(text) {
+  var textArea = document.createElement("textarea");
+  textArea.value = text;
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+
+  try {
+    var successful = document.execCommand('copy');
+    var msg = successful ? 'successful' : 'unsuccessful';
+    console.log('Fallback: Copying text command was ' + msg);
+  } catch (err) {
+    console.error('Fallback: Oops, unable to copy', err);
+  }
+
+  document.body.removeChild(textArea);
+}
+function copyTextToClipboard(text) {
+  if (!navigator.clipboard) {
+    fallbackCopyTextToClipboard(text);
+    return;
+  }
+  navigator.clipboard.writeText(text).then(function() {
+    console.log('Async: Copying to clipboard was successful!');
+  }, function(err) {
+    console.error('Async: Could not copy text: ', err);
+  });
+}
+
+
