@@ -149,6 +149,7 @@ var COLLEGE_SECTOR_RADIOS =
 
 
 function getQueryParam(param,fallback, validOpts) {
+  
     param = param.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     var regex = new RegExp('[\\?&]' + param + '=([^&#]*)');
     var results = regex.exec(location.search);

@@ -14,7 +14,7 @@
 
 //FEATURES
 //make chart responsive
-//make the URL update
+//share URL: doesn't work for two year colleges
 
 //STYLING
 //'cover' not doing what you'd think on cover image
@@ -30,22 +30,13 @@ var higherEdSelections = {};
 	higherEdSelections.geography = getQueryParam('geography','national',['national','state','school']), 
 	higherEdSelections.chartType = getQueryParam('chart-type','single-year-bar',['single-year-bar', 'by-sector-chart', 'by-race-chart', 'one-school-all-races-container', 'multiple-schools']) ,
 	higherEdSelections.year = getQueryParam('year','2017', Array.apply(null, Array(9)).map(function (o, i) {return String(i + 2009);})) //strings of years 2009 -> 2017
-	higherEdSelections.programLength = getQueryParam('program_length','four',['two', 'four'])
+	higherEdSelections.programLength = getQueryParam('program-length','four',['two', 'four'])
 	higherEdSelections.singleRace = getQueryParam('single-race', 'dif_hispa', Object.keys(translateRace))
 	higherEdSelections.singleSector = translate[getQueryParam('single-sector','public-nonselective',Object.keys(translate))],
 	higherEdSelections.state = decodeURIComponent(getQueryParam('state','Alabama',['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming','District of Columbia'].map(function(s){ return encodeURIComponent(s)}))),
   	higherEdSelections.selectedSchool = decodeURIComponent(getQueryParam('selected-school',encodeURIComponent('Alabama A & M University'),'all')),
 	higherEdSelections.arrayRaces = getQueryParam('array-race',[],Object.keys(translateRace)),
 	higherEdSelections.arraySectors = getQueryParam('array-sectors',[],Object.keys(translate))
-
-
-	// 'dif_white': 'White',
-	// 'dif_hispa': 'Hispanic',
-	// 'dif_black': 'Black',
-	// 'dif_asian': 'Asian',
-	// 'dif_amind': 'American Indian',
-	// 'dif_pacis': 'Pacific Islander',
-	// 'dif_multi': 'Multiracial'
 
 var SECTOR_KEY = higherEdSelections.programLength + 'cat',
 	SELECTED_DATASET = (higherEdSelections.geography == 'state') ? 'filteredForState' : higherEdSelections.geography + higherEdSelections.programLength,
@@ -586,9 +577,6 @@ sectorSvgs
 //svg & g: byRaceSVG, byRaceG, bySectorSVG, bySectorSVG; axis: bySectorYAxis, byRaceAxis;
 function drawLineChart(data, topic, svg, g, axisSelection){
 
-	var yAxisText = 'Representation relative to market of potential students',
-		xAxisText = 'Year'
-
 	var selected = {
 		'race': higherEdSelections.singleRace, //"dif_hispa", "dif_white".. etc
 		'sector': 'value', //bc this data object just has one sector at a time
@@ -613,14 +601,9 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 
 	y.domain([min, max]);
 
-  d3.selectAll('.axis-label').remove();
-  svg.append('text')
-    .text(yAxisText)
-    .attr('y', margin.top)
-    .attr('class', 'axis-label')
 
   svg.append('text')
-  	.text(xAxisText)
+  	.text('Year')
   	.attr('y', height + margin.bottom)
   	.attr('x', width/2)
   	.attr('class', 'axis-label')
@@ -662,7 +645,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		})
 
 	var path = g.selectAll('path')
-		.data(data, function(d){ return d.key })
+		.data(data, function(d){ return d.key }) //on second pass here (is there a second pass coming from voronoi fx?) d is undefined for 'school comparison'
 
 	path.enter()
 		.append('path')
@@ -709,6 +692,22 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		//.attr('data-cat', function(d){ return d.key })
 
 	path.exit().remove();
+
+
+	var voronoi = d3.voronoi()
+		.x(function(d){ return xLine(parseTime(d.year)) })
+		.y(function(d){ return y(+d[selected[topic]]) })
+		.extent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]]);
+
+		var voronoiGroup = g.append("g")
+			.attr("class", "voronoi");
+
+		voronoiGroup.selectAll("path")
+			.data(voronoi.polygons(d3.merge(data.map(function(d) { return d.values; }))))
+			.enter().append("path")
+				.attr("d", function(d) {return d ? "M" + d.join("L") + "Z" : null; })
+				// .on("mouseover", )
+				// .on("mouseout", )
 
 	function makeLegend(selection, data, useRaceTranslators){
 		data.sort(d3.ascending)
@@ -968,13 +967,22 @@ function buildOptionPanel(chartType){
 			d3.selectAll('.four-year, .program-type').classed('inactive', true);
 		}
 
+		if ( higherEdSelections.chartType === 'by-sector-chart' || higherEdSelections.chartType === 'by-race-chart' ){
+				d3.selectAll('div.sub-choice').classed('active-unselected', true)
+		}
+
 		//mouseovers and shrinky buttons
+
 		 d3.selectAll('.options-panel-section').append('span').attr('class', 'minimize').html('&#8212').on('click', function(){
 			var div = this.parentElement.parentElement.getAttribute('id')
 			d3.select('#' + div + '> div.collapsible').classed('collapsed', !d3.select('#' + div + '> div.collapsible').classed('collapsed'))	
 	    	
 	    	this.innerHTML === '—' ? d3.select(this).html('+') : d3.select(this).html('&#8212') 
 	    })
+
+		 if ( higherEdSelections.chartType === 'one-school-all-races-container' || higherEdSelections.chartType === 'multiple-schools'){		 	
+		 	d3.selectAll(".minimize").remove();
+		 }
 
 		var panelMouseover = d3.select('body').append('div')
 		    .attr('class', 'tooltip panelmouseover')
@@ -1326,7 +1334,7 @@ function initializeStaticControls(){
 		      d3.select('.time-selector.main-choice.bar').classed('selected', true);
 		      d3.select('.disable-box').style('visibility', 'hidden')
 		  	  higherEdSelections.chartType = 'single-year-bar'
-			}
+			}  
 
 		} else if ( userChoice === 'school' ){
       		d3.select('#school-comparison').property('checked', false);
@@ -1743,6 +1751,11 @@ function init(){
   //can't find the option to move text on slider in the package: https://github.com/johnwalley/d3-simple-slider
   	d3.selectAll('#year-input > svg > g > g.axis > g > text').attr('y', 12)
   	d3.select('#year-input > svg > g > g.slider > g > text').attr('y', 19).style('font-size', 14)
+
+  	    if ( higherEdSelections.programLength === 'two' ){
+      convertSelectors('two')
+    }
+
   	if(higherEdSelections.geography == 'national'){
   		console.log('foo')
 		d3.select('#time-selection').style('display', 'block');
@@ -1757,8 +1770,7 @@ function init(){
 		} else {
 			d3.select('#mobile-filter-options').style('display', 'inline')
 		}
-  	}
-  	else if(higherEdSelections.geography == 'state'){
+  	} else if(higherEdSelections.geography == 'state'){
 		d3.select('#first-chart-container > h4 > span:nth-child(1)').text(higherEdSelections.state);
 		d3.select('#third-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
 		d3.select('#second-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);

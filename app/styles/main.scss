@@ -177,7 +177,7 @@ h1 {
 
 .title-content {
   text-align: center;
-  padding-top: 43%;
+  padding-top: 47%;
 }
 
 #intro {
@@ -307,6 +307,8 @@ div.tooltip.panelmouseover {
 
 }
 
+
+
 p.inactive > span.more-info {
   display: inline;
 }
@@ -347,9 +349,17 @@ h4.chart-title {
   color: $gray-8;
   font-size: 24px;
   font-weight: 700;
-  margin-bottom: 25px;
+  margin-bottom: 5px;
   // text-align: center;
 }
+
+#chart-frame > div > h3 {
+  color: $gray-7;
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 25px;
+}
+
 div.sector{
   display: inline-block;
   float: left;
@@ -439,6 +449,13 @@ div.sector{
 .axis-label {
   fill: $gray-6;
   font-style: italic;
+}
+
+.voronoi path {
+  fill: none;
+  stroke: $magenta-6;
+  pointer-events: all;
+  cursor: pointer;
 }
 
 .zero-line {
@@ -676,9 +693,10 @@ select:focus::-ms-value {
 }
 
 
-.main-choice {
+.time-selector.main-choice {
   display: block;
-  font-size: 18px;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 .collapsible {
@@ -862,13 +880,20 @@ select:focus::-ms-value {
   display: inline-block;
   font-weight: 400;
   font-size: 14px;
-  height: 45px;
   line-height: 1.1;
   margin-top: 15px;
   margin-right: 10px;
-  padding: 3px 5px;
+  padding: 6px 3px;
   text-align: center;
   text-transform: uppercase;
+  vertical-align: middle;
+  width: 118px;
+}
+
+.download {
+  background-color: $gray-2;
+  display: inline-block;
+  padding: 10px;
   vertical-align: middle;
   width: 118px;
 }
@@ -880,7 +905,7 @@ select:focus::-ms-value {
 }
 
 .time-selector.by-sector {
-  line-height: 40px;
+  // line-height: 40px;
 }
 
 .time-selector.sub-choice > div.btn-img-wrapper {
@@ -924,10 +949,6 @@ select:focus::-ms-value {
   position: relative;
   font-size: 28px;
   font-weight: 300;
-}
-
-#school-selection > h4 {
-  display: none;
 }
 
 .slider {
@@ -1194,13 +1215,9 @@ label.check-switch:active:after {
     font-size: 16px;
     font-weight: 400;
     line-height: 1.1;
-    padding: 1rem;
+    padding: 8px;
     text-align: center;
     vertical-align: middle;
-  }
-
-  .time-selector.by-sector {
-    line-height: 1.5;
   }
 
   #time-selection {
@@ -1220,7 +1237,7 @@ label.check-switch:active:after {
     font-size: 16px;
     height: 60px;
     margin: 0;
-    padding: 1rem;
+    // padding: 1rem;
     width: 33%;
   }
 
@@ -1261,21 +1278,9 @@ label.check-switch:active:after {
   }
 
   #geography-selection > div, .time-selector {
-
     width: 32%;
   }
 
-  .time-selector.by-sector {
-    line-height: 1.1;
-  }
-
-  .time-selector.sub-choice {
-    padding: 10px 5px;
-  }
-
-    #time-selection > div.time-selector.line.sub-choice.race {
-    padding: 12px 0 0 0;
-  }
 }
 
 @media (max-width: 400px){
@@ -1283,26 +1288,13 @@ label.check-switch:active:after {
     display: none;
   }
 
+  .time-selector, .time-selector.sub-choice {
+    font-size: 14px;
+  }
+
   .time-selector.sub-choice > div.btn-img-wrapper {
     display: none;
-    font-size: 14px;
   }
-
-  .time-selector.main-choice {
-    padding: 8px 5px 0 5px;
-    font-size: 14px;
-  }
-
-  .time-selector.sub-choice {
-    padding: 8px 0 0 0;
-    font-size: 14px;
-  }
-
-  #time-selection > div.time-selector.line.sub-choice.race {
-    padding: 5px 0 0 0;
-    font-size: 14px;
-  }
-
 
 
 }
