@@ -269,6 +269,7 @@ p.scenario {
 // chart specific
 
 div.tooltip {
+  // border-bottom: 2px solid $magenta-5;
   color: #000000;
   text-shadow:
    -1px -1px 0 #FFFFFF,  
@@ -453,7 +454,7 @@ div.sector{
 
 .voronoi path {
   fill: none;
-  stroke: $magenta-6;
+  stroke: none;
   pointer-events: all;
   cursor: pointer;
 }
@@ -583,7 +584,7 @@ label.inactive:before {
   padding-left: 3px;
 }
 
-#comparison-menu > .race-ethnicity-checkboxes {
+#comparison-menu > .race-checkbox-wrapper {
   margin-left: 10px;
   margin-top: 6px;
 }

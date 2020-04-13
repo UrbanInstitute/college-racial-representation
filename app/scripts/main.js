@@ -127,7 +127,6 @@ d3.select(window).on('resize', resize);
 
 
 function resize(){
-  //can't rely on mobile resize events, they fire too much
   //https://stackoverflow.com/questions/17328742/mobile-chrome-fires-resize-event-on-scroll
   if (storedWidth !== document.body.clientWidth){
     console.log('diff')
@@ -174,26 +173,27 @@ console.log('hole ' + width)
         .attr('width', width)
         .attr('height', height);
 
-    //update the scales
-    xLine.range([margin.left, width - margin.right])
-    xBar.rangeRound([barMargin.left, width - barMargin.right])
-
     var topicDependentKey = {
 		'by-race-chart': 'value', //"dif_hispa", "dif_white".. etc
 		'by-sector-chart': higherEdSelections.singleRace, //bc this data object just has one sector at a time
 		'multiple-schools': higherEdSelections.singleRace,
 		'one-school-all-races-container': higherEdSelections.singleRace
 	}
+	if (higherEdSelections.chartType !== 'single-year-bar'){		
+	    xLine.range([margin.left, width - margin.right])
+	    var line = d3.line()
+	  		.x(function(d){ return xLine(parseTime(d.year)) })
+	  		.y(function(d){ return y(+d[topicDependentKey]) })
+	}
 
-    var line = d3.line()
-  		.x(function(d){ return xLine(parseTime(d.year)) })
-  		.y(function(d){ return y(+d[topicDependentKey]) })
+    if (higherEdSelections.chartType === 'single-year-bar'){
+    	xBar.rangeRound([barMargin.left, width - barMargin.right])
 
-    //here you would somehow resize the stuff on the chart: lines, bars, axis lines
-    d3.selectAll('rect')
-      .attr('x', function(d){ return +d.value > 0 ? xBar(0) : xBar(d.value) })
-      .attr('fill', function(d){ return raceColorObj[d.key] })
-      .attr('width', function(d){ return +d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
+	    d3.selectAll('rect')
+	      .attr('x', function(d){ return +d.value > 0 ? xBar(0) : xBar(d.value) })
+	      .attr('fill', function(d){ return raceColorObj[d.key] })
+	      .attr('width', function(d){ return +d.value > 0 ? xBar(d.value) - xBar(0) : (xBar(0) - xBar(d.value)) })
+    }
 
     // d3.selectAll('path.data-line')
     // 	.attr('d', function(d){ return line(d.values)  })
@@ -222,7 +222,7 @@ var html =
 // checkbox template
 function checkboxTemplater(option){
 var html =
-'<div class="c-cb"><input type="checkbox" class=" " name="' + higherEdSelections.chartType + '" value="' + option + '" checked/><label for="' + option + '">' + translateRace[option] + '</label></div>'
+'<div class="c-cb"><input type="checkbox" class="race-checkbox" name="' + higherEdSelections.chartType + '" value="' + option + '" checked/><label for="' + option + '">' + translateRace[option] + '</label></div>'
     return html
 }
 
@@ -583,7 +583,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		'comparison': higherEdSelections.singleRace
 	}
 	if (higherEdSelections.chartType === 'multiple-schools'){
-		var div = d3.select('body').append('div')
+		var tt = d3.select('body').append('div')
 		    .attr('class', 'tooltip')
 		    .style('opacity', 0);
 	}
@@ -608,7 +608,6 @@ function drawLineChart(data, topic, svg, g, axisSelection){
   	.attr('x', width/2)
   	.attr('class', 'axis-label')
     
-//was trying to get last item in svg.selectAll('.grid > .tick'), if that's a thing to set the y for the axis label
 	var line = d3.line()
 		.x(function(d){ return xLine(parseTime(d.year)) })
 		.y(function(d){ return y(+d[selected[topic]]) })
@@ -645,7 +644,12 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		})
 
 	var path = g.selectAll('path')
-		.data(data, function(d){ return d.key }) //on second pass here (is there a second pass coming from voronoi fx?) d is undefined for 'school comparison'
+		.data(data, function(d){ 
+			//on second pass here (from voronoi fx?) d is undefined for 'school comparison', so added this check
+			if (typeof(d) != "undefined" && d.hasOwnProperty("key")) {
+			 	return d.key 
+			} 
+		})
 
 	path.enter()
 		.append('path')
@@ -693,11 +697,12 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 
 	path.exit().remove();
 
+	if ( higherEdSelections.chartType === 'multiple-schools' ){
 
-	var voronoi = d3.voronoi()
-		.x(function(d){ return xLine(parseTime(d.year)) })
-		.y(function(d){ return y(+d[selected[topic]]) })
-		.extent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]]);
+		var voronoi = d3.voronoi()
+			.x(function(d){ return xLine(parseTime(d.year)) })
+			.y(function(d){ return y(+d[selected[topic]]) })
+			.extent([[0, 0], [width, height - margin.bottom]]);
 
 		var voronoiGroup = g.append("g")
 			.attr("class", "voronoi");
@@ -705,9 +710,38 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		voronoiGroup.selectAll("path")
 			.data(voronoi.polygons(d3.merge(data.map(function(d) { return d.values; }))))
 			.enter().append("path")
-				.attr("d", function(d) {return d ? "M" + d.join("L") + "Z" : null; })
-				// .on("mouseover", )
-				// .on("mouseout", )
+				.attr("d", function(d) { return d ? "M" + d.join("L") + "Z" : null; })
+				.on("mouseover", function(d){
+					tt.style('opacity', .9);
+	        		tt.html(d.data.inst_name)
+			            .style('left', (d3.event.pageX) + 'px')
+			            .style('top', (d3.event.pageY - 28) + 'px');
+			        d3.select("path[data-cat=" + classify(d.data.inst_name) +  "]")
+			        	.attr('stroke-width', 4)
+			        	.style('stroke', function(d){ 
+			        		
+			        		if (d.key !== higherEdSelections.selectedSchool){
+				        		return '#9d9d9d'
+				        	}
+				        })
+	        
+				})
+				.on("mouseout", function(d){
+					tt.style('opacity', 0)
+					d3.select("path[data-cat=" + classify(d.data.inst_name) +  "]")
+						.style('stroke', function(d){
+							if (d.key !== higherEdSelections.selectedSchool){
+				        		return '#D2D2D2'
+				        	}
+						})
+						.attr('stroke-width', function(d){
+							if (d.key !== higherEdSelections.selectedSchool){
+				        		return 2
+				        	}
+						})
+				})
+	}
+		
 
 	function makeLegend(selection, data, useRaceTranslators){
 		data.sort(d3.ascending)
@@ -732,8 +766,8 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 	}
 
 	if (topic === 'race') {
-		var data = data.map(function(d){return d.key})
-		makeLegend(byRaceLegend, data, false)
+		var raceData = data.map(function(d){return d.key})
+		makeLegend(byRaceLegend, raceData, false)
 	}
 
   	if (higherEdSelections.chartType === 'one-school-all-races-container') {
@@ -754,14 +788,10 @@ function drawLineChart(data, topic, svg, g, axisSelection){
       .style('border-left', function(d,i){ return '17px solid ' + schoolComparisonColors[i] })
       .text(function(d){ return d })
 
-    d3.selectAll('.data-line').on('mouseover', function(d){
-    	div.style('opacity', .9);
-        div.html(d.key)
-            .style('left', (d3.event.pageX) + 'px')
-            .style('top', (d3.event.pageY - 28) + 'px');
-        d3.select(this).attr('stroke-width', 4)
+    d3.selectAll('.data-line')
+    	.on('mouseover', function(d){
+        	d3.select(this).attr('stroke-width', 4)
         }).on('mouseout', function(d) {
-        	div.style('opacity', 0);
         	d3.select(this).attr('stroke-width', 2)
         });
     }
@@ -797,11 +827,11 @@ function buildOptionPanel(chartType){
 
 			d3.select('#second-dynamic-menu').append('p').attr('class', 'options-panel-section').text('Race/Ethnicity')
 			var div = d3.select('#second-dynamic-menu').append('div').attr('class', 'collapsible')
-			div.selectAll('div.race-ethnicity-checkboxes')
+			div.selectAll('div.race-checkbox-wrapper')
 				.data(RACE_OPTIONS)
 				.enter()
 				.append('div')
-				.classed('race-ethnicity-checkboxes', true)
+				.classed('race-checkbox-wrapper', true)
 				.classed('checked', true)
 				.html(function(d){ return checkboxTemplater(d) })
 
@@ -824,11 +854,11 @@ function buildOptionPanel(chartType){
 
 			d3.select('#second-dynamic-menu').append('p').attr('class', 'options-panel-section').text('Race/Ethnicity')
 			var div = d3.select('#second-dynamic-menu').append('div').attr('class', 'collapsible')
-			div.selectAll('div.race-ethnicity-checkboxes')
+			div.selectAll('div.race-checkbox-wrapper')
 				.data(RACE_OPTIONS)
 				.enter()
 				.append('div')
-				.classed('race-ethnicity-checkboxes', true)
+				.classed('race-checkbox-wrapper', true)
 				.html(function(d){ return checkboxTemplater(d) })
 
 		} else if (chartType === 'one-school-all-races-container'){
@@ -843,11 +873,11 @@ function buildOptionPanel(chartType){
 
 	      //school chart gets checkboxes for race, comparison chart gets radio for sectors
 	      d3.select('#comparison-menu').html('<p class="options-panel-section">Race/Ethnicity</p>')
-	      d3.select('#comparison-menu').selectAll('div.race-ethnicity-checkboxes')
+	      d3.select('#comparison-menu').selectAll('div.race-checkbox-wrapper')
 	        .data(RACE_OPTIONS)
 	        .enter()
 	        .append('div')
-	        .classed('race-ethnicity-checkboxes', true)
+	        .classed('race-checkbox-wrapper', true)
 	        .classed('checked', true)
 	        .html(function(d){ return checkboxTemplater(d) })
 
@@ -908,12 +938,10 @@ function buildOptionPanel(chartType){
 				}
 			}
 
-			//if the box is being unchecked and the selections array is empty
-			if (selectionIndex > 0 && higherEdSelections.arraySectors.length < 1){
-				//alert('Please pick at least one sector')
+			//if the box is being unchecked (i.e., was in arraySectors already) but the selections array is now empty
+			if (selectionIndex > -1 && higherEdSelections.arraySectors.length < 1){
 		      higherEdSelections.arraySectors.push(translate[userChoice])
-		      //TODO - why this not worky
-		      d3.select('.sector-boxes > div > input[value=' + userChoice + ']').property('checked', true)
+		      d3.select('input[value=' + userChoice + ']').property('checked', true)
 			} 
 			callSectorLine()
 			callBarChart(higherEdSelections.year, true);
@@ -934,7 +962,7 @@ function buildOptionPanel(chartType){
 		})
 
 		//race boxes - updates arrayRaces
-		d3.selectAll('.race-ethnicity-checkboxes').on('click', raceCheckboxListener)
+		d3.selectAll('.race-checkbox').on('click', raceCheckboxListener)
 
 		//race radios - updates singleRace
 		d3.selectAll('.race-ethnicity-radios').on('click', function(){
@@ -954,7 +982,7 @@ function buildOptionPanel(chartType){
 		d3.select('div.race-ethnicity-radios> div > label > input[value=' + higherEdSelections.singleRace + ']').property('checked', true);	
 
 		d3.select('input.sector-radios[value=' + translateBack[higherEdSelections.singleSector] + ']').property('checked', true)
-		d3.selectAll('.race-ethnicity-checkboxes > div > input')
+		d3.selectAll('.race-checkbox-wrapper > div > input')
 			.property('checked', function(d){ return higherEdSelections.arrayRaces.indexOf(this.value) > -1 });
 		d3.selectAll('input.sector-boxes')
 			.property('checked', function(d){ return higherEdSelections.arraySectors.indexOf(translate[this.value]) > -1 });
@@ -1647,7 +1675,7 @@ d3.selectAll('.filter-btn').on('click', function(){
 
 function raceCheckboxListener(){
 
-	var userChoice = d3.select(this).datum()
+	var userChoice = d3.select(this).attr('value')
 	var checked = d3.select('input[value="' + userChoice + '"]').property('checked')
 
 	if (checked){
@@ -1670,6 +1698,8 @@ function raceCheckboxListener(){
 		callBarChart(higherEdSelections.year, true)
      	callRaceLine();
     }
+
+
 }
 
 
