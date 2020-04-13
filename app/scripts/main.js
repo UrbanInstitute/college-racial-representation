@@ -646,7 +646,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 	var path = g.selectAll('path')
 		.data(data, function(d){ 
 			//on second pass here (from voronoi fx?) d is undefined for 'school comparison', so added this check
-			if (typeof(d) != "undefined" && d.hasOwnProperty("key")) {
+			if (typeof(d) != 'undefined' && d.hasOwnProperty('key')) {
 			 	return d.key 
 			} 
 		})
@@ -704,19 +704,19 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 			.y(function(d){ return y(+d[selected[topic]]) })
 			.extent([[0, 0], [width, height - margin.bottom]]);
 
-		var voronoiGroup = g.append("g")
-			.attr("class", "voronoi");
+		var voronoiGroup = g.append('g')
+			.attr('class', 'voronoi');
 
-		voronoiGroup.selectAll("path")
+		voronoiGroup.selectAll('path')
 			.data(voronoi.polygons(d3.merge(data.map(function(d) { return d.values; }))))
-			.enter().append("path")
-				.attr("d", function(d) { return d ? "M" + d.join("L") + "Z" : null; })
-				.on("mouseover", function(d){
+			.enter().append('path')
+				.attr('d', function(d) { return d ? 'M' + d.join('L') + 'Z' : null; })
+				.on('mouseover', function(d){
 					tt.style('opacity', .9);
 	        		tt.html(d.data.inst_name)
 			            .style('left', (d3.event.pageX) + 'px')
 			            .style('top', (d3.event.pageY - 28) + 'px');
-			        d3.select("path[data-cat=" + classify(d.data.inst_name) +  "]")
+			        d3.select('path[data-cat=' + classify(d.data.inst_name) +  ']')
 			        	.attr('stroke-width', 4)
 			        	.style('stroke', function(d){ 
 			        		
@@ -726,9 +726,9 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 				        })
 	        
 				})
-				.on("mouseout", function(d){
+				.on('mouseout', function(d){
 					tt.style('opacity', 0)
-					d3.select("path[data-cat=" + classify(d.data.inst_name) +  "]")
+					d3.select('path[data-cat=' + classify(d.data.inst_name) +  ']')
 						.style('stroke', function(d){
 							if (d.key !== higherEdSelections.selectedSchool){
 				        		return '#D2D2D2'
@@ -1009,7 +1009,7 @@ function buildOptionPanel(chartType){
 	    })
 
 		 if ( higherEdSelections.chartType === 'one-school-all-races-container' || higherEdSelections.chartType === 'multiple-schools'){		 	
-		 	d3.selectAll(".minimize").remove();
+		 	d3.selectAll('.minimize').remove();
 		 }
 
 		var panelMouseover = d3.select('body').append('div')
