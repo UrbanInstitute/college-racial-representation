@@ -250,9 +250,9 @@ function getShareUrl(){
   })
 
   d3.select('#share-tooltip')
-    .transition()
-    .delay(3000)
-    .style('display', 'none')
+    // .transition()
+    // .delay(3000)
+    // .style('display', 'none')
 
   return shareURL;
 }

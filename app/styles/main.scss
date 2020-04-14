@@ -110,7 +110,12 @@ $green-8: #370B0A;
 *******************************************/
 
 a {
+  color: $cyan-6;
   cursor: pointer;
+}
+
+a:hover {
+  color: $cyan-7;
 }
 
 #heroimage {
@@ -206,6 +211,10 @@ h1 {
 
 
 // scenario buttons
+
+.caret {
+  display: none;
+}
 
 #scenarios {
   margin-left: 3.3%;
@@ -695,7 +704,7 @@ select:focus::-ms-value {
 
 
 .time-selector.main-choice {
-  display: block;
+  display: inline-block;
   font-size: 16px;
   font-weight: 700;
 }
@@ -760,9 +769,11 @@ select:focus::-ms-value {
   border: 1px solid $cyan-6;
   color: $cyan-6;
   cursor: pointer;
+  float: right;
   font-size: 16px;
   font-weight: 400;
   margin-top: $spacing-unit;
+  margin-right: 15px;
   padding: 10px;
   text-transform: uppercase;
   width: 130px  ;
@@ -774,13 +785,14 @@ select:focus::-ms-value {
 }
 
 #share-tooltip {
-  bottom: 80px;
-  display: none;
-  position: absolute;
   background: #ffffff;
+  display: none;
   border: 1px solid #d2d2d2;
-  width: 320px;
+  bottom: 80px;
   height: 90px;
+  position: absolute;
+  right: 0;
+  width: 320px;
 
   .copy-button {
     position: relative;
@@ -822,7 +834,7 @@ select:focus::-ms-value {
 
 #share-tooltip:after, #share-tooltip:before {
   top: 100%;
-  left: 20%;
+  left: 80%;
   border: solid transparent;
   content: " ";
   height: 0;
@@ -891,13 +903,6 @@ select:focus::-ms-value {
   width: 118px;
 }
 
-.download {
-  background-color: $gray-2;
-  display: inline-block;
-  padding: 10px;
-  vertical-align: middle;
-  width: 118px;
-}
 
 .time-selector.sub-choice.active-unselected {
   background-color: #FFFFFF;
@@ -907,6 +912,22 @@ select:focus::-ms-value {
 
 .time-selector.by-sector {
   // line-height: 40px;
+}
+
+div.btn-img-wrapper {
+  margin-right: 10px;
+  width: 20px;
+}
+div.time-selector.main-choice.selected > div.btn-img-wrapper > svg {
+  fill: $cyan-6;
+}
+
+div.time-selector.main-choice > div.btn-img-wrapper > svg {
+  fill: $gray-7;
+}
+
+.svg-icon.lighter-fill {
+  opacity: 0.6;
 }
 
 .time-selector.sub-choice > div.btn-img-wrapper {
@@ -1115,10 +1136,6 @@ label.check-switch:active:after {
     display: none;
   }
 
-  #chart-area-container {
-    margin-top: $spacing-unit;
-  }
-
   .disable-box {
     display: none;
   }
@@ -1251,12 +1268,9 @@ label.check-switch:active:after {
   }
 
   #year-input-wrapper {
-    margin-top: 60px;
+    margin-top: $spacing-unit;
   }
 
-  #year-input {
-    height: 80px;
-  }
     .left-float {
     width: 20%;
   }
@@ -1295,6 +1309,10 @@ label.check-switch:active:after {
 
   .time-selector.sub-choice > div.btn-img-wrapper {
     display: none;
+  }
+
+  #year-input-wrapper {
+    margin-top: 30px;
   }
 
 
