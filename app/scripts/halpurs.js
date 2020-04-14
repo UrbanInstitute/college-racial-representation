@@ -160,7 +160,15 @@ function getQueryParam(param,fallback, validOpts) {
       if(Array.isArray(fallback)){
         return testResult.split(',').filter(function(o){ return validOpts.indexOf(o) != -1 })
       }else{
-        return (validOpts == 'all' || validOpts.indexOf(testResult) == -1) ? fallback : testResult;
+        // return (validOpts == 'all' || validOpts.indexOf(testResult) == -1) ? fallback : testResult;
+        //if validOpts is 'all' or the test result isn't in valid Opts (like it's garbage) use the fallback, otherwise use the testresult
+        if (validOpts === 'all'){
+          return testResult
+        } else if (validOpts.indexOf(testResult) == -1){
+          return fallback
+        } else if (validOpts.indexOf(testResult) > -1){
+          return testResult;
+        }
       }
     }
 }
@@ -250,9 +258,9 @@ function getShareUrl(){
   })
 
   d3.select('#share-tooltip')
-    // .transition()
-    // .delay(3000)
-    // .style('display', 'none')
+    .transition()
+    .delay(3000)
+    .style('display', 'none')
 
   return shareURL;
 }
