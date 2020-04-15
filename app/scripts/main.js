@@ -1158,7 +1158,7 @@ function callComparisonChart(){
 
 	var pgmLength = higherEdData.allData.schoolfour.filter(function(sch){return sch.inst_name === higherEdSelections.selectedSchool })[0].slevel
 
-	higherEdSelections.programLength = pgmLength === "4-year" ? "four" : "two"
+	higherEdSelections.programLength = pgmLength === '4-year' ? 'four' : 'two'
 
 	var stateAverage = higherEdData.allData['state' + higherEdSelections.programLength].filter(function(d){
 		return d[higherEdSelections.programLength + 'cat'] === higherEdSelections.singleSector && 

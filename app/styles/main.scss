@@ -888,13 +888,14 @@ select:focus::-ms-value {
 }
 
 .time-selector.sub-choice {
-  background-color: $gray-2;
-  // border: 1px solid $gray-5;
+  // background-color: $gray-2;
+  border: 1px solid $gray-6;
   border-radius: 1px;
   display: inline-block;
   font-weight: 400;
   font-size: 14px;
   line-height: 1.1;
+  height: 48px;
   margin-top: 15px;
   margin-right: 10px;
   padding: 6px 3px;
