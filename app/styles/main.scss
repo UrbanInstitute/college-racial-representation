@@ -658,12 +658,10 @@ select:focus::-ms-value {
 .ui-selectmenu-text {
     font-size: 16px;
     color: $gray-8;
-    
     font-family: Lato;
 }
 
 #geography-selection {
-  margin-bottom: $spacing-unit;
   margin-top: $spacing-unit;
   text-align: center;
 }
