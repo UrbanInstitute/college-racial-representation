@@ -159,7 +159,7 @@ body {
 }
 
 h1 {
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .clear {
@@ -176,7 +176,7 @@ h1 {
 .dateline {
   // background: white;
   font-size: 18px;
-  padding-bottom: $spacing-unit;
+  
   // margin-bottom: 0px;
 }
 
@@ -1285,6 +1285,10 @@ label.check-switch:active:after {
 }
 
 @media (max-width: 600px){
+  h1 {
+      font-size: 30px;
+  }
+
   .left-float {
     width: 25%;
   }

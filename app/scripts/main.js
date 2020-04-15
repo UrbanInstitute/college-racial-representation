@@ -36,7 +36,8 @@ var higherEdSelections = {};
 	higherEdSelections.state = decodeURIComponent(getQueryParam('state','Alabama',['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming','District of Columbia'] )),
   	higherEdSelections.selectedSchool = decodeURIComponent(getQueryParam('selected-school',encodeURIComponent('Alabama A & M University'),'all')),
 	higherEdSelections.arrayRaces = getQueryParam('array-race',[],Object.keys(translateRace)),
-	higherEdSelections.arraySectors = getQueryParam('array-sectors',[],Object.keys(translate))
+	higherEdSelections.arraySectors = getQueryParam('array-sectors',[],Object.keys(translate)),
+	higherEdSelections.defaultSchool = higherEdSelections.selectedSchool
 
 var SECTOR_KEY = higherEdSelections.programLength + 'cat',
 	SELECTED_DATASET = (higherEdSelections.geography == 'state') ? 'filteredForState' : higherEdSelections.geography + higherEdSelections.programLength,
@@ -903,7 +904,7 @@ function buildOptionPanel(chartType){
 	  }
 		//sector boxes - updates arraySector
 		d3.selectAll('.sector-boxes').on('click', function(){
-
+debugger
 			var userChoice = this.value;
 			var checkbox = d3.select(this);
 			var selectionIndex = higherEdSelections.arraySectors.indexOf(translate[userChoice]);
@@ -1153,6 +1154,12 @@ function callComparisonChart(){
 	})
 
 	//now pull out the state level data for the selected sector && state to be the average line on the chart
+	//this goes wrong when another view has changed the programLEngth but this one is still on default
+
+	var pgmLength = higherEdData.allData.schoolfour.filter(function(sch){return sch.inst_name === higherEdSelections.selectedSchool })[0].slevel
+
+	higherEdSelections.programLength = pgmLength === "4-year" ? "four" : "two"
+
 	var stateAverage = higherEdData.allData['state' + higherEdSelections.programLength].filter(function(d){
 		return d[higherEdSelections.programLength + 'cat'] === higherEdSelections.singleSector && 
 		d.fips_ipeds === higherEdSelections.state 
@@ -1400,9 +1407,6 @@ function initializeStaticControls(){
 	    if (userChoice !== 'school'){
 	        //all these use SELECTED_DATASET inside the filtering/nesting functions
 	    	callBarChart(higherEdSelections.year, true);
-
-	    	
-
 	    }
 
 	    if (higherEdSelections.chartType === 'by-race-chart'){
@@ -1410,7 +1414,6 @@ function initializeStaticControls(){
 	    } else if (higherEdSelections.chartType === 'by-sector-chart'){
 	    	callSectorLine()
 	    }
-
 	    buildOptionPanel(higherEdSelections.chartType)
 
 	})
@@ -1742,7 +1745,7 @@ function makeSectorNest(){
 function makeDemogNest(sector, isSchoolData){
 
 	var nestedByDemog = [],
-		filtered;
+		schoolOrSector;
 
 	if (higherEdSelections.geography === 'state'){
 		higherEdData.allData.filteredForState =  higherEdData.allData[higherEdSelections.geography + higherEdSelections.programLength].filter(function(d){
@@ -1751,20 +1754,21 @@ function makeDemogNest(sector, isSchoolData){
 	}
 
 	if (isSchoolData){
-		filtered = higherEdData.allData[SELECTED_DATASET].filter(function(d){
+										//schools dumped into one csv named schoolfour
+		schoolOrSector = higherEdData.allData.schoolfour.filter(function(d){
 					return d.inst_name === higherEdSelections.selectedSchool
 				})
-		higherEdSelections.state = filtered[0].fips_ipeds;
-		higherEdSelections.singleSector = filtered[0][SECTOR_KEY];
+		higherEdSelections.state = schoolOrSector[0].fips_ipeds;
+		higherEdSelections.singleSector = schoolOrSector[0].fourcat;
 	} else {
-		filtered = higherEdData.allData[SELECTED_DATASET].filter(function(d){
+		schoolOrSector = higherEdData.allData[SELECTED_DATASET].filter(function(d){
 							return d[SECTOR_KEY] === sector
 						})
 	}
 
 	for (var i = 0; i < RACE_OPTIONS.length; i++){
 		nestedByDemog.push({'key': RACE_OPTIONS[i], 'values': []})
-		filtered.forEach(function(yearData){
+		schoolOrSector.forEach(function(yearData){
 			var obj = {
 				'year': yearData.year,
 				'value': yearData[RACE_OPTIONS[i]]
@@ -1797,9 +1801,10 @@ function init(){
   	d3.selectAll('#year-input > svg > g > g.axis > g > text').attr('y', 12)
   	d3.select('#year-input > svg > g > g.slider > g > text').attr('y', 19).style('font-size', 14)
 
-  	    if ( higherEdSelections.programLength === 'two' ){
+  	if ( higherEdSelections.programLength === 'two' ){
       convertSelectors('two')
     }
+
 
   	if(higherEdSelections.geography == 'national'){
   		
