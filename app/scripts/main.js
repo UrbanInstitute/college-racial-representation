@@ -49,7 +49,7 @@ var SECTOR_KEY = higherEdSelections.programLength + 'cat',
   	RACE_OPTIONS
 
 var storedWidth = document.body.clientWidth;
-var IS_MOBILE = storedWidth < 768 ? true : false ;
+var IS_MOBILE = storedWidth < 769 ? true : false ;
 
 var optionsPanelTotalWidth = 
 	IS_MOBILE ? 0 :
@@ -274,10 +274,11 @@ function showChart(chartType){
 function addArrowsToHighlights(){
 	if (window.innerWidth < 950){
 		d3.selectAll('.caret').style('display', 'inline')
-		d3.selectAll('.caret').on('click', function(){
+		d3.selectAll('img.caret').on('click', function(){
+			
 			var isLeft = d3.select(this).classed('left')
 			//get the ID of wrapping div to know whether scenario1, 2 or 3
-			var wrappingDiv = this.parentElement
+			var wrappingDiv = this.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement
 			var id = wrappingDiv.getAttribute('id'),
 			multiplier = id.substring(id.length - 1)
 			
@@ -1275,7 +1276,7 @@ var sliderTime =
 		.min(d3.min(dataTime))
 		.max(d3.max(dataTime))
 		.step(1000 * 60 * 60 * 24 * 365)
-		.width(IS_MOBILE ? chartHole - 90 : 220)
+		.width(IS_MOBILE ? chartHole - 70 : 220)
 		.tickFormat(function(d){ return '\'' + d3.timeFormat('%y')(d)})
 		.tickValues(dataTime)
 		.default(new Date(higherEdSelections.year, 10, 3))
@@ -1284,14 +1285,14 @@ var sliderTime =
 
 			higherEdSelections.year = timeFormat(val);
 			callBarChart(higherEdSelections.year, false);
-			// d3.select('#first-chart-container > h4 > span:nth-child(2)').text(timeFormat(val));
+			d3.select('#first-chart-container > h4 > span:nth-child(2)').text(timeFormat(val));
 		});
 
 
 var gTime =
 	d3.select('div#year-input')
 		.append('svg')
-		.attr('width', IS_MOBILE ? chartHole - 60 : 250)
+		.attr('width', IS_MOBILE ? chartHole : 250)
 		.attr('height', 60)
 		.append('g')
 		.attr('transform', 'translate(15,15)');
@@ -1583,7 +1584,7 @@ d3.selectAll('.filter-btn').on('click', function(){
 	d3.select('.pop-up-menu').remove();
 	if (higherEdSelections.chartType === 'single-year-bar'){
 		var div = d3.select('div.slider').append('div').attr('class', 'pop-up-menu')
-		div.append('span').attr('id', 'close-btn').style('left', window.innerWidth - 100 + 'px').style('top', '20px').html('&times;').on('click', function(){
+		div.append('span').attr('id', 'close-btn').style('left', window.innerWidth - 70 + 'px').style('top', '20px').html('&times;').on('click', function(){
 			d3.selectAll('.slider').classed('close', true)
 		})
 		div.append('div').html(COLLEGE_SECTOR_CHECKBOXES)
