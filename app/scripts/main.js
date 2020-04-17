@@ -1040,17 +1040,17 @@ debugger
     	if (higherEdSelections.chartType === 'single-year-bar'){
     		d3.select('#race-ethnicity-filter').style('display', 'none')
     		d3.select('#sector-filter').style('display', 'inline-block')
-    		d3.select('#mobile-filter-options > h4').style('visibility', 'visible')
+    		d3.select('#mobile-filter-options > h4').style('visibility', 'visible').text('Choose sectors')
     		d3.select('#year-input-wrapper').style('display', 'block')
     	} else if (higherEdSelections.chartType === 'by-sector-chart'){
     		d3.select('#race-ethnicity-filter').style('display', 'inline-block')
     		d3.select('#sector-filter').style('display', 'none')
-    		d3.select('#mobile-filter-options > h4').style('visibility', 'visible')
+    		d3.select('#mobile-filter-options > h4').style('visibility', 'visible').text('Choose a race/ethnicity')
     		d3.select('#year-input-wrapper').style('display', 'none')
     	} else if (higherEdSelections.chartType === 'by-race-chart'){
     		d3.select('#race-ethnicity-filter').style('display', 'none')
     		d3.select('#sector-filter').style('display', 'inline-block')
-    		d3.select('#mobile-filter-options > h4').style('visibility', 'visible')
+    		d3.select('#mobile-filter-options > h4').style('visibility', 'visible').text('Choose a sector')
     		d3.select('#year-input-wrapper').style('display', 'none')
     	}
 	}
@@ -1670,7 +1670,7 @@ d3.selectAll('.filter-btn').on('click', function(){
 			})
 	} else if (higherEdSelections.chartType === 'by-race-chart'){
 		var div = d3.select('div.slider').append('div').attr('class', 'pop-up-menu')
-		div.append('span').attr('id', 'close-btn').style('left', window.innerWidth - 100 + 'px').style('top', '20px').html('&times;').on('click', function(){
+		div.append('span').attr('id', 'close-btn').style('left', window.innerWidth - 70 + 'px').style('top', '20px').html('&times;').on('click', function(){
 			d3.selectAll('.slider').classed('close', true)
 		})
 		div.append('div').html(COLLEGE_SECTOR_RADIOS)

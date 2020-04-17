@@ -873,7 +873,7 @@ select:focus::-ms-value {
 
 #time-selection {
   // border-bottom: 1px solid $gray-5;
-  padding-bottom: 65px;
+  padding-bottom: 40px;
   width: 100%;
 }
 
@@ -1271,6 +1271,7 @@ label.check-switch:active:after {
 
   .time-selector.main-choice {
     padding-top: 20px;
+    font-weight: 400;
   }
 
   .time-selector.main-choice.selected > div.text-wrapper > p {
@@ -1291,6 +1292,7 @@ label.check-switch:active:after {
     background-color: #FFFFFF;
     border: 1px solid $cyan-6;
     font-size: 16px;
+    font-weight: 400;
     height: 60px;
     margin: 0;
     padding: 0;
