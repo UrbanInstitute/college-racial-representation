@@ -11,15 +11,22 @@
 
 //TODOs
 //BUGS
+//iE
 
 //FEATURES
 //make chart responsive
-//share URL: doesn't work for two year colleges
 
-//STYLING
-//'cover' not doing what you'd think on cover image
-
-
+if (!Object.entries) {
+  Object.entries = function( obj ){
+    var ownProps = Object.keys( obj ),
+        i = ownProps.length,
+        resArray = new Array(i); // preallocate the Array
+    while (i--)
+      resArray[i] = [ownProps[i], obj[ownProps[i]]];
+    
+    return resArray;
+  };
+}
 
 // the datas
 var higherEdData = {};
@@ -1805,7 +1812,6 @@ function init(){
   	if ( higherEdSelections.programLength === 'two' ){
       convertSelectors('two')
     }
-
 
   	if(higherEdSelections.geography == 'national'){
   		
