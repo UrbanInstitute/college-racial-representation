@@ -84,8 +84,8 @@ var translate = {
    'public-highly-selective': 'Public More Selective',
    'public-nonselective': 'Public Nonselective',
    'public-selective': 'Public Selective',
-   'two-year-public': 'Public 2-year',
-   'two-year-private': 'For-Profit 2-year'
+   'two-year-public': 'Public 2-Year',
+   'two-year-private': 'For-Profit 2-Year'
 }
 
 var translateBack = {
@@ -96,8 +96,8 @@ var translateBack = {
    'Public More Selective': 'public-highly-selective',
    'Public Nonselective': 'public-nonselective',
    'Public Selective': 'public-selective',
-   'Public 2-year': 'two-year-public',
-   'For-Profit 2-year': 'two-year-private'
+   'Public 2-Year': 'two-year-public',
+   'For-Profit 2-Year': 'two-year-private'
 }
 
 var translateRace = {

@@ -65,10 +65,10 @@
           A college degree can improve a person’s <a target="_blank" href="https://opportunityinsights.org/paper/undermatching/">job prospects, wages, and quality of life</a>, but not everyone has equal access to higher education.
         </p>
         <p>
-          College <a target="_blank" href="https://www.equityinhighered.org/">enrollment gaps</a> between racial and ethnic groups persist, driven by <a target="_blank" href="https://next50.urban.org/question/structural-racism">systemic barriers</a>&#8212;like the <a target="_blank" href="https://www.urban.org/research/publication/bold-equitable-policy-solutions-are-needed-close-racial-and-gender-wealth-gaps">racial wealth gap</a>, <a target="_blank" href="https://www.americanprogress.org/issues/race/news/2019/11/04/476789/early-decision-harms-students-color-low-income-students/">inequitable admissions practices</a>, <a target="_blank" href="https://apps.urban.org/features/school-funding-do-poor-kids-get-fair-share/">underinvestment in K–12 education</a>, and <a target="_blank" href="https://www.nber.org/papers/w18586">varying student preferences</a>&#8212;as well as policies and practices that often aren’t designed to help underrepresented students access quality higherpostsecondary education opportunities. These gaps can <a target="_blank" href="https://www.nber.org/papers/w23618">perpetuate earnings and wealth disparities</a> between racial and ethnic groups.
+          College <a target="_blank" href="https://www.equityinhighered.org/">enrollment gaps</a> between racial and ethnic groups persist, driven by <a target="_blank" href="https://next50.urban.org/question/structural-racism">systemic barriers</a>&#8212;like the <a target="_blank" href="https://www.urban.org/research/publication/bold-equitable-policy-solutions-are-needed-close-racial-and-gender-wealth-gaps">racial wealth gap</a>, <a target="_blank" href="https://www.americanprogress.org/issues/race/news/2019/11/04/476789/early-decision-harms-students-color-low-income-students/">inequitable admissions practices</a>, <a target="_blank" href="https://apps.urban.org/features/school-funding-do-poor-kids-get-fair-share/">underinvestment in K–12 education</a>, and <a target="_blank" href="https://www.nber.org/papers/w18586">varying student preferences</a>&#8212;as well as policies and practices that often aren’t designed to help underrepresented students access high-quality postsecondary education opportunities. These gaps can <a target="_blank" href="https://www.nber.org/papers/w23618">perpetuate earnings and wealth disparities</a> between racial and ethnic groups.
         </p>
         <p>
-           Most colleges can easily find a diverse group of potential students, but many schools have student bodies that don’t look like the pool of potential students they could enroll. We look at two-and four-year colleges and universities to see which racial and ethnic groups are over-and underrepresented based on the population of the school’s market. This market area varies depending on the type of school and the distance current students are willing to travel to attend that college.
+           Most colleges can easily find a diverse group of potential students, but many schools have student bodies that don’t look like the pool of potential students they could enroll. We look at two- and four-year colleges and universities to see which racial and ethnic groups are over- and underrepresented based on the population of the school’s market. This market area varies depending on the type of school and the distance current students are willing to travel to attend that college.
         </p>
         <p>
             Exploring these trends can inform efforts to expand access to postsecondary education options that improve people’s lives, especially for those who have historically and systematically been denied those opportunities.
@@ -87,7 +87,7 @@
               </td>
               <td>
                 <h5>Data highlight</h5>
-                <p>White students are becoming less overrepresented at highly selective US public colleges</p>
+                <p>White overrepresention is falling at highly selective US public colleges</p>
                 <a href="#chart-area-container">
                   <p class="scenario-trigger">See the chart</p>
                 </a>
@@ -175,15 +175,15 @@
 
     <div id="options-panel">
       <div id="state-menu"> 
-        <h4 class="selection-label">State</h4>
+        <h4 class="selection-label">Choose a state</h4>
         <select id="dropdown"></select>
       </div>
 
       <div id="school-selection">
-        <h4 class="selection-label">College</h4>
-        <input type="" name="" id="school-lookup" class="ui-autocomplete-input" autocomplete="off" value="Start typing..."><br>
-        <img id = "school-lookup-icon" src = "images/searchIcon.png"/>
-        <p id="school-description" class="explainer">Sector: <span>4-year, selective public</span></p>
+        <h4 class="selection-label">Choose a college</h4>
+        <input type="" name="" id="school-lookup" class="ui-autocomplete-input active" autocomplete="off" value="Alabama A & M University"><br>
+        <img id = "school-lookup-icon" class="active" src = "images/closeIcon.png"/>
+        <p id="school-description" class="explainer"><span>Sector: 4-year, selective public</span></p>
         <p class="label">School comparison</p>
         <input id="school-comparison" type="checkbox">
         <label class="check-switch" for="school-comparison"></label>
@@ -239,6 +239,7 @@
             </svg>
 
           </div>
+
           <div class="text-wrapper"><p>Trends over time</p></div>
         </div>
         <div class="mobile-btn-wrapper">  
@@ -279,11 +280,13 @@
           <div class="legend"></div>
         </div>
         <div id="second-chart-container" class="chart-div">
+          <!-- Average Representation at 4-year Public Nonselective Alabama Colleges over Time, by Race or Ethnicity -->
           <h4 class="chart-title">Average Representation at <span>Public Nonselective</span> <span>US</span> Colleges over Time, by Race or Ethnicity</h4>
           <h3>Relative to market of potential students</h3>
           <div class="legend"></div>
         </div>
         <div id="third-chart-container" class="chart-div">
+          <!-- Average (X Race) Representation at (4-year/2-year) (US/State) Colleges over Time, by College Sector -->
           <h4 class="chart-title">Average <span>Hispanic</span> Representation at <span>US</span> Colleges over Time, by College Sector</h4>
           <h3>Relative to market of potential students</h3>
           <div class="legend"></div>
@@ -339,7 +342,7 @@
           Our national averages measure the average representativeness of colleges in the nation and are weighted by total college enrollment. Our state average estimates use a similar logic.
         </p>
         <p>
-          We use the Carnegie classifications of institutional selectivity, which categorizeuniversities into three groups: “nonselective”,“selective”, and “more selective”.
+          We use the Carnegie classifications of institutional selectivity, which categorize universities into three groups: “nonselective,” “selective,” and “more selective.”
         </p>
         <p>
           Our dataset does not include private nonprofit two-year colleges, colleges that focus on distance education, colleges whose enrollment drops below 30 students during the study period, and colleges that appear less than five years in the IPEDS data study period. We also exclude the race or ethnicity group “other” because of concerns about interpretation and because our data sources may define this group differently.
@@ -383,8 +386,8 @@
     <script type="text/javascript" src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- endbuild -->
     <!-- build:js scripts/main.js -->
-<script src=https://cdn.jsdelivr.net/npm/promise-polyfill@8.1/dist/polyfill.min.js></script>
-<script src=https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0/dist/fetch.umd.min.js></script>
+    <script src=https://cdn.jsdelivr.net/npm/promise-polyfill@8.1/dist/polyfill.min.js></script>
+    <script src=https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0/dist/fetch.umd.min.js></script>
     <script src="node_modules/jquery-ui-dist/jquery-ui.js"></script>
     <script src="node_modules/d3-simple-slider/dist/d3-simple-slider.js"></script>
     <script src="node_modules/d3/dist/d3.js"></script>
@@ -395,68 +398,6 @@
 </html>
 
 
-
-<!-- <p class="options-panel-section">College Sectors</p>
-<p class="program-length-hed">4-year</p>
-<p class="program-type">Public</p>
-<div>
-  <label class="n-radio-label">
-    <input type="radio" class="sector-radios n-radio " id="public-nonselective" name="sector-radios" value="public-nonselective" >
-    <span>>Nonselective</span>
-  </label>
-</div>
-<div>
-  <label class="n-radio-label">
-    <input type="radio" class="sector-radios n-radio " name="sector-radios" value="public-selective"/>
-    <span>Selective</span>
-  </label>
-</div>
-<div>
-  <label class="n-radio-label">
-  <input type="radio" class="sector-radios n-radio " name="sector-radios" value="public-highly-selective"/>
-  <span>>More selective</span>
-  </label>
-</div>
-<p class="program-type">Private</p>
-<div>
-  <label class="n-radio-label">
-    <input type="radio" class="sector-radios n-radio " name="sector-radios" value="private-nonselective"/>
-    <span>Nonselective</span>
-  </label>
-</div>
-<div>
-  <label class="n-radio-label">
-    <input type="radio" class="sector-radios n-radio " name="sector-radios" value="private-selective"/>
-    <span>Selective</span>
-  </label>
-</div>
-<div>
-  <label class="n-radio-label">
-    <input type="radio" class="sector-radios n-radio " name="sector-radios" value="private-highly-selective"/>
-    <span>More selective</span>
-  </label>
-</div>
-<p class="program-type">For-profit</p>
-<div>
-  <label class="n-radio-label">
-    <input type="radio" class="sector-radios n-radio " name="sector-radios" value="for-profit"/>
-    <span>All</span>
-  </label>
-</div>
-<p class="program-length-hed">2-year</p>
-<div>
-  <label class="n-radio-label">
-    <input type="radio" class="sector-radios two-year n-radio" name="sector-radios" value="two-year-public"/>
-    <span>Public</span>
-  </label>
-</div>
-<div>
-  <label class="n-radio-label">
-    <input type="radio" class="sector-radios two-year n-radio" name="sector-radios" value="two-year-private"/>
-    <span>All</span>
-  </label>
-</div>
- -->
 
 
 
