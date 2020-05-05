@@ -618,7 +618,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		.x(function(d){ return xLine(parseTime(d.year)) })
 		.y(function(d){ return y(+d[selected[topic]]) })
 		.defined(function(d){ 
-			if (d[selected[topic]] === ""){
+			if (d[selected[topic]] === ''){
 				return false
 			} else {
 				return !isNaN(d[selected[topic]])  
@@ -1300,7 +1300,7 @@ function makeSchoolLookup(){
       higherEdSelections.arraySectors = [schoolDatum[SECTOR_KEY]]
 
       d3.select('#school-description > span')
-      	.text("Sector: " + schoolDatum.slevel + ', ' + schoolDatum[SECTOR_KEY].toLowerCase())
+      	.text('Sector: ' + schoolDatum.slevel + ', ' + schoolDatum[SECTOR_KEY].toLowerCase())
 
       d3.select('#comparison-def > span').text(schoolDatum.fips_ipeds)
 
