@@ -734,7 +734,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 
 	path.exit().remove();
 
-	d3.selectAll(".highlight-school").moveToFront();
+	d3.selectAll('.highlight-school').moveToFront();
 
 
 	if ( higherEdSelections.chartType === 'multiple-schools' ){
