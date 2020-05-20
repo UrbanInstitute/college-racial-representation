@@ -25,7 +25,7 @@ if (!Object.entries) {
         resArray = new Array(i); // preallocate the Array
     while (i--)
       resArray[i] = [ownProps[i], obj[ownProps[i]]];
-    
+
     return resArray;
   };
 }
@@ -43,7 +43,7 @@ var higherEdData = {};
 
 // the user selections
 var higherEdSelections = {};
-	higherEdSelections.geography = getQueryParam('geography','national',['national','state','school']), 
+	higherEdSelections.geography = getQueryParam('geography','national',['national','state','school']),
 	higherEdSelections.chartType = getQueryParam('chart-type','single-year-bar',['single-year-bar', 'by-sector-chart', 'by-race-chart', 'one-school-all-races-container', 'multiple-schools']) ,
 	higherEdSelections.year = getQueryParam('year','2017', Array.apply(null, Array(9)).map(function (o, i) {return String(i + 2009);})) //strings of years 2009 -> 2017
 	higherEdSelections.programLength = getQueryParam('program-length','four',['two', 'four'])
@@ -67,7 +67,7 @@ var SECTOR_KEY = higherEdSelections.programLength + 'cat',
 var storedWidth = document.body.clientWidth;
 var IS_MOBILE = storedWidth < 769 ? true : false ;
 
-var optionsPanelTotalWidth = 
+var optionsPanelTotalWidth =
 	IS_MOBILE ? 0 :
 	parseInt(d3.select('#options-panel').style('width')) + parseInt(d3.select('#options-panel').style('margin-right')),
 	pageContainerWidth = parseInt(d3.select('.page-container').style('width')),
@@ -140,7 +140,11 @@ var oneSchoolG = oneSchoolSVG.append('g')
 d3.select(window).on('resize', resize);
 
 
-
+    if (window.innerWidth > 1530){
+      d3.select('#heroimage').style('background-size', 'cover')
+    } else {
+      d3.select('#heroimage').style('background-size', 'contain')
+    }
 
 
 function resize(){
@@ -152,9 +156,15 @@ function resize(){
 
     IS_MOBILE = storedWidth < 768 ? true : false ;
 
+    if (window.innerWidth > 1530){
+      d3.select('#heroimage').style('background-size', 'cover')
+    } else {
+      d3.select('#heroimage').style('background-size', 'contain')
+    }
+
     optionsPanelTotalWidth = parseInt(d3.select('#options-panel').style('width')) + parseInt(d3.select('#options-panel').style('margin-right'))
-    if (IS_MOBILE){ 
-    	optionsPanelTotalWidth = 0 
+    if (IS_MOBILE){
+    	optionsPanelTotalWidth = 0
     	d3.selectAll('#first-dynamic-menu, #second-dynamic-menu').style('display', 'none')
     	d3.select('#mobile-filter-options').style('display', 'inline')
     } else {
@@ -196,7 +206,7 @@ function resize(){
 		'multiple-schools': higherEdSelections.singleRace,
 		'one-school-all-races-container': higherEdSelections.singleRace
 	}
-	if (higherEdSelections.chartType !== 'single-year-bar'){		
+	if (higherEdSelections.chartType !== 'single-year-bar'){
 	    xLine.range([margin.left, width - margin.right])
 	    var line = d3.line()
 	  		.x(function(d){ return xLine(parseTime(d.year)) })
@@ -219,6 +229,8 @@ function resize(){
       .attr('x2', chartHole - margin.left)
 
     showChart(higherEdSelections.chartType);
+
+
 
   }
 }
@@ -291,19 +303,19 @@ function addArrowsToHighlights(){
 	if (window.innerWidth < 950){
 		d3.selectAll('.caret').style('display', 'inline')
 		d3.selectAll('img.caret').on('click', function(){
-			
+
 			var isLeft = d3.select(this).classed('left')
 			//get the ID of wrapping div to know whether scenario1, 2 or 3
 			var wrappingDiv = this.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement
 			var id = wrappingDiv.getAttribute('id'),
 			multiplier = id.substring(id.length - 1)
-			
+
 			var chartScootch = isLeft ? (parseInt(d3.select(wrappingDiv).style('width')) * -1) * (multiplier -2) :
 			(parseInt(d3.select(wrappingDiv).style('width')) * -1) * multiplier
 			d3.select('#scenario1').style('margin-left', chartScootch + 'px')
 		})
-		
-		// var scootch = ( parseInt(d3.select('div.scenario').style('height')) / 2 ) - 30 + 'px'		
+
+		// var scootch = ( parseInt(d3.select('div.scenario').style('height')) / 2 ) - 30 + 'px'
 		// d3.selectAll('.caret').style('bottom', scootch)
 	} else {
 		d3.selectAll('.caret').remove();
@@ -405,10 +417,10 @@ function drawBarChart(data, animate){
 		  .classed('sector', true)
 	sectorContainers.selectAll('svg').remove()
 	console.log(barChartWidth, barChartHeight)
-	
+
 	var sectorSvgs = sectorContainers
 		.append('svg').attr('width',barChartWidth).attr('height', barChartHeight)
-		
+
 var sectorGroups = sectorSvgs.append('g')
 		.attr('transform', 'translate(0,12)')
 
@@ -433,15 +445,15 @@ sectorSvgs
 
 	var sectorLabels = sectorGroups.append('text')
 		.classed('sector-label', true)
-		.text(function(d){ 
+		.text(function(d){
 			var string = d[SECTOR_KEY]
-			return higherEdSelections.programLength === 'four' ? string : 
-				string.slice(0, string.length - 7) }) 
+			return higherEdSelections.programLength === 'four' ? string :
+				string.slice(0, string.length - 7) })
 		.attr('text-anchor', 'middle')
 		.attr('font-size', 16)
 		.attr('x', xBar(0))
       	.attr('y', 0)
- 
+
 	sectorContainers.exit().remove();
 
 	var barG = sectorGroups.selectAll('g')
@@ -521,7 +533,7 @@ sectorSvgs
     .classed('bar-labels', true)
     .text(function(d){ return formatTwoDecimals(d.value) + '%' })
     .attr('x', function(d){
-    	return animate ? xBar(0) : +d.value > 0 ? xBar(d.value) + 3 : xBar(d.value) - 2 
+    	return animate ? xBar(0) : +d.value > 0 ? xBar(d.value) + 3 : xBar(d.value) - 2
     })
     .attr('text-anchor', function(d){ return  +d.value > 0 ? 'start' : 'end' })
     .attr('y', function(d){ return y1(d.key) + y1.bandwidth()*.5 + 3 })
@@ -529,10 +541,10 @@ sectorSvgs
     if(animate){
     	barLabels.transition()
 		    .attr('x', function(d){
-		    	return +d.value > 0 ? xBar(d.value) + 3 : xBar(d.value) - 2 
+		    	return +d.value > 0 ? xBar(d.value) + 3 : xBar(d.value) - 2
 		    })
     }
-    
+
     d3.selectAll('li.key-item-bar').remove();
     var legendData = higherEdSelections.arrayRaces.sort(d3.ascending)
 	var keys = barLegend.selectAll('li.key-item-bar')
@@ -620,15 +632,15 @@ function drawLineChart(data, topic, svg, g, axisSelection){
   	.attr('y', height + margin.bottom)
   	.attr('x', width/2)
   	.attr('class', 'axis-label')
-    
+
 	var line = d3.line()
 		.x(function(d){ return xLine(parseTime(d.year)) })
 		.y(function(d){ return y(+d[selected[topic]]) })
-		.defined(function(d){ 
+		.defined(function(d){
 			if (d[selected[topic]] === ''){
 				return false
 			} else {
-				return !isNaN(d[selected[topic]])  
+				return !isNaN(d[selected[topic]])
 			}
 		})
 
@@ -636,8 +648,8 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 	svg.append('g')
 		.attr('class','x-axis')
 		.attr('transform', 'translate(' + margin.left + ',' + (height + margin.top - margin.bottom) + ')')
-		.call(d3.axisBottom(xLine).tickFormat( function(d){ return IS_MOBILE ? '\'' + d3.timeFormat('%y')(d) : 
-			d3.timeFormat('%Y')(d) 
+		.call(d3.axisBottom(xLine).tickFormat( function(d){ return IS_MOBILE ? '\'' + d3.timeFormat('%y')(d) :
+			d3.timeFormat('%Y')(d)
 		}) );
 
 	var yAxis = d3.axisLeft(y)
@@ -663,11 +675,11 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 		})
 
 	var path = g.selectAll('path')
-		.data(data, function(d){ 
+		.data(data, function(d){
 			//on second pass here (from voronoi fx?) d is undefined for 'school comparison', so added this check
 			if (typeof(d) != 'undefined' && d.hasOwnProperty('key')) {
-			 	return d.key 
-			} 
+			 	return d.key
+			}
 		})
 
 	path.enter()
@@ -681,7 +693,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 			return raceColorObj[d.key]
 			}
 	      })
-		.attr('stroke-width', function(d){   
+		.attr('stroke-width', function(d){
 			        		if (d.key !== higherEdSelections.selectedSchool){
 				        		return 2
 				        	} else {
@@ -745,20 +757,20 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 			            .style('left', (d3.event.pageX) + 'px')
 			            .style('top', (d3.event.pageY - 28) + 'px');
 			        d3.select('path[data-cat=' + classify(d.data.inst_name) +  ']')
-			        	.attr('stroke-width', function(d){   
+			        	.attr('stroke-width', function(d){
 			        		if (d.key !== higherEdSelections.selectedSchool){
 				        		return 4
 				        	} else {
 				        		return 6
 				        	}
 				        })
-			        	.style('stroke', function(d){    		
+			        	.style('stroke', function(d){
 			        		if (d.key !== higherEdSelections.selectedSchool){
 				        		return '#353535'
 				        	}
 				        })
 				        .attr('opacity', 1)
-	        
+
 				})
 				.on('mouseout', function(d){
 					tt.style('opacity', 0)
@@ -782,7 +794,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 						})
 				})
 	}
-		
+
 
 	function makeLegend(selection, data, isRaceChart){
 		data.sort(d3.ascending)
@@ -795,11 +807,11 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 			.attr('data-cat', function(d){ return isRaceChart ? classify(d) : d })
 			.classed('key-item-line', true)
 			.classed('race', isRaceChart)
-			.style('border-left', function(d){ 
+			.style('border-left', function(d){
 				var color = isRaceChart ? raceColorObj[d] : sectorColorObj[classify(d)];
 				return '17px solid ' + color;
 			})
-			.text(function(d){ 
+			.text(function(d){
 				if (isRaceChart){
 					return translateRace[d];
 				} else {
@@ -809,7 +821,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 					sectorLabel = firstLetter.concat(remainingLetters)
 					return sectorLabel
 				}
-				
+
 			})
 	}
 
@@ -920,9 +932,9 @@ function buildOptionPanel(chartType){
 				.html(function(d){ return checkboxTemplater(d) })
 
 		} else if (chartType === 'one-school-all-races-container'){
-	      
+
 	      d3.select('#school-selection').style('display', 'block');
-	      
+
 	      d3.select('#time-selection').style('display', 'none');
 	      d3.select('#state-menu').style('display', 'none');
 
@@ -942,7 +954,7 @@ function buildOptionPanel(chartType){
 	  	} else if (chartType === 'multiple-schools'){
 
 	  		d3.select('#school-selection').style('display', 'block');
-	      
+
 	      d3.select('#time-selection').style('display', 'none');
 	      d3.select('#state-menu').style('display', 'none');
 
@@ -1010,7 +1022,7 @@ function buildOptionPanel(chartType){
 			if (selectionIndex > -1 && higherEdSelections.arraySectors.length < 1){
 		      higherEdSelections.arraySectors.push(translate[userChoice])
 		      d3.select('input[value=' + userChoice + ']').property('checked', true)
-			} 
+			}
 			callSectorLine()
 			callBarChart(higherEdSelections.year, true);
 
@@ -1050,7 +1062,7 @@ function buildOptionPanel(chartType){
 		})
 
 		//now make all the checked radios & boxes match current selections
-		d3.select('div.race-ethnicity-radios> div > label > input[value=' + higherEdSelections.singleRace + ']').property('checked', true);	
+		d3.select('div.race-ethnicity-radios> div > label > input[value=' + higherEdSelections.singleRace + ']').property('checked', true);
 
 		d3.select('input.sector-radios[value=' + translateBack[higherEdSelections.singleSector] + ']').property('checked', true)
 		d3.selectAll('.race-checkbox-wrapper > div > input')
@@ -1058,7 +1070,7 @@ function buildOptionPanel(chartType){
 		d3.selectAll('input.sector-boxes')
 			.property('checked', function(d){ return higherEdSelections.arraySectors.indexOf(translate[this.value]) > -1 });
 
-			
+
 		if (higherEdSelections.programLength === 'four'){
 			d3.selectAll('.two-year').classed('inactive', true);
 			d3.selectAll('.four-year, .program-type').classed('inactive', false);
@@ -1075,14 +1087,14 @@ function buildOptionPanel(chartType){
 
 		 d3.selectAll('.options-panel-section').append('span').attr('class', 'minimize').html('&#8212').on('click', function(){
 			var div = this.parentElement.parentElement.getAttribute('id')
-			d3.select('#' + div + '> div.collapsible').classed('collapsed', !d3.select('#' + div + '> div.collapsible').classed('collapsed'))	
-	    	
-	    	this.innerHTML === '—' ? d3.select(this).html('+') : d3.select(this).html('&#8212') 
+			d3.select('#' + div + '> div.collapsible').classed('collapsed', !d3.select('#' + div + '> div.collapsible').classed('collapsed'))
+
+	    	this.innerHTML === '—' ? d3.select(this).html('+') : d3.select(this).html('&#8212')
 	    })
 		 //second menu collapsed by default
 		d3.select('#second-dynamic-menu > p > span.minimize').html('+')
 
-		 if ( higherEdSelections.chartType === 'one-school-all-races-container' || higherEdSelections.chartType === 'multiple-schools'){		 	
+		 if ( higherEdSelections.chartType === 'one-school-all-races-container' || higherEdSelections.chartType === 'multiple-schools'){
 		 	d3.selectAll('.minimize').remove();
 		 }
 
@@ -1099,7 +1111,7 @@ function buildOptionPanel(chartType){
 		}).on('mouseout', function(d) {
 	        	panelMouseover.style('opacity', 0);
 	    });
-	if (IS_MOBILE){		
+	if (IS_MOBILE){
     	if (higherEdSelections.chartType === 'single-year-bar'){
     		d3.select('#race-ethnicity-filter').style('display', 'none')
     		d3.select('#sector-filter').style('display', 'inline-block')
@@ -1117,9 +1129,9 @@ function buildOptionPanel(chartType){
     		d3.select('#year-input-wrapper').style('display', 'none')
     	}
 	}
-    
+
 }
-		
+
 d3.select('#school-comparison').on('click', function(d){
   //toggle the chart type
   if (higherEdSelections.chartType === 'one-school-all-races-container'){
@@ -1139,7 +1151,7 @@ function callBarChart(year, animate){
 	}
 	var programLength = higherEdSelections.programLength === 'two' ? '2-Year ' : '4-Year ' ;
 	if (higherEdSelections.geography === 'national'){
-		
+
 		d3.select('#first-chart-container > h4 > span:nth-child(1)').text(programLength + 'US');
 	} else {
 		d3.select('#first-chart-container > h4 > span:nth-child(1)').text(programLength + higherEdSelections.state);
@@ -1148,7 +1160,7 @@ function callBarChart(year, animate){
 	var twoYears = ['Public 2-Year', 'For-Profit 2-Year']
 
 	for ( var i = 0; i < higherEdSelections.arraySectors.length; i ++ ){
-		//if a sector in the array IS a two year and the program length is four 
+		//if a sector in the array IS a two year and the program length is four
 		if ( twoYears.indexOf(higherEdSelections.arraySectors[i]) > -1 && higherEdSelections.programLength === 'four' ){
 			convertSelectors('two')
 		}
@@ -1174,7 +1186,7 @@ function callSectorLine(){
 	var twoYears = ['Public 2-Year', 'For-Profit 2-Year']
 
 	for ( var i = 0; i < higherEdSelections.arraySectors.length; i ++ ){
-		//if a sector in the array IS a two year and the program length is four 
+		//if a sector in the array IS a two year and the program length is four
 		if ( twoYears.indexOf(higherEdSelections.arraySectors[i]) > -1 && higherEdSelections.programLength === 'four' ){
 			convertSelectors('two')
 		}
@@ -1194,7 +1206,7 @@ function callRaceLine(){
 	var twoYears = ['Public 2-Year', 'For-Profit 2-Year']
 
 	for ( var i = 0; i < higherEdSelections.arraySectors.length; i ++ ){
-		//if a sector in the array IS a two year but the program length is four 
+		//if a sector in the array IS a two year but the program length is four
 		if ( twoYears.indexOf(higherEdSelections.arraySectors[i]) > -1 && higherEdSelections.programLength === 'four' ){
 			convertSelectors('two')
 		}
@@ -1203,7 +1215,7 @@ function callRaceLine(){
 			convertSelectors('four')
 		}
 	}
-	
+
 	//if the singleSector is a two year school, set everything to 'two', otherwise 'four'
 	if (twoYears.indexOf(higherEdSelections.singleSector) > -1 ){
 		convertSelectors('two')
@@ -1232,8 +1244,8 @@ function callComparisonChart(){
 	higherEdSelections.programLength = pgmLength === '4-year' ? 'four' : 'two'
 
 	var stateAverage = higherEdData.allData['state' + higherEdSelections.programLength].filter(function(d){
-		return d[higherEdSelections.programLength + 'cat'] === higherEdSelections.singleSector && 
-		d.fips_ipeds === higherEdSelections.state 
+		return d[higherEdSelections.programLength + 'cat'] === higherEdSelections.singleSector &&
+		d.fips_ipeds === higherEdSelections.state
 	})
 
 	var nestedState = d3.nest().key(function(d){ return d.fips_ipeds }).entries(stateAverage);
@@ -1269,7 +1281,7 @@ function makeDropdown(data){
                       .text(function(d){ return d })
                       .attr('value', function(d){ return d })
                       .property('selected', function(d){ return d === higherEdSelections.state })
-  
+
   $('#dropdown').selectmenu({
   	change: menuSelected
   })
@@ -1277,7 +1289,7 @@ function makeDropdown(data){
 
 function menuSelected(){
 	higherEdSelections.state = this.value;
-	
+
 	d3.select('#third-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
 	d3.select('#second-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.state);
 
@@ -1291,11 +1303,11 @@ function menuSelected(){
 }
 
 function makeSchoolLookup(){
-	var schools = d3.nest().key(function(d){ 
+	var schools = d3.nest().key(function(d){
 		return d.unitid })
 	.entries(higherEdData.allData.schoolfour)
-	
-	schools.map(function(d){ 
+
+	schools.map(function(d){
 		return d.label = d.values[0].inst_name
 	})
 
@@ -1315,7 +1327,7 @@ function makeSchoolLookup(){
       								//this will always be 'schoolfour'
       var schoolDatum = higherEdData.allData[SELECTED_DATASET].filter(function(d){
       	return d.inst_name === higherEdSelections.selectedSchool })[0]
-      
+
       higherEdSelections.programLength = schoolDatum.slevel === '4-year' ? 'four' : 'two' ;
       //all school stuff is schoolfour/fourcat
       SECTOR_KEY = 'fourcat'
@@ -1397,7 +1409,7 @@ function initializeStaticControls(){
 
 
 		if ( userChoice === 'state'){
-			
+
 			if (!IS_MOBILE){
 				d3.select('#first-dynamic-menu').style('display', 'block');
 				d3.select('#second-dynamic-menu').style('display', 'block');
@@ -1442,7 +1454,7 @@ function initializeStaticControls(){
 				d3.select('.disable-box').style('visibility', 'hidden')
 			}
 		} else if ( userChoice === 'national' ){
-		    if (!IS_MOBILE){	    	
+		    if (!IS_MOBILE){
 			    d3.select('#first-dynamic-menu').style('display', 'block')
 			    d3.select('#second-dynamic-menu').style('display', 'block')
 		    } else {
@@ -1463,7 +1475,7 @@ function initializeStaticControls(){
 		      d3.select('.time-selector.main-choice.bar').classed('selected', true);
 		      d3.select('.disable-box').style('visibility', 'hidden')
 		  	  higherEdSelections.chartType = 'single-year-bar'
-			}  
+			}
 
 		} else if ( userChoice === 'school' ){
       		d3.select('#school-comparison').property('checked', false);
@@ -1555,7 +1567,7 @@ function initializeStaticControls(){
 			SELECTED_DATASET = 'nationalfour'
 			SECTOR_KEY = 'fourcat'
 
-			
+
 			d3.select('#state-menu').style('display', 'none')
 			d3.select('#school-selection').style('display', 'none')
 			d3.select('#first-chart-container > h4 > span:nth-child(1)').text('US');
@@ -1598,7 +1610,7 @@ function initializeStaticControls(){
 	        d3.selectAll('.time-selector.main-choice.line').classed('selected', true);
 	        d3.selectAll('div.sub-choice').classed('active-unselected', true);
 	        d3.select('div.sub-choice[value=\'' + higherEdSelections.chartType + '\']').classed('selected', true);
-	        
+
 	        if (!IS_MOBILE){
 	        	d3.select('#time-selection').style('display', 'block');
 			    d3.select('#first-dynamic-menu').style('display', 'block');
@@ -1643,6 +1655,7 @@ function initializeStaticControls(){
 			d3.select('path.data-line.dif_black').attr('stroke-width', 4)
 
 			d3.select('#school-lookup').property('value', 'Wayne State University')
+      d3.select('#comparison-def > span').text('Michigan')
 		}
 		d3.selectAll('div.geography-choices').classed('selected', false)
 		d3.select('div.geography-choices[data-cat="' + higherEdSelections.geography + '"]').classed('selected', true)
@@ -1711,12 +1724,12 @@ d3.selectAll('.filter-btn').on('click', function(){
 				//alert('Please pick at least one sector')
 		      higherEdSelections.arraySectors.push(translate[userChoice])
 		      d3.select('.sector-boxes > div > input[value=' + userChoice + ']').property('checked', true)
-			} 
+			}
 			callBarChart(higherEdSelections.year, true);
 
 		})//end sector boxes
 
-	} else if (higherEdSelections.chartType === 'by-sector-chart'){	
+	} else if (higherEdSelections.chartType === 'by-sector-chart'){
 		var div = d3.select('div.slider').append('div').attr('class', 'pop-up-menu').style('margin-top', '35px')
 		div.append('p').attr('class', 'options-panel-section').style('display', 'inline').text('Race/Ethnicity')
 		div.append('span').attr('id', 'close-btn').style('left', scootch).html('&times;').on('click', function(){
@@ -1734,7 +1747,7 @@ d3.selectAll('.filter-btn').on('click', function(){
 				higherEdSelections.singleRace = userChoice;
 			    if (higherEdSelections.chartType === 'by-sector-chart'){
 			  		d3.select('#third-chart-container > h4 > span').text(translateRace[userChoice]);
-			  		d3.select('div.race-ethnicity-radios> div > label > input[value=' + higherEdSelections.singleRace + ']').property('checked', true);	
+			  		d3.select('div.race-ethnicity-radios> div > label > input[value=' + higherEdSelections.singleRace + ']').property('checked', true);
 			  		callSectorLine();
 			    } else if (chartType === 'multiple-schools'){
 			      callComparisonChart();
@@ -1748,7 +1761,7 @@ d3.selectAll('.filter-btn').on('click', function(){
 		})
 		div.append('div').html(COLLEGE_SECTOR_RADIOS)
 		d3.selectAll('.sector-radios').on('click', function(){
-			
+
 			higherEdSelections.singleSector = translate[this.value];
 			if (d3.select(this).classed('two-year')){
 				convertSelectors('two')
@@ -1784,7 +1797,7 @@ function raceCheckboxListener(){
 		//force there to be at least one
 		higherEdSelections.arrayRaces = [userChoice]
 		d3.select('input[value="' + userChoice + '"]').property('checked', true)
-	} 
+	}
 	if (higherEdSelections.chartType === 'one-school-all-races-container'){
       callSchoolChart();
     } else {
@@ -1832,7 +1845,7 @@ function makeDemogNest(sector, isSchoolData){
 		var schoolID = higherEdData.allData.schoolfour.filter(function(d){
 			return d.inst_name === higherEdSelections.selectedSchool
 		})[0].unitid
-		
+
 										//schools dumped into one csv named schoolfour
 		schoolOrSector = higherEdData.allData.schoolfour.filter(function(d){
 					return d.unitid === schoolID
@@ -1885,7 +1898,7 @@ function init(){
     }
 
   	if(higherEdSelections.geography == 'national'){
-  		
+
 		d3.select('#time-selection').style('display', 'block');
 		d3.select('#state-menu').style('display', 'none')
 		d3.select('#school-selection').style('display', 'none')
@@ -1927,7 +1940,7 @@ function init(){
   	else if(higherEdSelections.geography == 'school'){
 			d3.select('#school-comparison').property('checked', false);
 			d3.select('#fourth-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.selectedSchool)
-			
+
 			makeSchoolLookup(nestedSchools);
 
   	}
@@ -1966,7 +1979,7 @@ function init(){
 			var sLevel = higherEdSelections.programLength === 'two' ? '2-year' : '4-year'
 			d3.select('#school-description > span').text(sLevel + ', ' + higherEdSelections.singleSector.toLowerCase())
       		d3.select('#comparison-def > span').text(higherEdSelections.state)
-			break;	
+			break;
 	}
 
 	d3.selectAll('div.geography-choices').classed('selected', false)
@@ -1975,7 +1988,7 @@ function init(){
 	showChart(higherEdSelections.chartType)
   	d3.select('#first-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.year);
 	//draw your default chart, bars for 2017: all races/sectors
-	
+
 
 	d3.select('#tmpClick').on('click', getShareUrl)
 

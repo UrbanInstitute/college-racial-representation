@@ -135,6 +135,10 @@ a:hover {
     width: 70%;
 }
 
+.hed, .dateline, #intro {
+  background-color: #FFFFFF;
+}
+
 div.page-container {
   padding-top: $spacing-unit;
   margin: 0 auto;
@@ -176,7 +180,7 @@ h1 {
 .dateline {
   // background: white;
   font-size: 18px;
-  
+
   // margin-bottom: 0px;
 }
 
@@ -186,7 +190,7 @@ h1 {
 }
 
 #intro {
-  
+
   margin-right: auto;
   margin-left: auto;
   margin-bottom: 80px;
@@ -283,7 +287,7 @@ div.tooltip {
   // border-bottom: 2px solid $magenta-5;
   color: #000000;
   text-shadow:
-   -1px -1px 0 #FFFFFF,  
+   -1px -1px 0 #FFFFFF,
     1px -1px 0 #FFFFFF,
     -1px 1px 0 #FFFFFF,
      1px 1px 0 #FFFFFF;
@@ -502,7 +506,7 @@ li.key-item-line, li.key-item-bar, li.key-item-comparison, text.key-item-bar {
 
 #first-chart-container > div.legend > .key {
   margin-bottom: 0;
-} 
+}
 
 // menu panel styling
 
@@ -1035,7 +1039,7 @@ div.time-selector.main-choice > div.btn-img-wrapper > svg {
   left: 0;
   padding-left: 30px;
   overflow: hidden;
-  background-color: #FFFFFF; 
+  background-color: #FFFFFF;
   transition: all;
   transition-duration: .5s;
   transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
@@ -1062,7 +1066,7 @@ input#school-comparison[type=checkbox]{
   height: 0;
   width: 0;
   visibility: hidden;
-  margin-bottom: 20px;  
+  margin-bottom: 20px;
 }
 
 label.check-switch {
@@ -1149,7 +1153,7 @@ label.check-switch:active:after {
 
 
 
-@media (max-width: 900px) { 
+@media (max-width: 900px) {
   div.page-container {
     padding-top: 0;
     width: 90%;
