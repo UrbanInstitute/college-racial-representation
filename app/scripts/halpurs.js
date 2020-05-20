@@ -126,7 +126,7 @@ var sectorColorObj = {
   'for-profit': '#fdbf11',
   'private-more-selective': '#98cf90',
   'private-nonselective': '#55b748',
-  'private-selective': '#2c5c2d',
+  'private-selective': '#408941',
   'public-more-selective': '#73bfe2',
   'public-nonselective': '#1696d2',
   'public-selective': '#0a4c6a',

@@ -30,6 +30,13 @@ if (!Object.entries) {
   };
 }
 
+// https://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-the-front-with-d3
+d3.selection.prototype.moveToFront = function() {
+  return this.each(function(){
+    this.parentNode.appendChild(this);
+  });
+};
+
 // the datas
 var higherEdData = {};
 	higherEdData.allData = {};
@@ -674,7 +681,13 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 			return raceColorObj[d.key]
 			}
 	      })
-		.attr('stroke-width', 2)
+		.attr('stroke-width', function(d){   
+			        		if (d.key !== higherEdSelections.selectedSchool){
+				        		return 2
+				        	} else {
+				        		return 4
+				        	}
+				        })
 		.attr('class', function(d,i){
 			var string = 'data-line ';
 			if (topic==='comparison'){
@@ -709,6 +722,9 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 
 	path.exit().remove();
 
+	d3.selectAll(".highlight-school").moveToFront();
+
+
 	if ( higherEdSelections.chartType === 'multiple-schools' ){
 
 		var voronoi = d3.voronoi()
@@ -729,10 +745,16 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 			            .style('left', (d3.event.pageX) + 'px')
 			            .style('top', (d3.event.pageY - 28) + 'px');
 			        d3.select('path[data-cat=' + classify(d.data.inst_name) +  ']')
-			        	.attr('stroke-width', 4)
+			        	.attr('stroke-width', function(d){   
+			        		if (d.key !== higherEdSelections.selectedSchool){
+				        		return 4
+				        	} else {
+				        		return 6
+				        	}
+				        })
 			        	.style('stroke', function(d){    		
 			        		if (d.key !== higherEdSelections.selectedSchool){
-				        		return '#9d9d9d'
+				        		return '#353535'
 				        	}
 				        })
 				        .attr('opacity', 1)
@@ -743,12 +765,14 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 					d3.select('path[data-cat=' + classify(d.data.inst_name) +  ']')
 						.style('stroke', function(d){
 							if (d.key !== higherEdSelections.selectedSchool){
-				        		return '#D2D2D2'
+				        		return '#969696'
 				        	}
 						})
 						.attr('stroke-width', function(d){
 							if (d.key !== higherEdSelections.selectedSchool){
 				        		return 2
+				        	} else {
+				        		return 4
 				        	}
 						})
 						.attr('opacity', function(d){
@@ -805,7 +829,7 @@ function drawLineChart(data, topic, svg, g, axisSelection){
 
   if (higherEdSelections.chartType === 'multiple-schools'){
     oneSchoolLegend.selectAll('li').remove();
-    var schoolComparisonColors = ['#1696D2', '#D2D2D2', '#000000']
+    var schoolComparisonColors = ['#1696D2', '#969696', '#000000']
     var keys = oneSchoolLegend.selectAll('li.key-item-comparison')
       .data([higherEdSelections.selectedSchool, higherEdSelections.state + ' ' + higherEdSelections.singleSector.toLowerCase() + ' college', 'State average'])
       .enter()
