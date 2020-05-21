@@ -142,13 +142,13 @@ var oneSchoolG = oneSchoolSVG.append('g')
 
 //http://eyeseast.github.io/visible-data/2013/08/26/responsive-d3/
 d3.select(window).on('resize', resize);
-	
+
 	var windowWidth = window.innerWidth
 
     if (windowWidth > 1530){
-      d3.select('#heroimage').style('background-size', 'cover')
+      d3.select('#heroimage').style('background-size', 'cover').style('height', windowWidth/1.585 + 'px')
     } else {
-      d3.select('#heroimage').style('background-size', 'contain').style('height', windowWidth/1.585)
+      d3.select('#heroimage').style('background-size', 'contain')
     }
 
 
@@ -162,7 +162,7 @@ function resize(){
     IS_MOBILE = storedWidth < 768 ? true : false ;
 
     if (window.innerWidth > 1530){
-      d3.select('#heroimage').style('background-size', 'cover')
+      d3.select('#heroimage').style('background-size', 'cover').style('height', storedWidth/1.585 + 'px')
     } else {
       d3.select('#heroimage').style('background-size', 'contain')
     }
@@ -1344,7 +1344,7 @@ function makeSchoolLookup(){
       higherEdSelections.arraySectors = [schoolDatum[SECTOR_KEY]]
 
   	var length = higherEdSelections.programLength === 'two' ? '' : '4-year '
-		
+
 
       d3.select('#school-description > span')
       	.text('Sector: ' + length +  schoolDatum[SECTOR_KEY].toLowerCase())
