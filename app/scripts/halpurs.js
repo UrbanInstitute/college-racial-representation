@@ -186,7 +186,7 @@ function getShareUrl(){
     ['singleRace','single-race','dif_hispa'],
     ['singleSector','single-sector','public-nonselective'],
     ['state','state','Alabama'],
-    ['selectedSchool','selected-school',encodeURIComponent('Alabama A & M University')],
+    ['selectedSchool','selected-school',encodeURIComponent('Northern Virginia Community College')],
     ['arrayRaces','array-race',Object.keys(translateRace)],
     ['arraySectors','array-sectors',Object.keys(translate).slice(2)]//default val is for four year, so doesn't include the 2 two-year options
   ]

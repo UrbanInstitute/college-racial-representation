@@ -45,12 +45,12 @@ var higherEdData = {};
 var higherEdSelections = {};
 	higherEdSelections.geography = getQueryParam('geography','national',['national','state','school']),
 	higherEdSelections.chartType = getQueryParam('chart-type','single-year-bar',['single-year-bar', 'by-sector-chart', 'by-race-chart', 'one-school-all-races-container', 'multiple-schools']) ,
-	higherEdSelections.year = getQueryParam('year','2017', Array.apply(null, Array(9)).map(function (o, i) {return String(i + 2009);})) //strings of years 2009 -> 2017
+	higherEdSelections.year = getQueryParam('year','2009', Array.apply(null, Array(9)).map(function (o, i) {return String(i + 2009);})) //strings of years 2009 -> 2017
 	higherEdSelections.programLength = getQueryParam('program-length','four',['two', 'four'])
 	higherEdSelections.singleRace = getQueryParam('single-race', 'dif_hispa', Object.keys(translateRace))
 	higherEdSelections.singleSector = translate[getQueryParam('single-sector','public-nonselective',Object.keys(translate))],
 	higherEdSelections.state = decodeURIComponent(getQueryParam('state','Alabama',['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming','District of Columbia'] )),
-  	higherEdSelections.selectedSchool = decodeURIComponent(getQueryParam('selected-school',encodeURIComponent('Alabama A & M University'),'all')),
+  	higherEdSelections.selectedSchool = decodeURIComponent(getQueryParam('selected-school',encodeURIComponent('Northern Virginia Community College'),'all')),
 	higherEdSelections.arrayRaces = getQueryParam('array-race',[],Object.keys(translateRace)),
 	higherEdSelections.arraySectors = getQueryParam('array-sectors',[],Object.keys(translate)),
 	higherEdSelections.defaultSchool = higherEdSelections.selectedSchool
@@ -90,6 +90,10 @@ var xLine, xBar,
 var MIN_YEAR = 2009,
     MAX_YEAR = 2017;
 
+
+var panelMouseover = d3.select('body').append('div')
+    .attr('class', 'tooltip panelmouseover')
+    .style('opacity', 0);
 
 //******The chart selections & their G's
 //bar chart
@@ -138,12 +142,13 @@ var oneSchoolG = oneSchoolSVG.append('g')
 
 //http://eyeseast.github.io/visible-data/2013/08/26/responsive-d3/
 d3.select(window).on('resize', resize);
+	
+	var windowWidth = window.innerWidth
 
-
-    if (window.innerWidth > 1530){
+    if (windowWidth > 1530){
       d3.select('#heroimage').style('background-size', 'cover')
     } else {
-      d3.select('#heroimage').style('background-size', 'contain')
+      d3.select('#heroimage').style('background-size', 'contain').style('height', windowWidth/1.585)
     }
 
 
@@ -449,9 +454,9 @@ sectorSvgs
 			var string = d[SECTOR_KEY]
 			return higherEdSelections.programLength === 'four' ? string :
 				string.slice(0, string.length - 7) })
-		.attr('text-anchor', 'middle')
+		.attr('text-anchor', function(){ return IS_MOBILE ? 'left' : 'middle' })
 		.attr('font-size', 16)
-		.attr('x', xBar(0))
+		.attr('x', function(){ return IS_MOBILE ? 0 : xBar(0) })
       	.attr('y', 0)
 
 	sectorContainers.exit().remove();
@@ -1098,9 +1103,9 @@ function buildOptionPanel(chartType){
 		 	d3.selectAll('.minimize').remove();
 		 }
 
-		var panelMouseover = d3.select('body').append('div')
-		    .attr('class', 'tooltip panelmouseover')
-		    .style('opacity', 0);
+		// var panelMouseover = d3.select('body').append('div')
+		//     .attr('class', 'tooltip panelmouseover')
+		//     .style('opacity', 0);
 
 		d3.selectAll('.more-info').on('mouseover', function(){
 	    	panelMouseover
@@ -1111,6 +1116,9 @@ function buildOptionPanel(chartType){
 		}).on('mouseout', function(d) {
 	        	panelMouseover.style('opacity', 0);
 	    });
+
+
+
 	if (IS_MOBILE){
     	if (higherEdSelections.chartType === 'single-year-bar'){
     		d3.select('#race-ethnicity-filter').style('display', 'none')
@@ -1335,8 +1343,11 @@ function makeSchoolLookup(){
       higherEdSelections.singleSector = schoolDatum[SECTOR_KEY]
       higherEdSelections.arraySectors = [schoolDatum[SECTOR_KEY]]
 
+  	var length = higherEdSelections.programLength === 'two' ? '' : '4-year '
+		
+
       d3.select('#school-description > span')
-      	.text('Sector: ' + schoolDatum.slevel + ', ' + schoolDatum[SECTOR_KEY].toLowerCase())
+      	.text('Sector: ' + length +  schoolDatum[SECTOR_KEY].toLowerCase())
 
       d3.select('#comparison-def > span').text(schoolDatum.fips_ipeds)
 
@@ -1774,6 +1785,27 @@ d3.selectAll('.filter-btn').on('click', function(){
 		})
 	}
 
+	d3.selectAll('.more-info').on('click', function(){
+    	panelMouseover
+    		.style('opacity', 1)
+        	.html('Comparisons between 4-year and 2-year colleges aren’t available because we use different age groups for our analyses of the two institution levels’ potential pool of students.')
+            .style('left', '20px')
+            .style('top', (d3.event.pageY -100) + 'px');
+
+        window.setTimeout(closePanelMouseover, 1)
+	})
+
+	function closePanelMouseover(){
+
+		d3.select('.pop-up-menu').on('click', function(){
+			if (d3.select('.panelmouseover').style('opacity') === '1'){
+				panelMouseover
+					.html('')
+					.style('opacity', 0)
+			}
+		})
+	}
+
 
   	d3.selectAll('.slider').classed('close', false)
 });
@@ -1968,16 +2000,16 @@ function init(){
 			break;
 		case 'one-school-all-races-container':
 			callSchoolChart();
-			var sLevel = higherEdSelections.programLength === 'two' ? '2-year' : '4-year'
-			d3.select('#school-description > span').text(sLevel + ', ' + higherEdSelections.singleSector)
+			var sLevel = higherEdSelections.programLength === 'two' ? '' : '4-year '
+			d3.select('#school-description > span').text(sLevel + higherEdSelections.singleSector)
       		d3.select('#comparison-def > span').text(higherEdSelections.state)
 
 			break;
 
 		case 'multiple-schools':
 			callComparisonChart();
-			var sLevel = higherEdSelections.programLength === 'two' ? '2-year' : '4-year'
-			d3.select('#school-description > span').text(sLevel + ', ' + higherEdSelections.singleSector.toLowerCase())
+			var sLevel = higherEdSelections.programLength === 'two' ? '' : '4-year '
+			d3.select('#school-description > span').text(sLevel + higherEdSelections.singleSector.toLowerCase())
       		d3.select('#comparison-def > span').text(higherEdSelections.state)
 			break;
 	}

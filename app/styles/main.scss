@@ -140,8 +140,9 @@ a:hover {
 }
 
 div.page-container {
-  padding-top: $spacing-unit;
+  padding-top: 30px;
   margin: 0 auto;
+  max-width: 1150px;
   width: 80%;
   // position: relative;
   // bottom: 575px;
@@ -221,8 +222,10 @@ h1 {
 }
 
 #scenarios {
-  margin-left: 3.3%;
+  margin: 0 auto;
+  max-width: 1150px;
   padding: 20px 0;
+
 }
 
 p.scenario {
@@ -669,7 +672,7 @@ select:focus::-ms-value {
 }
 
 #geography-selection {
-  margin-bottom: 45px;
+  margin-bottom: 25px;
   margin-top: $spacing-unit;
   text-align: center;
 }
@@ -983,19 +986,29 @@ div.time-selector.main-choice > div.btn-img-wrapper > svg {
   margin-top: 10px;
 }
 
-//mobile pop up menu
+//mobile pop up menu - sorry, future self and others, this is awful!
 #mobile-filter-options > h4 {
   display: none;
 }
 
 #options-panel > div.slider > div > div > p.options-panel-section {
-  display: inline;
+  display: none;
   font-size: 21px;
 }
+
 #options-panel > div.slider > div > div > div > p {
 // #options-panel > div.slider > div > div > div > p.program-type, #options-panel > div.slider > div > div > div > p.program-length-hed.four-year {
   font-size: 18px;
 }
+
+#options-panel > div.slider > div > div > div > p.program-type {
+  padding-left: 10px;
+}
+
+#options-panel > div.slider > div > div > div > div.c-cb {
+  margin-left: 20px;
+}
+
 #options-panel > div.slider > div > div > div > div > label > span,
 #options-panel > div.slider > div > div > div > .c-cb,
 #options-panel > div.slider > div > div > div > label > span {
@@ -1007,7 +1020,7 @@ div.time-selector.main-choice > div.btn-img-wrapper > svg {
 }
 
 #options-panel > div.slider > div > div > div > p.program-length-hed.four-year {
-  padding-top: 5px;
+  // padding-top: 5px;
 }
 
 #options-panel > div.slider > div > div.race-ethnicity-radios {
@@ -1038,7 +1051,7 @@ div.time-selector.main-choice > div.btn-img-wrapper > svg {
   top: 40px;
   left: 0;
   padding-left: 30px;
-  overflow: hidden;
+  overflow: scroll; // overflow: hidden;
   background-color: #FFFFFF;
   transition: all;
   transition-duration: .5s;
@@ -1167,6 +1180,9 @@ label.check-switch:active:after {
     text-align: left;
   }
 
+  #chart-frame {
+    margin-top: 55px;
+  }
 
   #mobile-filter-options > h4 {
     display: block;
