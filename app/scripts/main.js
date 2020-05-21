@@ -1786,26 +1786,21 @@ d3.selectAll('.filter-btn').on('click', function(){
 	}
 
 	d3.selectAll('.more-info').on('click', function(){
+		d3.event.stopPropagation();
     	panelMouseover
     		.style('opacity', 1)
         	.html('Comparisons between 4-year and 2-year colleges aren’t available because we use different age groups for our analyses of the two institution levels’ potential pool of students.')
             .style('left', '20px')
             .style('top', (d3.event.pageY -100) + 'px');
-
-        window.setTimeout(closePanelMouseover, 1)
 	})
 
-	function closePanelMouseover(){
-
-		d3.select('.pop-up-menu').on('click', function(){
-			if (d3.select('.panelmouseover').style('opacity') === '1'){
-				panelMouseover
-					.html('')
-					.style('opacity', 0)
-			}
-		})
-	}
-
+	d3.select('.pop-up-menu').on('click', function(){
+		if (d3.select('.panelmouseover').style('opacity') === '1'){
+			panelMouseover
+				.html('')
+				.style('opacity', 0)
+		}
+	})
 
   	d3.selectAll('.slider').classed('close', false)
 });
