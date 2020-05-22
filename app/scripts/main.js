@@ -145,11 +145,14 @@ d3.select(window).on('resize', resize);
 
 	var windowWidth = window.innerWidth
 
+	//there's also a media query for big screens
     if (windowWidth > 1530){
-      d3.select('#heroimage').style('background-size', 'cover').style('height', windowWidth/1.585 + 'px')
-    } else {
-      d3.select('#heroimage').style('background-size', 'contain')
-    }
+      d3.select('#heroimage').style('height', windowWidth/1.585 + 'px')
+
+    } 
+    // else {
+    //   d3.select('#heroimage').style('background-size', 'contain')
+    // }
 
 
 function resize(){
@@ -162,10 +165,11 @@ function resize(){
     IS_MOBILE = storedWidth < 768 ? true : false ;
 
     if (window.innerWidth > 1530){
-      d3.select('#heroimage').style('background-size', 'cover').style('height', storedWidth/1.585 + 'px')
-    } else {
-      d3.select('#heroimage').style('background-size', 'contain')
-    }
+      d3.select('#heroimage').style('height', storedWidth/1.585 + 'px')
+    } 
+    // else {
+    //   d3.select('#heroimage').style('background-size', 'contain')
+    // }
 
     optionsPanelTotalWidth = parseInt(d3.select('#options-panel').style('width')) + parseInt(d3.select('#options-panel').style('margin-right'))
     if (IS_MOBILE){
