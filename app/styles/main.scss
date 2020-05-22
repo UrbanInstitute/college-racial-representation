@@ -494,6 +494,7 @@ div.sector{
 li.key-item-line, li.key-item-bar, li.key-item-comparison, text.key-item-bar {
   fill: $gray-7;
   color: $gray-7;
+  cursor: default;
   display: inline-block;
   margin: 0 1em 0.75em 0;
   padding: 0 0 0 3px;
@@ -1170,8 +1171,18 @@ label.check-switch:active:after {
     background-size: cover;
   }
 
-  .title-content {
+
+}
+
+@media (min-width: 1800px){
+    .title-content {
     padding-top: 66%;
+  }
+}
+
+@media (min-width: 2200px){
+    .title-content {
+    padding-top: 80%;
   }
 }
 
