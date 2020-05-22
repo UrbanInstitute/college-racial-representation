@@ -1260,21 +1260,13 @@ label.check-switch:active:after {
     h4 {
       display: inline;
     }
-    // p#school-description {
-    //   display: none;
-    // }
+
     p.label {
       padding-right: 17px;
     }
-    // label.check-switch {
-    //   display: none;
-    // }
-    // #school-comparison {
-    //   display: none;
-    // }
+
     p#comparison-def {
-      // border-bottom: 1px solid $gray-5;
-      padding-bottom: 25px;
+      margin-bottom: 0;
     }
     #comparison-menu {
       display: none;

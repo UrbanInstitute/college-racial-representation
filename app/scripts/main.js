@@ -312,7 +312,6 @@ function addArrowsToHighlights(){
 	if (window.innerWidth < 950){
 		d3.selectAll('.caret').style('display', 'inline')
 		d3.selectAll('img.caret').on('click', function(){
-
 			var isLeft = d3.select(this).classed('left')
 			//get the ID of wrapping div to know whether scenario1, 2 or 3
 			var wrappingDiv = this.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement
@@ -1740,9 +1739,14 @@ d3.selectAll('.filter-btn').on('click', function(){
 		      higherEdSelections.arraySectors.push(translate[userChoice])
 		      d3.select('.sector-boxes > div > input[value=' + userChoice + ']').property('checked', true)
 			}
+			
 			callBarChart(higherEdSelections.year, true);
 
 		})//end sector boxes
+		//sync the checkmarks with the current selections
+		d3.selectAll('input.sector-boxes')
+			.property('checked', function(d){ return higherEdSelections.arraySectors.indexOf(translate[this.value]) > -1 });
+
 
 	} else if (higherEdSelections.chartType === 'by-sector-chart'){
 		var div = d3.select('div.slider').append('div').attr('class', 'pop-up-menu').style('margin-top', '35px')
