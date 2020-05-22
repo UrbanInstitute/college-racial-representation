@@ -1165,7 +1165,15 @@ label.check-switch:active:after {
   }
 }
 
+@media (min-width: 1530px) {
+  #heroimage {
+    background-size: cover;
+  }
 
+  .title-content {
+    padding-top: 66%;
+  }
+}
 
 @media (max-width: 900px) {
   div.page-container {
