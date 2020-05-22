@@ -13,7 +13,7 @@
 //BUGS
 
 //FEATURES
-//make chart responsive
+//make chart responsive using resize
 
 //I took out 'dif_othra' and kept in (was dif_twora) 'dif_multi' which became 'multiracial'
 
