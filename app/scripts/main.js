@@ -1917,15 +1917,15 @@ function prepareData(){
 
 	//sorry this is bad, but the params thing causes probs with higherEdSelections. this is quick fix
 	//if there's a search string
-	if (location.search !== ""){
-		if (higherEdSelections.singleSector === "Public 2-Year" || higherEdSelections.singleSector === "For-Profit 2-Year"){
+	if (location.search !== ''){
+		if (higherEdSelections.singleSector === 'Public 2-Year' || higherEdSelections.singleSector === 'For-Profit 2-Year'){
 			//be sure the program length is right
-			higherEdSelections.programLength = "two"
+			higherEdSelections.programLength = 'two'
 		} else {
-			higherEdSelections.programLength = "four"
+			higherEdSelections.programLength = 'four'
 		}
 		
-		if (higherEdSelections.chartType === "one-school-all-races-container"){
+		if (higherEdSelections.chartType === 'one-school-all-races-container'){
 			//the queryparams function doesn't move singleSector selection into arraySectors 
 			higherEdSelections.arraySectors = [higherEdSelections.singleSector]
 		} else {
@@ -1936,7 +1936,7 @@ function prepareData(){
 		//if there's no search string, races will always be the same
 		higherEdSelections.arrayRaces = Object.keys(translateRace)
 		//and sectors will depend on if it's a two-year
-		if (higherEdSelections.singleSector === "Public 2-Year" || location.search !== "" && higherEdSelections.singleSector === "For-Profit 2-Year"){
+		if (higherEdSelections.singleSector === 'Public 2-Year' || location.search !== '' && higherEdSelections.singleSector === 'For-Profit 2-Year'){
 			higherEdSelections.arraySectors = Object.keys(translateBack).slice(7,9)
 		} else {
 			higherEdSelections.arraySectors = Object.keys(translateBack).slice(0,7)
@@ -1959,12 +1959,12 @@ function init(){
   	d3.select('#year-input > svg > g > g.slider > g > text').attr('y', 19).style('font-size', 14)
 
   	//what if i sprinkle this all over
-	if (higherEdSelections.singleSector === "Public 2-Year" || higherEdSelections.singleSector === "For-Profit 2-Year"){
+	if (higherEdSelections.singleSector === 'Public 2-Year' || higherEdSelections.singleSector === 'For-Profit 2-Year'){
 		//be sure the program length is right
-		higherEdSelections.programLength = "two"
+		higherEdSelections.programLength = 'two'
 		convertSelectors('two')
 	} else {
-		higherEdSelections.programLength = "four"
+		higherEdSelections.programLength = 'four'
 	}
 
 
