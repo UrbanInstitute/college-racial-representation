@@ -1,14 +1,3 @@
-
-
-// Uncomment to enable Bootstrap tooltips
-// https://getbootstrap.com/docs/4.0/components/tooltips/#example-enable-tooltips-everywhere
-// $(function () { $('[data-toggle="tooltip"]').tooltip(); });
-
-// Uncomment to enable Bootstrap popovers
-// https://getbootstrap.com/docs/4.0/components/popovers/#example-enable-popovers-everywhere
-// $(function () { $('[data-toggle="popover"]').popover(); });
-
-
 //TODOs
 //BUGS
 
@@ -16,6 +5,15 @@
 //make chart responsive using resize
 
 //I took out 'dif_othra' and kept in (was dif_twora) 'dif_multi' which became 'multiracial'
+
+
+function toggle_visibility(id) {
+  var e = document.getElementById(id);
+  if (e.style.display == 'inline-block')
+      e.style.display = 'none';
+  else
+      e.style.display = 'inline-block';
+}
 
 //This is for IE 11
 if (!Object.entries) {
@@ -1275,6 +1273,9 @@ function callSchoolChart(){
   d3.select('#fourth-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.selectedSchool);
   schoolDataByRace = schoolDataByRace.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
 
+  d3.select('#school-description > span').text('Sector: ' + higherEdSelections.singleSector.toLowerCase())
+  d3.select('#comparison-def > span').text(higherEdSelections.state)
+
   drawLineChart(schoolDataByRace, 'sector', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
 }
 
@@ -1493,6 +1494,8 @@ function initializeStaticControls(){
 
 		} else if ( userChoice === 'school' ){
       		d3.select('#school-comparison').property('checked', false);
+      		d3.select('#school-lookup').attr('value', higherEdSelections.selectedSchool);
+
 
       		if (IS_MOBILE){
       			d3.select('#mobile-filter-options').style('display', 'none')
@@ -1858,6 +1861,8 @@ function makeSectorNest(){
 			return d.fips_ipeds === higherEdSelections.state;
 		})
 	}
+
+	if (SELECTED_DATASET === 'schooltwo'){ SELECTED_DATASET = 'schoolfour'}
 	var nest = d3.nest().key(function(d){
 		return d[SECTOR_KEY]
 	}).entries(higherEdData.allData[SELECTED_DATASET]);
@@ -1910,10 +1915,35 @@ function prepareData(){
 	NESTED_BY_SECTOR = makeSectorNest();
 	NESTED_BY_RACE = makeDemogNest('Public Nonselective');
 
-	higherEdSelections.arraySectors = NESTED_BY_SECTOR.map(function(d){ return d.key })
-	// console.log(higherEdData)
-	var slicer = (SELECTED_DATASET == 'filteredForState') ? higherEdSelections.geography + higherEdSelections.programLength : SELECTED_DATASET;
-	higherEdSelections.arrayRaces = higherEdData.allData[slicer].columns.slice(2)
+	//sorry this is bad, but the params thing causes probs with higherEdSelections. this is quick fix
+	//if there's a search string
+	if (location.search !== ""){
+		if (higherEdSelections.singleSector === "Public 2-Year" || higherEdSelections.singleSector === "For-Profit 2-Year"){
+			//be sure the program length is right
+			higherEdSelections.programLength = "two"
+		} else {
+			higherEdSelections.programLength = "four"
+		}
+		
+		if (higherEdSelections.chartType === "one-school-all-races-container"){
+			//the queryparams function doesn't move singleSector selection into arraySectors 
+			higherEdSelections.arraySectors = [higherEdSelections.singleSector]
+		} else {
+			higherEdSelections.arraySectors = getQueryParam('array-sectors',[],Object.keys(translate)).map(function(d){return translate[d]})
+		}
+
+	} else {
+		//if there's no search string, races will always be the same
+		higherEdSelections.arrayRaces = Object.keys(translateRace)
+		//and sectors will depend on if it's a two-year
+		if (higherEdSelections.singleSector === "Public 2-Year" || location.search !== "" && higherEdSelections.singleSector === "For-Profit 2-Year"){
+			higherEdSelections.arraySectors = Object.keys(translateBack).slice(7,9)
+		} else {
+			higherEdSelections.arraySectors = Object.keys(translateBack).slice(0,7)
+		}
+	}
+
+	higherEdSelections.arrayRaces = Object.keys(translateRace)
 }
 
 function init(){
@@ -1928,9 +1958,15 @@ function init(){
   	d3.selectAll('#year-input > svg > g > g.axis > g > text').attr('y', 12)
   	d3.select('#year-input > svg > g > g.slider > g > text').attr('y', 19).style('font-size', 14)
 
-  	if ( higherEdSelections.programLength === 'two' ){
-      convertSelectors('two')
-    }
+  	//what if i sprinkle this all over
+	if (higherEdSelections.singleSector === "Public 2-Year" || higherEdSelections.singleSector === "For-Profit 2-Year"){
+		//be sure the program length is right
+		higherEdSelections.programLength = "two"
+		convertSelectors('two')
+	} else {
+		higherEdSelections.programLength = "four"
+	}
+
 
   	if(higherEdSelections.geography == 'national'){
 
@@ -1975,8 +2011,8 @@ function init(){
   	else if(higherEdSelections.geography == 'school'){
 			d3.select('#school-comparison').property('checked', false);
 			d3.select('#fourth-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.selectedSchool)
-
-			makeSchoolLookup(nestedSchools);
+			d3.select('#school-lookup').attr('value', higherEdSelections.selectedSchool)
+			makeSchoolLookup()
 
   	}
 
