@@ -1273,7 +1273,12 @@ function callSchoolChart(){
   d3.select('#fourth-chart-container > h4 > span:nth-child(2)').text(higherEdSelections.selectedSchool);
   schoolDataByRace = schoolDataByRace.filter(function(d){ return higherEdSelections.arrayRaces.indexOf(d.key) > -1 })
 
-  d3.select('#school-description > span').text('Sector: ' + higherEdSelections.singleSector.toLowerCase())
+  var actualProgramLength = ''
+  if (higherEdSelections.singleSector !== 'Public 2-Year' && higherEdSelections.singleSector !== 'For-Profit 2-Year'){
+  	actualProgramLength = '4-year '
+  }
+
+  d3.select('#school-description > span').text('Sector: ' + actualProgramLength + higherEdSelections.singleSector.toLowerCase())
   d3.select('#comparison-def > span').text(higherEdSelections.state)
 
   drawLineChart(schoolDataByRace, 'sector', oneSchoolSVG, oneSchoolG, oneSchoolYAxis)
@@ -2015,8 +2020,14 @@ function init(){
 			makeSchoolLookup()
 
   	}
+  		//crap
+	  var actualProgramLength = ''
+	  if (higherEdSelections.singleSector !== 'Public 2-Year' && higherEdSelections.singleSector !== 'For-Profit 2-Year'){
+	  	actualProgramLength = '4-year '
+	  }
 
 	switch(higherEdSelections.chartType){
+
 		case 'single-year-bar':
 			callBarChart(higherEdSelections.year, false);
 			d3.selectAll('.time-selector').classed('selected', false);
@@ -2039,16 +2050,16 @@ function init(){
 			break;
 		case 'one-school-all-races-container':
 			callSchoolChart();
-			var sLevel = higherEdSelections.programLength === 'two' ? '' : '4-year '
-			d3.select('#school-description > span').text(sLevel + higherEdSelections.singleSector)
+			// var sLevel = higherEdSelections.programLength === 'two' ? '' : '4-year '
+			d3.select('#school-description > span').text('Sector: ' + actualProgramLength + higherEdSelections.singleSector.toLowerCase())
       		d3.select('#comparison-def > span').text(higherEdSelections.state)
 
 			break;
 
 		case 'multiple-schools':
 			callComparisonChart();
-			var sLevel = higherEdSelections.programLength === 'two' ? '' : '4-year '
-			d3.select('#school-description > span').text(sLevel + higherEdSelections.singleSector.toLowerCase())
+			// var sLevel = higherEdSelections.programLength === 'two' ? '' : '4-year '
+			d3.select('#school-description > span').text('Sector: ' + actualProgramLength + higherEdSelections.singleSector.toLowerCase())
       		d3.select('#comparison-def > span').text(higherEdSelections.state)
 			break;
 	}
