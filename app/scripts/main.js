@@ -34,7 +34,7 @@ d3.selection.prototype.moveToFront = function() {
     this.parentNode.appendChild(this);
   });
 };
-
+var US_STATES = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming','District of Columbia']
 // the datas
 var higherEdData = {};
 	higherEdData.allData = {};
@@ -47,11 +47,17 @@ var higherEdSelections = {};
 	higherEdSelections.programLength = getQueryParam('program-length','four',['two', 'four'])
 	higherEdSelections.singleRace = getQueryParam('single-race', 'dif_hispa', Object.keys(translateRace))
 	higherEdSelections.singleSector = translate[getQueryParam('single-sector','public-nonselective',Object.keys(translate))],
-	higherEdSelections.state = decodeURIComponent(getQueryParam('state','Alabama',['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming','District of Columbia'] )),
+	higherEdSelections.state = decodeURIComponent(getQueryParam('state','Alabama', US_STATES)),
   	higherEdSelections.selectedSchool = decodeURIComponent(getQueryParam('selected-school',encodeURIComponent('Northern Virginia Community College'),'all')),
-	higherEdSelections.arrayRaces = getQueryParam('array-race',[],Object.keys(translateRace)),
-	higherEdSelections.arraySectors = getQueryParam('array-sectors',[],Object.keys(translate)),
+	higherEdSelections.arrayRaces = getQueryParam('array-race',['dif_white', 'dif_hispa', 'dif_black', 'dif_asian', 'dif_amind', 'dif_pacis', 'dif_multi'],Object.keys(translateRace)),
+	higherEdSelections.arraySectors = getQueryParam('array-sectors',['For-Profit', 'Private More Selective', 'Private Nonselective', 'Private Selective', 'Public More Selective', 'Public Nonselective', 'Public Selective'],Object.keys(translate)),
 	higherEdSelections.defaultSchool = higherEdSelections.selectedSchool
+
+	if (higherEdSelections.arraySectors.length > 0){
+		for (var i = 0; i < higherEdSelections.arraySectors.length; i++){
+			higherEdSelections.arraySectors[i] = translate[higherEdSelections.arraySectors[i]]
+		}
+	}
 
 var SECTOR_KEY = higherEdSelections.programLength + 'cat',
 	SELECTED_DATASET = (higherEdSelections.geography == 'state') ? 'filteredForState' : higherEdSelections.geography + higherEdSelections.programLength,
@@ -1452,9 +1458,7 @@ function initializeStaticControls(){
 
 
 				//create state dropdown menu
-			var states = higherEdData.allData.statefour.map(function(d){return d.fips_ipeds});
-			var menuData = states.filter(distinct);
-			makeDropdown(menuData);
+			makeDropdown(US_STATES);
 			d3.select('#state-menu').style('display', 'block');
 			$('#dropdown').val(higherEdSelections.state)
 			$('#dropdown').selectmenu('refresh')
@@ -1641,9 +1645,7 @@ function initializeStaticControls(){
 	        }
 
 			//create state dropdown menu
-			var states = higherEdData.allData.statefour.map(function(d){return d.fips_ipeds});
-			var menuData = states.filter(distinct);
-			makeDropdown(menuData);
+			makeDropdown(US_STATES);
 			d3.select('#state-menu').style('display', 'block');
 			$('#dropdown').val(higherEdSelections.state)
 			$('#dropdown').selectmenu('refresh')
@@ -1920,9 +1922,20 @@ function prepareData(){
 	NESTED_BY_SECTOR = makeSectorNest();
 	NESTED_BY_RACE = makeDemogNest('Public Nonselective');
 
-	//sorry this is bad, but the params thing causes probs with higherEdSelections. this is quick fix
-	//if there's a search string
-	if (location.search !== ''){
+	//more stuff to fix up from params
+	//if there's not a search string
+	if (location.search === ''){
+
+		//if there's no search string, races will always be the same
+		// higherEdSelections.arrayRaces = Object.keys(translateRace)
+		//and sectors will depend on if it's a two-year
+		if (higherEdSelections.singleSector === 'Public 2-Year' || location.search !== '' && higherEdSelections.singleSector === 'For-Profit 2-Year'){
+			higherEdSelections.arraySectors = Object.keys(translateBack).slice(7,9)
+		} else {
+			higherEdSelections.arraySectors = Object.keys(translateBack).slice(0,7)
+		}
+
+	} else {
 		if (higherEdSelections.singleSector === 'Public 2-Year' || higherEdSelections.singleSector === 'For-Profit 2-Year'){
 			//be sure the program length is right
 			higherEdSelections.programLength = 'two'
@@ -1933,22 +1946,12 @@ function prepareData(){
 		if (higherEdSelections.chartType === 'one-school-all-races-container'){
 			//the queryparams function doesn't move singleSector selection into arraySectors 
 			higherEdSelections.arraySectors = [higherEdSelections.singleSector]
-		} else {
-			higherEdSelections.arraySectors = getQueryParam('array-sectors',[],Object.keys(translate)).map(function(d){return translate[d]})
-		}
+		} 
 
-	} else {
-		//if there's no search string, races will always be the same
-		higherEdSelections.arrayRaces = Object.keys(translateRace)
-		//and sectors will depend on if it's a two-year
-		if (higherEdSelections.singleSector === 'Public 2-Year' || location.search !== '' && higherEdSelections.singleSector === 'For-Profit 2-Year'){
-			higherEdSelections.arraySectors = Object.keys(translateBack).slice(7,9)
-		} else {
-			higherEdSelections.arraySectors = Object.keys(translateBack).slice(0,7)
+		if (higherEdSelections.chartType !== 'single-year-bar'){
+			d3.select('.disable-box').style('visibility', 'visible')
 		}
 	}
-
-	higherEdSelections.arrayRaces = Object.keys(translateRace)
 }
 
 function init(){
@@ -2002,9 +2005,7 @@ function init(){
 			d3.select('#mobile-filter-options').style('display', 'inline')
 		}
 
-		var states = higherEdData.allData[SELECTED_DATASET].map(function(d){return d.fips_ipeds});
-		var menuData = states.filter(distinct);
-		makeDropdown(menuData);
+		makeDropdown(US_STATES);
 		d3.select('#state-menu').style('display', 'block');
 
 		//filter state data to just selected state

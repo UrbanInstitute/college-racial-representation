@@ -88,6 +88,7 @@ var translate = {
    'two-year-private': 'For-Profit 2-Year'
 }
 
+
 var translateBack = {
    'For-Profit': 'for-profit',
    'Private More Selective': 'private-highly-selective',
@@ -172,6 +173,8 @@ function getQueryParam(param,fallback, validOpts) {
       }
     }
 }
+
+
 function getShareUrl(){
   //the base url (localhost in dev, staging/prop when live) including protocol (https://) and full path
   var shareURL = window.location.origin + window.location.pathname
