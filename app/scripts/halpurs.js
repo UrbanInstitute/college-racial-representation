@@ -159,7 +159,13 @@ function getQueryParam(param,fallback, validOpts) {
     }else{
       var testResult = decodeURIComponent(results[1].replace(/\+/g, ' '))
       if(Array.isArray(fallback)){
-        return testResult.split(',').filter(function(o){ return validOpts.indexOf(o) != -1 })
+        var selectionArray = testResult.split(',').filter(function(o){ return validOpts.indexOf(o) != -1 })
+        if (param === 'array-sectors'){
+          selectionArray = selectionArray.map(function(sector){
+            return translate[sector]
+          })
+        }
+        return selectionArray
       }else{
         // return (validOpts == 'all' || validOpts.indexOf(testResult) == -1) ? fallback : testResult;
         //if validOpts is 'all' or the test result isn't in valid Opts (like it's garbage) use the fallback, otherwise use the testresult
@@ -170,6 +176,8 @@ function getQueryParam(param,fallback, validOpts) {
         } else if (validOpts.indexOf(testResult) > -1){
           return testResult;
         }
+
+
       }
     }
 }

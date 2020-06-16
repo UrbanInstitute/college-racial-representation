@@ -53,11 +53,6 @@ var higherEdSelections = {};
 	higherEdSelections.arraySectors = getQueryParam('array-sectors',['For-Profit', 'Private More Selective', 'Private Nonselective', 'Private Selective', 'Public More Selective', 'Public Nonselective', 'Public Selective'],Object.keys(translate)),
 	higherEdSelections.defaultSchool = higherEdSelections.selectedSchool
 
-	if (higherEdSelections.arraySectors.length > 0){
-		for (var i = 0; i < higherEdSelections.arraySectors.length; i++){
-			higherEdSelections.arraySectors[i] = translate[higherEdSelections.arraySectors[i]]
-		}
-	}
 
 var SECTOR_KEY = higherEdSelections.programLength + 'cat',
 	SELECTED_DATASET = (higherEdSelections.geography == 'state') ? 'filteredForState' : higherEdSelections.geography + higherEdSelections.programLength,
@@ -1184,6 +1179,7 @@ function callBarChart(year, animate){
 			convertSelectors('four')
 		}
 	}
+	
 	FILTERED_BY_YEAR = filterDataByYear(year).filter(function(d){
 		return higherEdSelections.arraySectors.indexOf(d[SECTOR_KEY]) > -1
 	})
