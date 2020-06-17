@@ -7,7 +7,7 @@
     "bootstrap": "^4.3.1",
     "d3": "^5.15.0",
     "d3-simple-slider": "^1.5.4",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jquery-ui": "^1.12.1",
     "jquery-ui-dist": "^1.12.1",
     "modernizr": "^3.7.1",
