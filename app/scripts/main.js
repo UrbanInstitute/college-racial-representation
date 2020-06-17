@@ -145,10 +145,10 @@ d3.select(window).on('resize', resize);
 	var windowWidth = window.innerWidth
 
 	//there's also a media query for big screens
-    if (windowWidth > 1530){
-      d3.select('#heroimage').style('height', windowWidth/1.585 + 'px')
+    // if (windowWidth > 1530){
+    //   d3.select('#heroimage').style('height', windowWidth/1.585 + 'px')
 
-    } 
+    // }
     // else {
     //   d3.select('#heroimage').style('background-size', 'contain')
     // }
@@ -165,7 +165,7 @@ function resize(){
 
     if (window.innerWidth > 1530){
       d3.select('#heroimage').style('height', storedWidth/1.585 + 'px')
-    } 
+    }
     // else {
     //   d3.select('#heroimage').style('background-size', 'contain')
     // }
@@ -1179,7 +1179,7 @@ function callBarChart(year, animate){
 			convertSelectors('four')
 		}
 	}
-	
+
 	FILTERED_BY_YEAR = filterDataByYear(year).filter(function(d){
 		return higherEdSelections.arraySectors.indexOf(d[SECTOR_KEY]) > -1
 	})
@@ -1745,7 +1745,7 @@ d3.selectAll('.filter-btn').on('click', function(){
 		      higherEdSelections.arraySectors.push(translate[userChoice])
 		      d3.select('.sector-boxes > div > input[value=' + userChoice + ']').property('checked', true)
 			}
-			
+
 			callBarChart(higherEdSelections.year, true);
 
 		})//end sector boxes
@@ -1938,11 +1938,11 @@ function prepareData(){
 		} else {
 			higherEdSelections.programLength = 'four'
 		}
-		
+
 		if (higherEdSelections.chartType === 'one-school-all-races-container'){
-			//the queryparams function doesn't move singleSector selection into arraySectors 
+			//the queryparams function doesn't move singleSector selection into arraySectors
 			higherEdSelections.arraySectors = [higherEdSelections.singleSector]
-		} 
+		}
 
 		if (higherEdSelections.chartType !== 'single-year-bar'){
 			d3.select('.disable-box').style('visibility', 'visible')
