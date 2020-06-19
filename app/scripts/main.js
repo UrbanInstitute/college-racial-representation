@@ -222,8 +222,6 @@ function resize(){
 
     showChart(higherEdSelections.chartType);
 
-
-
   }
 }
 
@@ -1131,9 +1129,23 @@ d3.select('#school-comparison').on('click', function(d){
   if (higherEdSelections.chartType === 'one-school-all-races-container'){
     higherEdSelections.chartType = 'multiple-schools';
     callComparisonChart();
+    //show race selection menu
+    if (IS_MOBILE){
+    	d3.select('#mobile-filter-options > h4').style('visibility', 'visible').text('Choose a race/ethnicity').style('margin-top', '43px')
+    	d3.select('#mobile-filter-options').style('display', 'inline')
+    	d3.select('#race-ethnicity-filter').style('display', 'inline-block')
+    	d3.select('#sector-filter').style('display', 'none')
+    }
   } else {
     higherEdSelections.chartType = 'one-school-all-races-container';
     callSchoolChart();
+
+    if (IS_MOBILE){
+    	d3.select('#mobile-filter-options > h4').style('visibility', 'hidden')
+    	d3.select('#mobile-filter-options').style('display', 'none')
+    	d3.select('#race-ethnicity-filter').style('display', 'none')
+    	
+    }
   }
 
   buildOptionPanel(higherEdSelections.chartType);
@@ -1782,6 +1794,27 @@ d3.selectAll('.filter-btn').on('click', function(){
 			d3.select('#second-chart-container > h4 > span').text(higherEdSelections.singleSector + sectorLength);
 			callRaceLine();
 		})
+	} else if (higherEdSelections.chartType === 'multiple-schools'){
+		var div = d3.select('div.slider').append('div').attr('class', 'pop-up-menu').style('margin-top', '35px')
+		div.append('p').attr('class', 'options-panel-section').style('display', 'inline').text('Race/Ethnicity')
+		div.append('span').attr('id', 'close-btn').style('left', scootch).html('&times;').on('click', function(){
+			d3.selectAll('.slider').classed('close', true)
+		})
+		div.selectAll('div.race-ethnicity-radios')
+			.data(RACE_OPTIONS)
+			.enter()
+			.append('div')
+			.classed('race-ethnicity-radios', true)
+			.html(function(d){ return radioButtonTemplater(d) })
+			.on('click', function(){
+				var userChoice = d3.select(this).datum();
+				higherEdSelections.singleRace = userChoice;
+			    if (higherEdSelections.chartType === 'multiple-schools'){
+			  		d3.select('#fourth-chart-container > h4 > span').text(translateRace[userChoice]);			  		
+			  		callComparisonChart();
+			    } 
+			})
+			d3.select('div.slider > div > div > div > label > input[value=' + higherEdSelections.singleRace + ']').property('checked',true)
 	}
 
 	d3.selectAll('.more-info').on('click', function(){
