@@ -1761,14 +1761,15 @@ d3.selectAll('.filter-btn').on('click', function(){
 			    } else if (chartType === 'multiple-schools'){
 			      callComparisonChart();
 			    }
-
 			})
+			d3.select('input[value=' + higherEdSelections.singleRace + ']').property('checked', true)
 	} else if (higherEdSelections.chartType === 'by-race-chart'){
 		var div = d3.select('div.slider').append('div').attr('class', 'pop-up-menu')
 		div.append('span').attr('id', 'close-btn').style('left', window.innerWidth - 70 + 'px').style('top', '30px').html('&times;').on('click', function(){
 			d3.selectAll('.slider').classed('close', true)
 		})
 		div.append('div').html(COLLEGE_SECTOR_RADIOS)
+		d3.select('input[value=' + translateBack[higherEdSelections.singleSector] + ']').property('checked', true)
 		d3.selectAll('.sector-radios').on('click', function(){
 
 			higherEdSelections.singleSector = translate[this.value];
