@@ -41,7 +41,7 @@
     "gulp-uglify": "^3.0.2",
     "gulp-useref": "^3.1.6",
     "mkdirp": "^0.5.1",
-    "mocha": "^6.2.2",
+    "mocha": "^10.2.0",
     "yargs": "13.2.4"
   },
   "scripts": {
